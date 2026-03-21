@@ -105,7 +105,24 @@
             .tag-grupo { min-width: 70px; font-size: 0.55rem; }
         }
 
-        @media print { .no-print { display: none !important; } .religious-border { border: 2px solid #000; } }
+        @media print {
+            .no-print { display: none !important; }
+            .religious-border { border: 2px solid #000; }
+            body { background: white !important; padding: 0 !important; }
+            #main-body { padding: 0 !important; }
+            #painel-roteiro { display: block !important; }
+            .roteiro-bloco { break-inside: avoid; page-break-inside: avoid; }
+            .roteiro-canto-card { break-inside: avoid; }
+            .shadow-2xl { box-shadow: none !important; }
+            .religious-border { border: none !important; outline: none !important; }
+        }
+
+        /* Cantos */
+        .momento-btn.active { background-color: var(--header); color: white; border-color: var(--header); }
+        .canto-card { transition: box-shadow 0.2s; }
+        .canto-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); }
+        .badge-carismatico { background:#fef3c7; color:#92400e; }
+        .badge-liturgico   { background:#dbeafe; color:#1e40af; }
     </style>
 </head>
 <body id="main-body" class="p-1 sm:p-2 md:p-6 transition-colors duration-700">
@@ -172,10 +189,12 @@
         <div id="month-tabs" class="flex min-w-max md:w-full justify-between"></div>
     </nav>
 
-    <!-- ABAS PRINCIPAIS: Escala | Leituras do Dia -->
-    <div class="no-print border-b bg-white flex gap-0 px-2 sm:px-6 pt-3">
-        <button id="main-tab-escala"   class="main-tab-btn active font-cinzel text-xs sm:text-sm font-bold uppercase px-4 sm:px-6 py-2 border-b-2 border-transparent mr-2">📋 Escala</button>
-        <button id="main-tab-leituras" class="main-tab-btn font-cinzel text-xs sm:text-sm font-bold uppercase px-4 sm:px-6 py-2 border-b-2 border-transparent text-stone-400">📖 Leituras do Dia</button>
+    <!-- ABAS PRINCIPAIS: Escala | Leituras | Cantos -->
+    <div class="no-print border-b bg-white flex gap-0 px-2 sm:px-6 pt-3 overflow-x-auto">
+        <button id="main-tab-escala"   class="main-tab-btn active font-cinzel text-xs sm:text-sm font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent mr-1 whitespace-nowrap">📋 Escala</button>
+        <button id="main-tab-leituras" class="main-tab-btn font-cinzel text-xs sm:text-sm font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 mr-1 whitespace-nowrap">📖 Leituras</button>
+        <button id="main-tab-cantos"   class="main-tab-btn font-cinzel text-xs sm:text-sm font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">🎵 Cantos</button>
+        <button id="main-tab-roteiro"  class="main-tab-btn font-cinzel text-xs sm:text-sm font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">📜 Roteiro</button>
     </div>
 
     <!-- ══════════════════════════════════════════════════════════════ -->
@@ -273,6 +292,142 @@
             <div class="text-center py-16 text-stone-300">
                 <div class="text-5xl mb-3">📖</div>
                 <p class="font-cinzel text-sm">Selecione uma data para ver as leituras</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- PAINEL: CANTOS                                                  -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <div id="painel-cantos" class="p-2 sm:p-4 md:p-6 hidden">
+
+        <!-- Filtro por momento -->
+        <div class="flex flex-wrap gap-2 mb-5" id="momento-filtros">
+            <button data-momento="todos"      class="momento-btn active text-[10px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border">Todos</button>
+            <button data-momento="aclamacao"  class="momento-btn text-[10px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">🕊️ Aclamação</button>
+            <button data-momento="ofertorio"  class="momento-btn text-[10px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">🥖 Ofertório</button>
+            <button data-momento="santo"      class="momento-btn text-[10px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">✨ Santo</button>
+            <button data-momento="amem"       class="momento-btn text-[10px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">🙏 Amém</button>
+            <button data-momento="painosso"   class="momento-btn text-[10px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">🤲 Pai Nosso</button>
+            <button data-momento="paz"        class="momento-btn text-[10px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">🤝 Abraço da Paz</button>
+            <button data-momento="cordeiro"   class="momento-btn text-[10px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">🐑 Cordeiro</button>
+            <button data-momento="comunhao"   class="momento-btn text-[10px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">💛 Comunhão</button>
+            <button data-momento="final"      class="momento-btn text-[10px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">🎶 Final</button>
+            <button data-momento="entrada"    class="momento-btn text-[10px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">🎵 Entrada</button>
+            <button data-momento="ato"        class="momento-btn text-[10px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">🙏 Ato Penitencial</button>
+            <button data-momento="gloria"     class="momento-btn text-[10px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">✨ Glória</button>
+            <button data-momento="sequencia"  class="momento-btn text-[10px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">📜 Sequências</button>
+            <button data-momento="poscomunhao" class="momento-btn text-[10px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">🙏 Pós-Comunhão</button>
+        </div>
+
+        <!-- Grid de cantos -->
+        <div id="cantos-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+
+        <!-- Modal cifra / transpositor -->
+        <div id="modal-cifra" class="fixed inset-0 z-50 hidden" style="background:rgba(0,0,0,0.55)">
+            <div class="flex items-start justify-center min-h-screen p-4 pt-8">
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col">
+                    <div class="flex items-center justify-between px-5 py-4 border-b">
+                        <div>
+                            <h3 id="modal-titulo" class="font-cinzel font-bold text-[var(--header)] text-base uppercase"></h3>
+                            <p id="modal-artista" class="text-xs text-stone-400 mt-0.5"></p>
+                        </div>
+                        <button id="modal-fechar" class="text-stone-400 hover:text-stone-700 text-2xl leading-none">&times;</button>
+                    </div>
+                    <!-- Transpositor -->
+                    <div class="flex items-center gap-3 px-5 py-3 bg-stone-50 border-b flex-wrap">
+                        <span class="text-xs font-bold text-stone-500 uppercase">Tom:</span>
+                        <button id="trans-menos" class="w-7 h-7 rounded-full border border-stone-300 text-stone-600 font-bold hover:bg-stone-100 text-sm">−</button>
+                        <span id="trans-tom" class="text-sm font-bold text-[var(--header)] min-w-[40px] text-center"></span>
+                        <button id="trans-mais"  class="w-7 h-7 rounded-full border border-stone-300 text-stone-600 font-bold hover:bg-stone-100 text-sm">+</button>
+                        <span class="text-[10px] text-stone-400 ml-2" id="trans-semitons"></span>
+                    </div>
+                    <!-- Conteúdo cifra -->
+                    <div class="overflow-y-auto flex-1 p-5">
+                        <pre id="modal-cifra-texto" class="font-mono text-xs sm:text-sm leading-relaxed text-stone-800 whitespace-pre-wrap"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modo admin: botão adicionar canto -->
+        <div id="btn-add-canto-wrap" class="hidden mt-6">
+            <button id="btn-add-canto" class="flex items-center gap-2 bg-[var(--header)] text-white px-4 py-2 rounded-lg text-sm font-bold hover:opacity-90">
+                ＋ Adicionar Canto
+            </button>
+        </div>
+
+        <!-- Modal adicionar/editar canto (admin) -->
+        <div id="modal-add" class="fixed inset-0 z-50 hidden" style="background:rgba(0,0,0,0.55)">
+            <div class="flex items-start justify-center min-h-screen p-4 pt-8">
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
+                    <div class="flex items-center justify-between px-5 py-4 border-b">
+                        <h3 class="font-cinzel font-bold text-[var(--header)] uppercase text-sm">Cadastrar Canto</h3>
+                        <button id="modal-add-fechar" class="text-stone-400 hover:text-stone-700 text-2xl">&times;</button>
+                    </div>
+                    <div class="p-5 space-y-3">
+                        <input id="add-titulo"   placeholder="Título *" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+                        <input id="add-artista"  placeholder="Artista / Grupo" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+                        <select id="add-momento" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+                            <option value="aclamacao">Aclamação</option>
+                            <option value="ofertorio">Ofertório</option>
+                            <option value="santo">Santo</option>
+                            <option value="amem">Amém</option>
+                            <option value="painosso">Pai Nosso</option>
+                            <option value="paz">Abraço da Paz</option>
+                            <option value="cordeiro">Cordeiro</option>
+                            <option value="comunhao">Comunhão</option>
+                            <option value="final">Final</option>
+                            <option value="entrada">Entrada</option>
+                            <option value="ato">Ato Penitencial</option>
+                            <option value="gloria">Glória</option>
+                            <option value="sequencia">Sequência</option>
+                            <option value="poscomunhao">Pós-Comunhão</option>
+                        </select>
+                        <select id="add-estilo" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+                            <option value="carismatico">Carismático</option>
+                            <option value="liturgico">Litúrgico</option>
+                        </select>
+                        <input id="add-tom"      placeholder="Tom original (ex: G, Am, F)" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+                        <input id="add-youtube"  placeholder="Link YouTube" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+                        <input id="add-spotify"  placeholder="Link Spotify" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+                        <input id="add-partitura" placeholder="Link Partitura (PDF)" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+                        <textarea id="add-cifra" placeholder="Cole a cifra aqui..." rows="8" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-xs font-mono"></textarea>
+                        <button id="btn-salvar-canto" class="w-full bg-[var(--header)] text-white py-2 rounded-lg font-bold text-sm hover:opacity-90">Salvar Canto</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- PAINEL: ROTEIRO DA MISSA                                        -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <div id="painel-roteiro" class="hidden">
+
+        <!-- Barra de controles (no-print) -->
+        <div class="no-print flex flex-col sm:flex-row items-start sm:items-center gap-3 px-4 py-3 border-b bg-stone-50">
+            <div>
+                <label class="text-[10px] uppercase font-bold text-stone-500 block mb-1">Data da Missa</label>
+                <input type="date" id="roteiro-data" class="border border-stone-300 rounded-lg px-3 py-2 text-sm font-bold text-stone-700 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+            </div>
+            <button id="btn-carregar-roteiro" class="mt-0 sm:mt-5 bg-[var(--header)] text-white px-5 py-2 rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
+                Gerar Roteiro
+            </button>
+            <button id="btn-imprimir-roteiro" class="mt-0 sm:mt-5 bg-stone-600 text-white px-5 py-2 rounded-lg text-sm font-bold hover:opacity-90 transition-opacity hidden">
+                🖨️ Imprimir / PDF
+            </button>
+            <div id="roteiro-data-display" class="text-stone-400 text-xs italic mt-0 sm:mt-5"></div>
+        </div>
+
+        <!-- Conteúdo do roteiro (tela + impressão) -->
+        <div id="roteiro-container" class="p-4 sm:p-6 md:p-8 max-w-3xl mx-auto">
+            <div class="text-center py-16 text-stone-300 no-print">
+                <div class="text-5xl mb-3">📜</div>
+                <p class="font-cinzel text-sm">Selecione uma data e clique em Gerar Roteiro</p>
             </div>
         </div>
     </div>
@@ -400,7 +555,11 @@ function getTag(valorPadrao, chave) {
     const slug  = valor.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s/g,"");
     if (!isAdmin) {
         const s = document.createElement("span");
-        s.className = `tag-grupo bg-${slug}`;
+        s.className = `tag-grupo bg-${slug} cursor-pointer`;
+        s.title = "Ver leituras deste dia";
+        // extrai YYYY-MM-DD da chave (ex: "d1-2026-05-10" ou "sab-2026-05-10")
+        const isoMatch = chave.match(/(\d{4}-\d{2}-\d{2})$/);
+        if (isoMatch) s.dataset.leituraData = isoMatch[1];
         s.textContent = valor;
         return s.outerHTML;
     }
@@ -890,21 +1049,41 @@ document.addEventListener("change", e => {
 });
 
 // Abas principais: Escala / Leituras
-document.getElementById("main-tab-escala").addEventListener("click", () => {
-    document.getElementById("painel-escala").classList.remove("hidden");
-    document.getElementById("painel-leituras").classList.add("hidden");
-    document.getElementById("main-tab-escala").classList.add("active");
-    document.getElementById("main-tab-leituras").classList.remove("active");
-    document.getElementById("main-tab-leituras").classList.add("text-stone-400");
+// Navega para a aba Leituras filtrando pela data do card clicado
+function irParaLeitura(dataIso) {
+    document.getElementById("data-leitura").value = dataIso;
+    switchMainTab("leituras");
+    carregarLeituraCompleta(dataIso);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// Delegação de clique nos tags de grupo (escala → leituras)
+document.addEventListener("click", e => {
+    const tag = e.target.closest(".tag-grupo[data-leitura-data]");
+    if (tag && tag.dataset.leituraData) {
+        irParaLeitura(tag.dataset.leituraData);
+    }
 });
 
+function switchMainTab(ativo) {
+    ["escala","leituras","cantos","roteiro"].forEach(t => {
+        document.getElementById("painel-" + t).classList.toggle("hidden", t !== ativo);
+        document.getElementById("main-tab-" + t).classList.toggle("active", t === ativo);
+        document.getElementById("main-tab-" + t).classList.toggle("text-stone-400", t !== ativo);
+    });
+    if (ativo === "cantos") renderCantos();
+    if (ativo === "roteiro") iniciarRoteiro();
+}
+
+document.getElementById("main-tab-escala").addEventListener("click",   () => switchMainTab("escala"));
 document.getElementById("main-tab-leituras").addEventListener("click", () => {
-    document.getElementById("painel-leituras").classList.remove("hidden");
-    document.getElementById("painel-escala").classList.add("hidden");
-    document.getElementById("main-tab-leituras").classList.add("active");
-    document.getElementById("main-tab-leituras").classList.remove("text-stone-400");
-    document.getElementById("main-tab-escala").classList.remove("active");
+    switchMainTab("leituras");
+    const data = document.getElementById("data-leitura").value;
+    const container = document.getElementById("leitura-container");
+    if (container.querySelector(".text-stone-300")) carregarLeituraCompleta(data);
 });
+document.getElementById("main-tab-cantos").addEventListener("click",   () => switchMainTab("cantos"));
+document.getElementById("main-tab-roteiro").addEventListener("click",  () => { switchMainTab("roteiro"); iniciarRoteiro(); });
 
 // Sub-abas da escala
 document.querySelectorAll(".escala-tab").forEach(btn => {
@@ -937,16 +1116,6 @@ document.getElementById("btn-carregar-leitura").addEventListener("click", () => 
     if (data) carregarLeituraCompleta(data);
 });
 
-// Carrega automaticamente ao entrar na aba de leituras
-document.getElementById("main-tab-leituras").addEventListener("click", () => {
-    const data = document.getElementById("data-leitura").value;
-    const container = document.getElementById("leitura-container");
-    // Só carrega automaticamente se ainda estiver vazio (estado inicial)
-    if (container.querySelector(".text-stone-300")) {
-        carregarLeituraCompleta(data);
-    }
-});
-
 // WhatsApp
 const btnWpp     = document.getElementById("btn-whatsapp");
 const tooltip    = document.getElementById("wpp-tooltip");
@@ -973,6 +1142,591 @@ btnGeral.addEventListener("click", () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
+// SISTEMA DE CANTOS
+// ═══════════════════════════════════════════════════════════════════
+
+const NOTAS = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+const NOTAS_ALT = ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
+
+function transporTom(tom, semitons) {
+    if (!tom || semitons === 0) return tom || "—";
+    const isMinor = tom.endsWith("m") && tom.length > 1;
+    const base = isMinor ? tom.slice(0,-1) : tom;
+    let idx = NOTAS.indexOf(base);
+    if (idx === -1) idx = NOTAS_ALT.indexOf(base);
+    if (idx === -1) return tom;
+    return NOTAS[((idx + semitons) % 12 + 12) % 12] + (isMinor ? "m" : "");
+}
+
+function transporCifra(cifra, semitons) {
+    if (!semitons) return cifra;
+    return cifra.replace(/\b([A-G][b#]?)(m|maj|dim|aug|sus|add)?([0-9]*)\b/g, (match, nota, suf, num) => {
+        let idx = NOTAS.indexOf(nota);
+        if (idx === -1) idx = NOTAS_ALT.indexOf(nota);
+        if (idx === -1) return match;
+        return NOTAS[((idx + semitons) % 12 + 12) % 12] + (suf||"") + (num||"");
+    });
+}
+
+const CANTOS_BASE = [
+    {id:"a1",titulo:"Aleluia (Taizé)",artista:"Comunidade de Taizé",momento:"aclamacao",estilo:"liturgico",
+     tom:"D",youtube:"https://www.youtube.com/watch?v=iptrX7lIBz4",spotify:"",partitura:"",
+     cifra:"D              A\nAleluia, Aleluia, Aleluia\nG              D\nAleluia, Aleluia, Aleluia"},
+
+    {id:"a2",titulo:"Glória a Vós, Ó Cristo",artista:"Litúrgico",momento:"aclamacao",estilo:"liturgico",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=gloria+a+vos+o+cristo+aclamacao",spotify:"",partitura:"",
+     cifra:"G              C\nGlória a Vós, ó Cristo,\nD7             G\nVerbo de Deus (bis)\n\nC              G\nEu sou a ressurreição,\nD              G\neu sou a vida eterna"},
+
+    {id:"a3",titulo:"Aleluia Festivo",artista:"Vida e Paz",momento:"aclamacao",estilo:"carismatico",
+     tom:"A",youtube:"https://www.youtube.com/results?search_query=aleluia+festivo+carismatico",spotify:"",partitura:"",
+     cifra:"A                E\nAleluia, Aleluia!\nD                A\nAleluia, Aleluia!\nE                A\nAleluia, Aleluia, Aleluia!"},
+
+    {id:"o1",titulo:"Aceita, Senhor",artista:"Pe. Zezinho",momento:"ofertorio",estilo:"liturgico",
+     tom:"F",youtube:"https://www.youtube.com/results?search_query=aceita+senhor+pe+zezinho",spotify:"",partitura:"",
+     cifra:"F              C\nAceita, Senhor, este pão\nBb             F\nque é fruto do trabalho humano\nC7             F\noferecemos com amor"},
+
+    {id:"o2",titulo:"Tudo Que Tenho",artista:"Canção Nova",momento:"ofertorio",estilo:"carismatico",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=tudo+que+tenho+cancao+nova",spotify:"",partitura:"",
+     cifra:"G              Em\nTudo que tenho, tudo que sou\nC              D\nentrego nas tuas mãos, Senhor\nG              Em\nTudo que tenho, tudo que sou\nC         D    G\né teu, Senhor, é teu"},
+
+    {id:"o3",titulo:"Recebei, Senhor",artista:"Dom Luiz Gonzaga",momento:"ofertorio",estilo:"liturgico",
+     tom:"C",youtube:"https://www.youtube.com/results?search_query=recebei+senhor+ofertorio",spotify:"",partitura:"",
+     cifra:"C              G\nRecebei, Senhor, recebei\nAm             F\na oferenda deste povo seu\nG              C\nque vos ama e quer servir"},
+
+    {id:"s1",titulo:"Santo (Terra Prometida)",artista:"Fr. Leo Dehon",momento:"santo",estilo:"liturgico",
+     tom:"D",youtube:"https://www.youtube.com/results?search_query=santo+missa+terra+prometida",spotify:"",partitura:"",
+     cifra:"D     G     D\nSanto, Santo, Santo\nG          A\nSenhor Deus do universo\nD          G\nO céu e a terra estão cheios\nA7         D\nda vossa glória"},
+
+    {id:"s2",titulo:"Santo",artista:"Canção Nova",momento:"santo",estilo:"carismatico",
+     tom:"E",youtube:"https://www.youtube.com/results?search_query=santo+cancao+nova+missa",spotify:"",partitura:"",
+     cifra:"E              B\nSanto, Santo, Santo é o Senhor\nA              E\nSanto, Santo, Santo é o Senhor\nB              E\nHosana nas alturas!"},
+
+    {id:"am1",titulo:"Amém (Aclamação Eucarística)",artista:"Litúrgico",momento:"amem",estilo:"liturgico",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=amem+aclamacao+eucaristica",spotify:"",partitura:"",
+     cifra:"G         D\nAmém, Amém, Amém\nC         G\nPor Cristo, com Cristo e em Cristo\nD7        G\na Vós, Deus Pai, todo o honor"},
+
+    {id:"am2",titulo:"Por Cristo Com Cristo",artista:"Pe. Zezinho",momento:"amem",estilo:"liturgico",
+     tom:"F",youtube:"https://www.youtube.com/results?search_query=por+cristo+com+cristo+em+cristo+amem",spotify:"",partitura:"",
+     cifra:"F              C\nPor Cristo, com Cristo e em Cristo\nBb             F\na Vós, Deus Pai onipotente\nC7             F\nna unidade do Espírito Santo\nBb        C    F\ntodo o honor e toda a glória — Amém!"},
+
+    {id:"pn1",titulo:"Pai Nosso (Dom Marcos Barbosa)",artista:"Dom Marcos Barbosa",momento:"painosso",estilo:"liturgico",
+     tom:"C",youtube:"https://www.youtube.com/results?search_query=pai+nosso+dom+marcos+barbosa",spotify:"",partitura:"",
+     cifra:"C              F\nPai nosso que estais no céu\nG              C\nsantificado seja o vosso nome\nF              C\nvenha a nós o vosso reino\nG7             C\nseja feita a vossa vontade"},
+
+    {id:"pn2",titulo:"Pai Nosso",artista:"Comunidade Shalom",momento:"painosso",estilo:"carismatico",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=pai+nosso+comunidade+shalom",spotify:"",partitura:"",
+     cifra:"G              C\nPai Nosso que estais no céu\nD              G\nsantificado seja o Vosso nome\nEm             C\nvenha a nós o Vosso Reino\nD         G\nseja feita a Vossa vontade"},
+
+    {id:"pz1",titulo:"A Paz de Cristo",artista:"Pe. Zezinho",momento:"paz",estilo:"liturgico",
+     tom:"D",youtube:"https://www.youtube.com/results?search_query=a+paz+de+cristo+pe+zezinho",spotify:"",partitura:"",
+     cifra:"D              G\nA paz de Cristo seja convosco\nA              D\ne com o vosso espírito\nG              D\nDai-vos um abraço de paz\nA7             D\nno amor do Senhor Jesus"},
+
+    {id:"pz2",titulo:"Que a Paz Esteja",artista:"Canção Nova",momento:"paz",estilo:"carismatico",
+     tom:"A",youtube:"https://www.youtube.com/results?search_query=que+a+paz+esteja+cancao+nova",spotify:"",partitura:"",
+     cifra:"A              E\nQue a paz esteja convosco\nD              A\ne com o teu irmão também\nE              A\nno amor de Cristo Jesus\nD         E    A\nque nos une em comunhão"},
+
+    {id:"c1",titulo:"Cordeiro de Deus (Litúrgico)",artista:"Litúrgico Tradicional",momento:"cordeiro",estilo:"liturgico",
+     tom:"C",youtube:"https://www.youtube.com/results?search_query=cordeiro+de+deus+liturgico+missa",spotify:"",partitura:"",
+     cifra:"C              G\nCordeiro de Deus que tirais\nAm             F\no pecado do mundo\nG              C\ntende piedade de nós\n...\nF              G\ndai-nos a vossa paz"},
+
+    {id:"c2",titulo:"Eis o Cordeiro de Deus",artista:"Pe. Zezinho",momento:"cordeiro",estilo:"liturgico",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=eis+o+cordeiro+de+deus+pe+zezinho",spotify:"",partitura:"",
+     cifra:"G              D\nEis o Cordeiro de Deus\nC              G\nque tira o pecado do mundo\nD              G\nFelizes os convidados\nC         D    G\npara a Ceia do Senhor"},
+
+    {id:"co1",titulo:"Vinde, Povo de Deus",artista:"Pe. Zezinho",momento:"comunhao",estilo:"liturgico",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=vinde+povo+de+deus+pe+zezinho",spotify:"",partitura:"",
+     cifra:"G              C\nVinde, povo de Deus, vinde comer\nD              G\no pão da vida eterna\nC              G\nVinde beber do cálice\nD7             G\nda aliança de Cristo"},
+
+    {id:"co2",titulo:"Pão da Vida",artista:"Canção Nova",momento:"comunhao",estilo:"carismatico",
+     tom:"E",youtube:"https://www.youtube.com/results?search_query=pao+da+vida+cancao+nova",spotify:"",partitura:"",
+     cifra:"E              A\nPão da vida, corpo de Cristo\nB              E\nque nos dás a vida eterna\nA              E\nNo teu amor nos alimentas\nB7             E\ne nos une em comunhão"},
+
+    {id:"co3",titulo:"Senhor, Ficai Conosco (Taizé)",artista:"Comunidade de Taizé",momento:"comunhao",estilo:"liturgico",
+     tom:"Am",youtube:"https://www.youtube.com/results?search_query=senhor+ficai+conosco+taize",spotify:"",partitura:"",
+     cifra:"Am             F\nSenhor, ficai conosco\nC              G\npois a noite vai chegar\nF              C\nFicai, ficai conosco\nG              Am\ne ilumai o nosso caminhar"},
+
+    {id:"f1",titulo:"Ide Por Todo o Mundo",artista:"Comunidade Shalom",momento:"final",estilo:"carismatico",
+     tom:"D",youtube:"https://www.youtube.com/results?search_query=ide+por+todo+o+mundo+shalom",spotify:"",partitura:"",
+     cifra:"D              G\nIde por todo o mundo\nA              D\nanunciai o Evangelho\nG              D\nEu estarei convosco\nA7             D\naté o fim dos tempos"},
+
+    {id:"f2",titulo:"Glorificai o Senhor",artista:"Pe. Zezinho",momento:"final",estilo:"liturgico",
+     tom:"F",youtube:"https://www.youtube.com/results?search_query=glorificai+o+senhor+pe+zezinho",spotify:"",partitura:"",
+     cifra:"F              Bb\nGlorificai o Senhor, ó terra inteira\nC              F\ncantai a sua glória\nBb             F\nAnunciai ao mundo\nC7             F\nas maravilhas do Senhor"},
+
+    {id:"f3",titulo:"A Graça do Senhor",artista:"Canção Nova",momento:"final",estilo:"carismatico",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=a+graca+do+senhor+cancao+nova",spotify:"",partitura:"",
+     cifra:"G              Em\nA graça do Senhor Jesus Cristo\nC              G\no amor de Deus Pai\nD              G\ne a comunhão do Espírito Santo\nC         D    G\nestejam sempre convosco"},
+
+    {id:"seq1",titulo:"Sequência de Páscoa — Victimae Paschali",artista:"Canto Gregoriano",momento:"sequencia",estilo:"liturgico",
+     tom:"",youtube:"https://www.youtube.com/results?search_query=victimae+paschali+laudes+sequencia+pascoa",spotify:"",partitura:"",
+     cifra:"[Canto Gregoriano — sem cifra de acordes]\n\nLouvem os cristãos a vítima pascal.\nO Cordeiro resgatou o rebanho;\nCristo inocente reconciliou os pecadores com o Pai.\n\nMorte e vida travam combate assombroso;\no Senhor da vida, morto, reina vivo.\n\nConta-nos, Maria, o que viste no caminho.\nVi o sepulcro de Cristo vivo e a glória do Ressuscitado.\n\nCristo ressuscitou! Rei vitorioso!\nTem piedade de nós, Senhor. Amém. Aleluia!"},
+
+    {id:"seq2",titulo:"Sequência de Pentecostes — Veni Sancte Spiritus",artista:"Canto Gregoriano",momento:"sequencia",estilo:"liturgico",
+     tom:"",youtube:"https://www.youtube.com/results?search_query=veni+sancte+spiritus+sequencia+pentecostes",spotify:"",partitura:"",
+     cifra:"[Canto Gregoriano — sem cifra de acordes]\n\nVinde, Espírito Santo,\nenviai do céu um raio da vossa luz.\n\nVinde, pai dos pobres,\nvinde, dador de dons, vinde, luz dos corações.\n\nConsolador perfeito, hospede doce da alma, doce refrigério.\n\nNo trabalho, descanso; no ardor, frescura; no pranto, consolo.\n\nLavai o que está maculado, regai o que está árido, curai o que está enfermo.\n\nDai aos vossos fiéis os sete sagrados dons.\nDai mérito à virtude, dai salvação ao fim,\ndai a alegria eterna. Amém. Aleluia!"},
+
+    // ── ENTRADA ────────────────────────────────────────────────────
+    {id:"en1",titulo:"Eis o Dia Que Fez o Senhor",artista:"Pe. Zezinho",momento:"entrada",estilo:"liturgico",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=eis+o+dia+que+fez+o+senhor+pe+zezinho",spotify:"",partitura:"",
+     cifra:"G              C\nEis o dia que fez o Senhor\nD              G\nAlegremo-nos e exultemos\nC              G\nO Senhor está no meio de nós\nD7             G\nBendito seja o seu nome"},
+
+    {id:"en2",titulo:"Vamos Celebrar",artista:"Canção Nova",momento:"entrada",estilo:"carismatico",
+     tom:"D",youtube:"https://www.youtube.com/results?search_query=vamos+celebrar+cancao+nova+entrada",spotify:"",partitura:"",
+     cifra:"D              G\nVamos celebrar a festa do Senhor\nA              D\nvamos louvar, vamos adorar\nG              D\nEle nos reuniu com seu amor\nA7             D\nvamos celebrar, aleluia"},
+
+    {id:"en3",titulo:"Amai-vos Como Eu Vos Amei",artista:"Pe. Zezinho",momento:"entrada",estilo:"liturgico",
+     tom:"C",youtube:"https://www.youtube.com/results?search_query=amai-vos+como+eu+vos+amei+pe+zezinho",spotify:"",partitura:"",
+     cifra:"C              F\nAmai-vos como eu vos amei\nG              C\neste é o meu mandamento\nF              C\nAmai-vos como eu vos amei\nG7             C\nno amor está o sacramento"},
+
+    {id:"en4",titulo:"Venho Louvar-te",artista:"Comunidade Shalom",momento:"entrada",estilo:"carismatico",
+     tom:"A",youtube:"https://www.youtube.com/results?search_query=venho+louvar+te+shalom+entrada",spotify:"",partitura:"",
+     cifra:"A              E\nVenho louvar-te, Senhor\nD              A\nvenho adorar-te, ó Deus\nE              A\ncom todo o meu coração\nD         E    A\nglória e louvor só a ti"},
+
+    {id:"en5",titulo:"O Senhor É o Meu Pastor",artista:"Litúrgico",momento:"entrada",estilo:"liturgico",
+     tom:"F",youtube:"https://www.youtube.com/results?search_query=o+senhor+e+meu+pastor+missa+entrada",spotify:"",partitura:"",
+     cifra:"F              Bb\nO Senhor é o meu pastor\nC              F\ne nada me faltará\nBb             F\nEm verdes pastagens me faz repousar\nC7             F\ne me conduz às águas tranquilas"},
+
+    // ── ATO PENITENCIAL ────────────────────────────────────────────
+    {id:"ato1",titulo:"Senhor, Tende Piedade (Kyrie)",artista:"Litúrgico Tradicional",momento:"ato",estilo:"liturgico",
+     tom:"C",youtube:"https://www.youtube.com/results?search_query=kyrie+eleison+liturgico+missa+portugues",spotify:"",partitura:"",
+     cifra:"C              G\nSenhor, tende piedade (3x)\nC              G\nCristo, tende piedade (3x)\nC              G\nSenhor, tende piedade (3x)"},
+
+    {id:"ato2",titulo:"Senhor Misericórdia",artista:"Canção Nova",momento:"ato",estilo:"carismatico",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=senhor+misericordia+cancao+nova",spotify:"",partitura:"",
+     cifra:"G              Em\nSenhor misericórdia\nC              D\nSenhor misericórdia\nG              Em\nCristo misericórdia\nC         D    G\nSenhor misericórdia"},
+
+    // ── GLÓRIA ─────────────────────────────────────────────────────
+    {id:"gl1",titulo:"Glória a Deus nas Alturas",artista:"Pe. Zezinho",momento:"gloria",estilo:"liturgico",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=gloria+a+deus+nas+alturas+pe+zezinho",spotify:"",partitura:"",
+     cifra:"G              C\nGlória a Deus nas alturas\nD              G\ne paz na terra aos homens\nC              G\nque ele ama — louvamos-te\nD7             G\nbenedicimus-te, adoramos-te"},
+
+    {id:"gl2",titulo:"Glória (Canção Nova)",artista:"Canção Nova",momento:"gloria",estilo:"carismatico",
+     tom:"D",youtube:"https://www.youtube.com/results?search_query=gloria+cancao+nova+missa",spotify:"",partitura:"",
+     cifra:"D              G\nGlória a Deus nas alturas!\nA              D\nGlória, glória ao Senhor!\nG              D\nPaz na terra aos homens\nA7             D\nque ele ama — glória!"},
+
+    // ── PÓS-COMUNHÃO ───────────────────────────────────────────────
+    {id:"pc1",titulo:"Obrigado, Senhor",artista:"Pe. Zezinho",momento:"poscomunhao",estilo:"liturgico",
+     tom:"C",youtube:"https://www.youtube.com/results?search_query=obrigado+senhor+pe+zezinho+pos+comunhao",spotify:"",partitura:"",
+     cifra:"C              F\nObrigado, Senhor\nG              C\npelo teu amor\nF              C\nObrigado, Senhor\nG7             C\npelo dom da vida"},
+
+    {id:"pc2",titulo:"Ação de Graças",artista:"Comunidade Shalom",momento:"poscomunhao",estilo:"carismatico",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=acao+de+gracas+shalom+pos+comunhao",spotify:"",partitura:"",
+     cifra:"G              Em\nAção de graças, Senhor\nC              D\npelo que fizeste em mim\nG              Em\nTua bondade e teu amor\nC         D    G\nsão eternos, Senhor"},
+];
+
+let cantoAtual = null, semitonsAtual = 0, momentoFiltro = "todos";
+
+function carregarCantosExtras() {
+    try { return JSON.parse(localStorage.getItem("cantos_extras") || "[]"); } catch(e) { return []; }
+}
+function salvarCantosExtras(e) { localStorage.setItem("cantos_extras", JSON.stringify(e)); }
+function todosOsCantos() { return [...CANTOS_BASE, ...carregarCantosExtras()]; }
+
+function renderCantos() {
+    const grid = document.getElementById("cantos-grid");
+    const todos = todosOsCantos().filter(c => momentoFiltro === "todos" || c.momento === momentoFiltro);
+    const LABEL = {aclamacao:"Aclamação",ofertorio:"Ofertório",santo:"Santo",amem:"Amém",
+        painosso:"Pai Nosso",paz:"Abraço da Paz",cordeiro:"Cordeiro",
+        comunhao:"Comunhão",final:"Final",sequencia:"Sequência"};
+    if (!todos.length) {
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-stone-300"><div class="text-4xl mb-2">🎵</div><p class="text-sm font-cinzel">Nenhum canto cadastrado neste momento</p></div>`;
+        return;
+    }
+    grid.innerHTML = todos.map(c => {
+        const badge = c.estilo==="carismatico"
+            ? `<span class="badge-carismatico text-[9px] font-bold uppercase px-2 py-0.5 rounded-full">Carismático</span>`
+            : `<span class="badge-liturgico text-[9px] font-bold uppercase px-2 py-0.5 rounded-full">Litúrgico</span>`;
+        const tom = c.tom ? `<span class="text-[9px] bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full font-bold">Tom: ${sanitizar(c.tom)}</span>` : "";
+        return `<div class="canto-card bg-white rounded-xl border border-stone-200 shadow-sm p-4 flex flex-col gap-3">
+            <div>
+                <div class="flex items-start justify-between gap-2 mb-1">
+                    <h3 class="font-cinzel font-bold text-[var(--header)] text-sm leading-snug">${sanitizar(c.titulo)}</h3>${badge}
+                </div>
+                <p class="text-[11px] text-stone-400 mb-1">${sanitizar(c.artista||"")}</p>
+                <div class="flex flex-wrap gap-1"><span class="text-[9px] text-stone-400 font-bold uppercase">${LABEL[c.momento]||c.momento}</span> ${tom}</div>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-auto">
+                ${c.cifra?`<button data-id="${sanitizar(c.id)}" class="btn-ver-cifra text-[10px] font-bold bg-[var(--bg-main)] text-[var(--header)] px-3 py-1.5 rounded-lg border border-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition-colors">🎸 Cifra / Tom</button>`:""}
+                ${c.youtube?`<a href="${sanitizar(c.youtube)}" target="_blank" rel="noopener" class="text-[10px] font-bold bg-red-50 text-red-600 px-3 py-1.5 rounded-lg border border-red-200 hover:bg-red-600 hover:text-white transition-colors">▶ YouTube</a>`:""}
+                ${c.spotify?`<a href="${sanitizar(c.spotify)}" target="_blank" rel="noopener" class="text-[10px] font-bold bg-green-50 text-green-700 px-3 py-1.5 rounded-lg border border-green-200 hover:bg-green-600 hover:text-white transition-colors">♫ Spotify</a>`:""}
+                ${c.partitura?`<a href="${sanitizar(c.partitura)}" target="_blank" rel="noopener" class="text-[10px] font-bold bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg border border-blue-200 hover:bg-blue-600 hover:text-white transition-colors">📄 Partitura</a>`:""}
+            </div>
+        </div>`;
+    }).join("");
+    document.getElementById("btn-add-canto-wrap").classList.toggle("hidden", !isAdmin);
+}
+
+function abrirCifra(id) {
+    cantoAtual = todosOsCantos().find(c => c.id === id);
+    if (!cantoAtual) return;
+    semitonsAtual = 0;
+    atualizarModalCifra();
+    document.getElementById("modal-cifra").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+}
+
+function atualizarModalCifra() {
+    if (!cantoAtual) return;
+    document.getElementById("modal-titulo").textContent  = cantoAtual.titulo;
+    document.getElementById("modal-artista").textContent = cantoAtual.artista || "";
+    document.getElementById("trans-tom").textContent = cantoAtual.tom ? transporTom(cantoAtual.tom, semitonsAtual) : "—";
+    document.getElementById("trans-semitons").textContent = semitonsAtual === 0 ? "tom original" : (semitonsAtual > 0 ? "+" : "") + semitonsAtual + " semitons";
+    document.getElementById("modal-cifra-texto").textContent = transporCifra(cantoAtual.cifra || "", semitonsAtual);
+}
+
+function fecharModalCifra() {
+    document.getElementById("modal-cifra").classList.add("hidden");
+    document.body.style.overflow = "";
+    cantoAtual = null; semitonsAtual = 0;
+}
+
+function fecharModalAdd() {
+    document.getElementById("modal-add").classList.add("hidden");
+    document.body.style.overflow = "";
+}
+
+document.addEventListener("click", e => {
+    const b = e.target.closest(".btn-ver-cifra");
+    if (b) { abrirCifra(b.dataset.id); return; }
+    if (e.target === document.getElementById("modal-cifra")) { fecharModalCifra(); return; }
+    if (e.target === document.getElementById("modal-add"))   { fecharModalAdd(); return; }
+});
+
+document.getElementById("modal-fechar").addEventListener("click", fecharModalCifra);
+document.getElementById("trans-menos").addEventListener("click", () => { semitonsAtual--; atualizarModalCifra(); });
+document.getElementById("trans-mais").addEventListener("click",  () => { semitonsAtual++; atualizarModalCifra(); });
+
+document.getElementById("momento-filtros").addEventListener("click", e => {
+    const btn = e.target.closest(".momento-btn");
+    if (!btn) return;
+    document.querySelectorAll(".momento-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    momentoFiltro = btn.dataset.momento;
+    renderCantos();
+});
+
+document.getElementById("btn-add-canto").addEventListener("click", () => {
+    document.getElementById("modal-add").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+});
+document.getElementById("modal-add-fechar").addEventListener("click", fecharModalAdd);
+
+document.getElementById("btn-salvar-canto").addEventListener("click", () => {
+    const titulo = document.getElementById("add-titulo").value.trim();
+    if (!titulo) { alert("Título obrigatório."); return; }
+    const novo = {
+        id:"extra_"+Date.now(), titulo,
+        artista:document.getElementById("add-artista").value.trim(),
+        momento:document.getElementById("add-momento").value,
+        estilo:document.getElementById("add-estilo").value,
+        tom:document.getElementById("add-tom").value.trim(),
+        youtube:document.getElementById("add-youtube").value.trim(),
+        spotify:document.getElementById("add-spotify").value.trim(),
+        partitura:document.getElementById("add-partitura").value.trim(),
+        cifra:document.getElementById("add-cifra").value,
+    };
+    const extras = carregarCantosExtras();
+    extras.push(novo);
+    salvarCantosExtras(extras);
+    ["add-titulo","add-artista","add-tom","add-youtube","add-spotify","add-partitura","add-cifra"]
+        .forEach(id => { document.getElementById(id).value = ""; });
+    fecharModalAdd();
+    renderCantos();
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// SISTEMA DE ROTEIRO DA MISSA
+// ═══════════════════════════════════════════════════════════════════
+
+// Inicializa o painel roteiro (chamado ao entrar na aba)
+function iniciarRoteiro() {
+    // Sincroniza com a data da aba Leituras
+    const dataLeitura = document.getElementById("data-leitura").value;
+    const roteiroInput = document.getElementById("roteiro-data");
+    if (dataLeitura) roteiroInput.value = dataLeitura;
+    else if (!roteiroInput.value) roteiroInput.value = new Date().toISOString().split("T")[0];
+
+    // Se já há roteiro carregado, não recarrega automaticamente
+    const container = document.getElementById("roteiro-container");
+    if (container.querySelector(".roteiro-bloco")) return;
+    gerarRoteiro();
+}
+
+async function gerarRoteiro() {
+    const dataStr = document.getElementById("roteiro-data").value;
+    if (!dataStr) return;
+
+    const [ano, mes, dia] = dataStr.split("-").map(Number);
+    const d = new Date(ano, mes - 1, dia);
+    const litInfo = getLiturgico(d);
+
+    const diasPT = ["Domingo","Segunda-Feira","Terça-Feira","Quarta-Feira","Quinta-Feira","Sexta-Feira","Sábado"];
+    const mesesPT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+    const dataDisplay = `${diasPT[d.getDay()]}, ${dia} de ${mesesPT[mes-1]} de ${ano}`;
+    const dataIso = dataStr;
+
+    document.getElementById("roteiro-data-display").textContent = dataDisplay;
+    document.getElementById("btn-imprimir-roteiro").classList.add("hidden");
+
+    const container = document.getElementById("roteiro-container");
+    container.innerHTML = `<div class="text-center py-12 loading-pulse"><div class="text-4xl mb-2">⏳</div><p class="text-stone-400 text-sm font-cinzel">Carregando liturgia e montando roteiro...</p></div>`;
+
+    // Busca leitura da API
+    let litData = null;
+    try {
+        const res = await fetch(`https://liturgia.up.railway.app/?dia=${dia}&mes=${mes}&ano=${ano}`);
+        litData = await res.json();
+    } catch(e) {
+        container.innerHTML = `<div class="text-center py-12 text-red-400"><div class="text-4xl mb-2">⚠️</div><p>Erro ao carregar liturgia. Verifique a conexão.</p></div>`;
+        return;
+    }
+
+    // Cantos da escala do dia (lê do localStorage)
+    function cantoEscala(chavePrefix, horarios) {
+        // Tenta encontrar grupo escalado nesse dia
+        for (const h of horarios) {
+            const val = localStorage.getItem(`${chavePrefix}-${dataIso}`);
+            if (val && grupos.includes(val)) return val;
+        }
+        return null;
+    }
+
+    // Sugestões de cantos do banco para um momento
+    function sugestoesMomento(momento, max = 3) {
+        return todosOsCantos().filter(c => c.momento === momento).slice(0, max);
+    }
+
+    // Verifica se é Páscoa ou Pentecostes (tem Sequência)
+    const pascoa = getPascoa(ano);
+    const pentecostes = new Date(pascoa); pentecostes.setDate(pascoa.getDate() + 49);
+    const dHoje = new Date(ano, mes-1, dia); dHoje.setHours(0,0,0,0);
+    const dPascoa = new Date(pascoa); dPascoa.setHours(0,0,0,0);
+    const dPente = new Date(pentecostes); dPente.setHours(0,0,0,0);
+    const temSequencia = dHoje.getTime() === dPascoa.getTime() || dHoje.getTime() === dPente.getTime();
+    const qualSequencia = dHoje.getTime() === dPascoa.getTime() ? "seq1" : "seq2";
+
+    // Refrão da aclamação conforme tempo
+    const isQuaresmaOuAdvento = ["quaresma","advento"].some(t => litInfo.nome.toLowerCase().includes(t));
+    const refraoAcl = isQuaresmaOuAdvento ? "Glória a vós, ó Cristo, Verbo de Deus." : "Aleluia, Aleluia, Aleluia!";
+
+    // Extrai versículo da antífona
+    const antifonaRaw = litData.evangelho?.antifona || "";
+    const matchAnt = antifonaRaw.match(/^([A-Za-zÀ-ú0-9\s,]+\d[a-z]?\.\s*)(.+)$/s);
+    const refVers = matchAnt ? sanitizar(matchAnt[1].trim()) : "";
+    const textoVers = matchAnt ? sanitizar(matchAnt[2].trim()) : sanitizar(antifonaRaw);
+
+    // Grupo escalado no dia (domingos: d1..d4; sábados: sab)
+    const dow = d.getDay();
+    const grupoEscalado = {
+        "07:30": localStorage.getItem(`d1-${dataIso}`) || null,
+        "09:00": localStorage.getItem(`d2-${dataIso}`) || null,
+        "17:00": localStorage.getItem(`d3-${dataIso}`) || null,
+        "19:00": localStorage.getItem(`d4-${dataIso}`) || null,
+        "16:00 (Sáb)": dow === 6 ? (localStorage.getItem(`sab-${dataIso}`) || null) : null,
+    };
+    const gruposAtivos = Object.entries(grupoEscalado).filter(([,v]) => v).map(([h,g]) => `${h} — ${g}`);
+
+    // ── Helpers de renderização ──────────────────────────────────
+
+    function cabecalhoRoteiro() {
+        const corTempo = {
+            "quaresma":"bg-purple-100 text-purple-800 border-purple-200",
+            "páscoa":"bg-amber-50 text-amber-800 border-amber-200",
+            "advento":"bg-purple-100 text-purple-800 border-purple-200",
+            "natal":"bg-amber-50 text-amber-800 border-amber-200",
+            "pentecostes":"bg-red-50 text-red-800 border-red-200",
+            "comum":"bg-green-50 text-green-800 border-green-200",
+        };
+        const tempoKey = litInfo.nome.toLowerCase();
+        const corClass = Object.entries(corTempo).find(([k]) => tempoKey.includes(k))?.[1] || corTempo["comum"];
+
+        return `
+        <div class="roteiro-bloco mb-6 print:mb-4">
+            <div class="text-center border-b-2 border-[var(--header)] pb-4 mb-4">
+                <h1 class="font-cinzel text-xl sm:text-2xl font-bold text-[var(--header)] uppercase mb-1">Roteiro da Missa</h1>
+                <p class="font-cinzel text-base text-stone-600">${sanitizar(litData.liturgia || litData.titulo || "Liturgia do Dia")}</p>
+                <p class="text-sm text-stone-500 mt-1">${sanitizar(dataDisplay)}</p>
+                <div class="inline-block mt-2 px-3 py-1 rounded-full border text-xs font-bold ${corClass}">
+                    Tempo ${sanitizar(litInfo.nome)}
+                </div>
+            </div>
+            ${gruposAtivos.length ? `
+            <div class="bg-stone-50 rounded-lg p-3 border border-stone-200 mb-4 text-xs">
+                <p class="font-bold text-stone-500 uppercase text-[10px] mb-1">Grupos Escalados</p>
+                ${gruposAtivos.map(g => `<p class="text-stone-700">• ${sanitizar(g)}</p>`).join("")}
+            </div>` : ""}
+        </div>`;
+    }
+
+    function blocoMomento(numero, icone, titulo, cor, conteudo) {
+        const cores = {
+            verde:  "border-l-[var(--header)] bg-green-50",
+            roxo:   "border-l-purple-500 bg-purple-50",
+            amber:  "border-l-amber-500 bg-amber-50",
+            azul:   "border-l-blue-500 bg-blue-50",
+            rosa:   "border-l-pink-500 bg-pink-50",
+            pedra:  "border-l-stone-400 bg-stone-50",
+            red:    "border-l-red-500 bg-red-50",
+        };
+        return `
+        <div class="roteiro-bloco border-l-4 rounded-r-xl p-4 mb-4 ${cores[cor]||cores.pedra}" style="border-left-width:4px">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="text-base">${icone}</span>
+                <div>
+                    <span class="text-[9px] font-bold text-stone-400 uppercase">${numero}</span>
+                    <h2 class="font-cinzel font-bold text-stone-800 text-sm uppercase leading-tight">${titulo}</h2>
+                </div>
+            </div>
+            ${conteudo}
+        </div>`;
+    }
+
+    function cardCanto(c, destaque = false) {
+        if (!c) return "";
+        const tom = c.tom ? `<span class="ml-1 text-[9px] bg-white px-1.5 py-0.5 rounded border border-stone-200 font-bold">Tom: ${sanitizar(c.tom)}</span>` : "";
+        const badge = c.estilo === "carismatico"
+            ? `<span class="badge-carismatico text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full">Carismático</span>`
+            : `<span class="badge-liturgico text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full">Litúrgico</span>`;
+        return `
+        <div class="roteiro-canto-card bg-white rounded-lg border ${destaque?"border-[var(--accent)]":"border-stone-200"} p-2.5 mb-2 flex items-start justify-between gap-2">
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-1 flex-wrap mb-0.5">
+                    ${destaque ? `<span class="text-[9px] font-bold text-[var(--header)] uppercase">★ Escala</span>` : ""}
+                    ${badge} ${tom}
+                </div>
+                <p class="font-bold text-stone-800 text-xs leading-snug">${sanitizar(c.titulo)}</p>
+                <p class="text-[10px] text-stone-400">${sanitizar(c.artista||"")}</p>
+            </div>
+            <div class="flex flex-col gap-1 no-print flex-shrink-0">
+                ${c.cifra ? `<button data-id="${sanitizar(c.id)}" class="btn-ver-cifra text-[9px] font-bold bg-stone-100 text-stone-600 px-2 py-1 rounded hover:bg-[var(--header)] hover:text-white transition-colors">🎸</button>` : ""}
+                ${c.youtube ? `<a href="${sanitizar(c.youtube)}" target="_blank" rel="noopener" class="text-[9px] font-bold bg-red-50 text-red-600 px-2 py-1 rounded hover:bg-red-600 hover:text-white transition-colors text-center">▶</a>` : ""}
+                ${c.spotify ? `<a href="${sanitizar(c.spotify)}" target="_blank" rel="noopener" class="text-[9px] font-bold bg-green-50 text-green-700 px-2 py-1 rounded hover:bg-green-600 hover:text-white transition-colors text-center">♫</a>` : ""}
+            </div>
+        </div>`;
+    }
+
+    function secaoCantos(momento, grupoNome) {
+        const todos = todosOsCantos().filter(c => c.momento === momento);
+        const escalado = grupoNome ? todos.find(c =>
+            c.artista?.toLowerCase().includes(grupoNome.toLowerCase()) ||
+            c.titulo?.toLowerCase().includes(grupoNome.toLowerCase())
+        ) : null;
+        const sugestoes = todos.filter(c => c !== escalado).slice(0, 3);
+        return `
+            ${escalado ? cardCanto(escalado, true) : ""}
+            ${sugestoes.length ? `<p class="text-[9px] uppercase font-bold text-stone-400 mb-1 mt-2">Sugestões</p>` : ""}
+            ${sugestoes.map(c => cardCanto(c, false)).join("")}
+            ${!escalado && !sugestoes.length ? `<p class="text-xs text-stone-400 italic">Nenhum canto cadastrado para este momento.</p>` : ""}`;
+    }
+
+    function leituraTexto(texto, referencia) {
+        if (!texto) return `<p class="text-xs text-stone-400 italic">Texto não disponível.</p>`;
+        const linhas = texto.split(/\n+/).filter(l=>l.trim());
+        return `
+            ${referencia ? `<p class="text-[10px] font-bold text-stone-400 uppercase mb-2">${sanitizar(referencia)}</p>` : ""}
+            ${linhas.map(l=>`<p class="text-sm text-stone-700 leading-relaxed mb-1">${sanitizar(l)}</p>`).join("")}`;
+    }
+
+    function salmodiaTexto(salmo) {
+        if (!salmo) return "";
+        const refrao = sanitizar(salmo.refrao || "");
+        const refraoHtml = refrao ? `<div class="bg-amber-100 rounded px-3 py-1.5 my-2"><p class="text-xs font-bold text-amber-900 italic"><span class="text-red-700 not-italic">R.</span> ${refrao}</p></div>` : "";
+        const estrofes = (salmo.texto||"").split(/\n{2,}/).map(e=>e.trim()).filter(Boolean);
+        const blocos = estrofes.length > 1 ? estrofes
+            : (salmo.texto||"").split(/\n/).filter(l=>l.trim()).reduce((acc,l)=>{
+                if(!acc.length||acc[acc.length-1].length>=2) acc.push([]);
+                acc[acc.length-1].push(l); return acc;
+            },[]).map(g=>g.join("\n"));
+        return `
+            ${refraoHtml}
+            ${blocos.map(e=>{
+                const linhas=e.split(/\n/).filter(l=>l.trim());
+                return `<div class="mb-1">${linhas.map(l=>`<p class="text-sm text-stone-700 italic leading-relaxed">${sanitizar(l)}</p>`).join("")}</div>${refraoHtml}`;
+            }).join("")}`;
+    }
+
+    // ── Monta o roteiro completo ──────────────────────────────────
+    const seq = temSequencia ? todosOsCantos().find(c=>c.id===qualSequencia) : null;
+    const grupoBase = gruposAtivos.length ? gruposAtivos[0].split("—")[1]?.trim() : null;
+
+    const roteiro = `
+    <div id="roteiro-content">
+        ${cabecalhoRoteiro()}
+
+        ${blocoMomento("01","🎵","Canto de Entrada","verde", secaoCantos("entrada", grupoBase))}
+
+        ${blocoMomento("02","🙏","Ato Penitencial","pedra", secaoCantos("ato", grupoBase))}
+
+        ${blocoMomento("03","✨","Glória","amber",
+            (isQuaresmaOuAdvento
+                ? `<p class="text-xs text-stone-500 italic bg-stone-100 px-3 py-2 rounded">O Glória não é cantado durante a Quaresma e o Advento.</p>`
+                : secaoCantos("gloria", grupoBase)))}
+
+        ${blocoMomento("04","📜","1ª Leitura","azul", leituraTexto(litData.primeiraLeitura?.texto, litData.primeiraLeitura?.referencia))}
+
+        ${blocoMomento("05","🎵","Salmo Responsorial","amber",
+            `<p class="text-[10px] font-bold text-stone-400 uppercase mb-2">${sanitizar(litData.salmo?.referencia||"")}</p>`
+            + salmodiaTexto(litData.salmo))}
+
+        ${litData.segundaLeitura?.texto ? blocoMomento("06","📜","2ª Leitura","azul",
+            leituraTexto(litData.segundaLeitura.texto, litData.segundaLeitura.referencia)) : ""}
+
+        ${temSequencia && seq ? blocoMomento("07","📜","Sequência","roxo", `
+            <p class="text-xs font-bold text-purple-600 mb-3">${sanitizar(seq.titulo)}</p>
+            <pre class="text-sm text-stone-700 leading-relaxed whitespace-pre-wrap font-serif">${sanitizar(seq.cifra)}</pre>`) : ""}
+
+        ${(()=>{ let n=litData.segundaLeitura?.texto?7:6; if(temSequencia)n++; return blocoMomento(String(n).padStart(2,"0"),"🕊️","Aclamação ao Evangelho","roxo", `
+            <div class="bg-purple-100 rounded-lg px-3 py-2 mb-3 border border-purple-200">
+                <p class="text-xs font-bold text-purple-900 italic"><span class="text-red-700 not-italic font-bold">R.</span> (bis) — ${sanitizar(refraoAcl)}</p>
+            </div>
+            <div class="mb-3">
+                <p class="text-[10px] font-bold text-purple-500 uppercase mb-1">1. ${refVers ? `<span class="font-normal normal-case text-purple-400">${refVers}</span>` : ""}</p>
+                <p class="text-sm text-purple-800 italic leading-relaxed">${textoVers}</p>
+            </div>
+            ${secaoCantos("aclamacao", grupoBase)}`); })()}
+
+        ${(()=>{ let n=litData.segundaLeitura?.texto?8:7; if(temSequencia)n++; return blocoMomento(String(n).padStart(2,"0"),"✝️","Evangelho","verde",
+            leituraTexto(litData.evangelho?.texto, litData.evangelho?.referencia)); })()}
+
+        ${(()=>{ let n=litData.segundaLeitura?.texto?9:8; if(temSequencia)n++; return blocoMomento(String(n).padStart(2,"0"),"🎙️","Homilia / Credo / Oração dos Fiéis","pedra", `
+            <p class="text-sm text-stone-500 italic">Homilia pelo celebrante.</p>
+            <p class="text-sm text-stone-500 italic mt-1">Credo (recitado) — Oração dos Fiéis.</p>`); })()}
+
+        ${(()=>{ let n=litData.segundaLeitura?.texto?10:9; if(temSequencia)n++; return blocoMomento(String(n).padStart(2,"0"),"🥖","Ofertório","amber", secaoCantos("ofertorio", grupoBase)); })()}
+
+        ${(()=>{ let n=litData.segundaLeitura?.texto?11:10; if(temSequencia)n++; return blocoMomento(String(n).padStart(2,"0"),"✨","Santo","amber", secaoCantos("santo", grupoBase)); })()}
+
+        ${(()=>{ let n=litData.segundaLeitura?.texto?12:11; if(temSequencia)n++; return blocoMomento(String(n).padStart(2,"0"),"🙏","Amém — Aclamação Eucarística","verde", secaoCantos("amem", grupoBase)); })()}
+
+        ${(()=>{ let n=litData.segundaLeitura?.texto?13:12; if(temSequencia)n++; return blocoMomento(String(n).padStart(2,"0"),"🤲","Pai Nosso","azul", secaoCantos("painosso", grupoBase)); })()}
+
+        ${(()=>{ let n=litData.segundaLeitura?.texto?14:13; if(temSequencia)n++; return blocoMomento(String(n).padStart(2,"0"),"🤝","Abraço da Paz","rosa", secaoCantos("paz", grupoBase)); })()}
+
+        ${(()=>{ let n=litData.segundaLeitura?.texto?15:14; if(temSequencia)n++; return blocoMomento(String(n).padStart(2,"0"),"🐑","Cordeiro de Deus","amber", secaoCantos("cordeiro", grupoBase)); })()}
+
+        ${(()=>{ let n=litData.segundaLeitura?.texto?16:15; if(temSequencia)n++; return blocoMomento(String(n).padStart(2,"0"),"💛","Comunhão","verde", secaoCantos("comunhao", grupoBase)); })()}
+
+        ${(()=>{ let n=litData.segundaLeitura?.texto?17:16; if(temSequencia)n++; return blocoMomento(String(n).padStart(2,"0"),"🙏","Pós-Comunhão / Avisos","pedra", secaoCantos("poscomunhao", grupoBase)
+            + `<p class="text-sm text-stone-500 italic mt-3 border-t pt-2">Avisos paroquiais e bênção final.</p>`); })()}
+
+        ${(()=>{ let n=litData.segundaLeitura?.texto?18:17; if(temSequencia)n++; return blocoMomento(String(n).padStart(2,"0"),"🎶","Canto Final","verde", secaoCantos("final", grupoBase)); })()}
+
+        <p class="text-center text-[10px] text-stone-300 mt-6 italic no-print">Roteiro gerado automaticamente · Paróquia Imaculado Coração de Maria</p>
+    </div>`;
+
+    container.innerHTML = roteiro;
+    document.getElementById("btn-imprimir-roteiro").classList.remove("hidden");
+}
+
+// Botões do roteiro
+document.getElementById("btn-carregar-roteiro").addEventListener("click", gerarRoteiro);
+document.getElementById("btn-imprimir-roteiro").addEventListener("click", () => window.print());
+
+document.getElementById("roteiro-data").addEventListener("keydown", e => {
+    if (e.key === "Enter") gerarRoteiro();
+});
+
 // INICIALIZAÇÃO
 // ═══════════════════════════════════════════════════════════════════
 window.addEventListener("load", render);
