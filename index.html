@@ -355,6 +355,8 @@
             <button data-escala="domingos"   class="escala-tab text-[14px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded border border-stone-200 text-stone-500">🙏 Domingos</button>
             <button data-escala="sabados"    class="escala-tab text-[14px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded border border-stone-200 text-stone-500">⛪ Sábados</button>
             <button data-escala="lista"      class="escala-tab text-[14px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded border border-stone-200 text-stone-500">📝 Lista</button>
+            <button data-escala="log" id="tab-log"
+                    class="escala-tab hidden text-[14px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded border border-amber-300 text-amber-700 bg-amber-50">📋 Log</button>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -405,6 +407,35 @@
                     <div id="lista-escala" class="space-y-2"></div>
                 </div>
 
+                <!-- SUB-PAINEL: LOG DE OCORRÊNCIAS (só admin) -->
+                <div id="sub-log" class="escala-sub hidden">
+                    <!-- Formulário nova ocorrência manual -->
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
+                        <p class="text-[13px] font-bold text-amber-800 uppercase mb-2">📋 Registrar Ocorrência Manual</p>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input type="date" id="log-data-input"
+                                class="border border-stone-300 rounded-lg px-3 py-2 text-sm text-stone-700 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400 w-full sm:w-40">
+                            <input type="text" id="log-texto-input" placeholder="Descreva a ocorrência…"
+                                class="flex-1 border border-stone-300 rounded-lg px-3 py-2 text-sm text-stone-700 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400">
+                            <button id="btn-log-add"
+                                class="bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-amber-700 transition-colors whitespace-nowrap">
+                                + Registrar
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Filtro rápido -->
+                    <div class="flex flex-wrap gap-2 mb-3 items-center">
+                        <span class="text-[12px] font-bold text-stone-400 uppercase">Filtrar:</span>
+                        <button data-logfiltro="todos"   class="log-filtro-btn active text-[12px] font-bold px-2 py-1 rounded-full border bg-stone-700 text-white">Todos</button>
+                        <button data-logfiltro="troca"   class="log-filtro-btn text-[12px] font-bold px-2 py-1 rounded-full border border-blue-300 text-blue-700">🔄 Trocas</button>
+                        <button data-logfiltro="grupo"   class="log-filtro-btn text-[12px] font-bold px-2 py-1 rounded-full border border-green-300 text-green-700">👥 Grupos</button>
+                        <button data-logfiltro="manual"  class="log-filtro-btn text-[12px] font-bold px-2 py-1 rounded-full border border-amber-300 text-amber-700">📝 Manuais</button>
+                        <button id="btn-log-limpar" class="ml-auto text-[12px] text-red-400 hover:text-red-600 font-bold px-2 py-1 rounded border border-red-200 hover:border-red-400 transition-colors">🗑️ Limpar log</button>
+                    </div>
+                    <!-- Lista de entradas -->
+                    <div id="log-lista" class="space-y-2"></div>
+                </div>
+
             </div>
 
             <!-- SIDEBAR: Festividades -->
@@ -450,7 +481,7 @@
     <div id="painel-cantos" class="p-2 sm:p-4 md:p-6 hidden">
 
         <!-- Filtro por momento -->
-        <div class="flex flex-wrap gap-2 mb-5" id="momento-filtros">
+        <div class="flex flex-wrap gap-2 mb-3" id="momento-filtros">
             <button data-momento="todos"       class="momento-btn active text-[14px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border">Todos</button>
             <button data-momento="entrada"     class="momento-btn text-[14px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">01 🎵 Entrada</button>
             <button data-momento="ato"         class="momento-btn text-[14px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">02 🙏 Ato Penitencial</button>
@@ -467,6 +498,25 @@
             <button data-momento="comunhao"    class="momento-btn text-[14px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">13 💛 Comunhão</button>
             <button data-momento="poscomunhao" class="momento-btn text-[14px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">14 🙏 Pós-Comunhão</button>
             <button data-momento="final"       class="momento-btn text-[14px] sm:text-xs font-bold uppercase px-3 py-1.5 rounded-full border border-stone-200 text-stone-500">15 🎶 Final</button>
+        </div>
+
+        <!-- Linha de busca + filtro de tipo (salmo) -->
+        <div class="flex flex-wrap gap-2 mb-4 items-center">
+            <div class="flex-1 min-w-[180px] relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-sm">🔎</span>
+                <input type="text" id="cantos-busca"
+                    placeholder="Buscar por título, artista ou letra..."
+                    class="w-full pl-8 pr-3 py-2 text-sm border border-stone-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+            </div>
+            <!-- Filtro tipo salmo — só aparece quando momento = salmo ou todos -->
+            <div id="salmo-tipo-filtros" class="flex flex-wrap gap-1">
+                <span class="text-[12px] font-bold text-stone-400 uppercase self-center mr-1">Clima:</span>
+                <button data-tipo="todos"         class="tipo-btn active text-[12px] font-bold px-2 py-1 rounded-full border bg-stone-700 text-white">Todos</button>
+                <button data-tipo="louvor"        class="tipo-btn text-[12px] font-bold px-2 py-1 rounded-full border border-amber-300 text-amber-700 bg-amber-50">🎉 Louvor</button>
+                <button data-tipo="confianca"     class="tipo-btn text-[12px] font-bold px-2 py-1 rounded-full border border-blue-300 text-blue-700 bg-blue-50">🕊️ Confiança</button>
+                <button data-tipo="arrependimento" class="tipo-btn text-[12px] font-bold px-2 py-1 rounded-full border border-purple-300 text-purple-700 bg-purple-50">🙏 Súplica</button>
+                <button data-tipo="meditacao"     class="tipo-btn text-[12px] font-bold px-2 py-1 rounded-full border border-teal-300 text-teal-700 bg-teal-50">🌿 Meditação</button>
+            </div>
         </div>
 
         <!-- Grid de cantos -->
@@ -490,10 +540,24 @@
                         <span id="trans-tom" class="text-sm font-bold text-[var(--header)] min-w-[40px] text-center"></span>
                         <button id="trans-mais"  class="w-7 h-7 rounded-full border border-stone-300 text-stone-600 font-bold hover:bg-stone-100 text-sm">+</button>
                         <span class="text-[14px] text-stone-400 ml-2" id="trans-semitons"></span>
-                        <a id="modal-cifraclub-link" href="#" target="_blank" rel="noopener"
-                           class="ml-auto text-[14px] font-bold bg-orange-50 text-orange-700 px-3 py-1.5 rounded-lg border border-orange-200 hover:bg-orange-600 hover:text-white transition-colors">
-                           🔍 Buscar no Cifra Club
-                        </a>
+                        <div class="ml-auto flex flex-wrap gap-1.5">
+                            <a id="modal-cifraclub-link" href="#" target="_blank" rel="noopener"
+                               class="text-[12px] font-bold bg-orange-50 text-orange-700 px-2.5 py-1 rounded-lg border border-orange-200 hover:bg-orange-600 hover:text-white transition-colors">
+                               🔍 Cifra Club
+                            </a>
+                            <a id="modal-banana-link" href="#" target="_blank" rel="noopener"
+                               class="text-[12px] font-bold bg-yellow-50 text-yellow-700 px-2.5 py-1 rounded-lg border border-yellow-300 hover:bg-yellow-500 hover:text-white transition-colors">
+                               🍌 Banana
+                            </a>
+                            <a id="modal-youtube-link" href="#" target="_blank" rel="noopener"
+                               class="text-[12px] font-bold bg-red-50 text-red-600 px-2.5 py-1 rounded-lg border border-red-200 hover:bg-red-600 hover:text-white transition-colors">
+                               ▶ YouTube
+                            </a>
+                            <a id="modal-cancaonova-link" href="#" target="_blank" rel="noopener"
+                               class="text-[12px] font-bold bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg border border-blue-200 hover:bg-blue-600 hover:text-white transition-colors">
+                               🎵 C. Nova
+                            </a>
+                        </div>
                     </div>
                     <!-- Conteúdo cifra -->
                     <div class="overflow-y-auto flex-1 p-5">
@@ -816,6 +880,58 @@
                         <p class="text-stone-400 text-sm">Buscando informações...</p>
                     </div>
                 </div>
+
+                <!-- Seção Equipe de Música (visível para todos, editável só admin) -->
+                <div id="fest-escala-section" class="px-5 pb-4 border-t pt-4 flex-shrink-0">
+                    <p class="text-[12px] font-bold text-stone-400 uppercase tracking-wider mb-2">🎵 Equipe de Música</p>
+                    <!-- Tags de equipes salvas -->
+                    <div id="fest-equipes-salvas" class="flex flex-wrap gap-1 mb-2"></div>
+                    <!-- Formulário admin -->
+                    <div id="fest-escala-admin" class="hidden">
+                        <div class="flex flex-wrap gap-2 items-end mt-2">
+                            <div class="flex flex-col gap-1 min-w-[110px]">
+                                <label class="text-[11px] font-bold text-stone-400 uppercase">Horário</label>
+                                <select id="fest-horario-select"
+                                    class="border border-stone-300 rounded-lg px-2 py-1.5 text-sm text-stone-700 bg-white focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+                                    <option value="07h30">07h30</option>
+                                    <option value="09h00">09h00</option>
+                                    <option value="16h00">16h00</option>
+                                    <option value="17h00">17h00</option>
+                                    <option value="19h00">19h00</option>
+                                    <option value="__livre__">✏️ Outro…</option>
+                                </select>
+                            </div>
+                            <div class="flex flex-col gap-1 flex-1 min-w-[130px]">
+                                <label class="text-[11px] font-bold text-stone-400 uppercase">Grupo / Equipe</label>
+                                <select id="fest-grupo-select"
+                                    class="border border-stone-300 rounded-lg px-2 py-1.5 text-sm text-stone-700 bg-white focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+                                    <option value="">— selecione —</option>
+                                </select>
+                            </div>
+                            <button id="fest-escala-add"
+                                class="bg-[var(--header)] text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:opacity-90 whitespace-nowrap">
+                                + Adicionar
+                            </button>
+                        </div>
+                        <div id="fest-horario-livre-wrap" class="hidden mt-2">
+                            <input type="text" id="fest-horario-livre" placeholder="Ex: 10h00, 15h30…"
+                                class="border border-stone-300 rounded-lg px-3 py-1.5 text-sm w-full focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+                        </div>
+                        <!-- Ações destrutivas -->
+                        <div class="flex gap-2 mt-3 pt-3 border-t border-stone-100">
+                            <button id="fest-limpar-equipes"
+                                class="text-[12px] text-red-400 hover:text-red-600 font-bold px-2 py-1 rounded border border-red-200 hover:border-red-400 transition-colors">
+                                🗑️ Limpar equipes
+                            </button>
+                            <button id="fest-ocultar-evento"
+                                class="text-[12px] text-stone-400 hover:text-stone-600 font-bold px-2 py-1 rounded border border-stone-200 hover:border-stone-400 transition-colors ml-auto">
+                                👁️ Ocultar este evento
+                            </button>
+                        </div>
+                    </div>
+                    <p id="fest-escala-vazio" class="text-[12px] text-stone-300 italic hidden">Nenhuma equipe escalada.</p>
+                </div>
+
                 <!-- Rodapé com links -->
                 <div class="px-5 py-3 border-t flex-shrink-0 flex flex-wrap gap-2" id="fest-modal-links"></div>
             </div>
@@ -1190,21 +1306,27 @@ function getLiturgico(date) {
 // TAG DE GRUPO
 // ═══════════════════════════════════════════════════════════════════
 function getTag(valorPadrao, chave) {
-    const bruto = localStorage.getItem(chave) || valorPadrao;
-    const valor = grupos.includes(bruto) ? bruto : valorPadrao;
-    const slug  = valor.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s/g,"");
+    const bruto  = localStorage.getItem(chave) || "";
+    // Aceita grupos fixos OU qualquer texto salvo (entrada manual)
+    const valor  = bruto || valorPadrao;
+    const eFixo  = grupos.includes(valor);
+    const slug   = (eFixo ? valor : "definir").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s/g,"");
     if (!isAdmin) {
         const s = document.createElement("span");
         s.className = `tag-grupo bg-${slug} cursor-pointer`;
         s.title = "Ver leituras deste dia";
-        // extrai YYYY-MM-DD da chave (ex: "d1-2026-05-10" ou "sab-2026-05-10")
         const isoMatch = chave.match(/(\d{4}-\d{2}-\d{2})$/);
         if (isoMatch) s.dataset.leituraData = isoMatch[1];
         s.textContent = valor;
         return s.outerHTML;
     }
     const opts = grupos.map(g=>`<option value="${sanitizar(g)}" ${valor===g?"selected":""}>${sanitizar(g)}</option>`).join("");
-    return `<select data-chave="${sanitizar(chave)}" class="tag-grupo bg-${slug} cursor-pointer outline-none w-full border-none admin-select">${opts}</select>`;
+    const outroLabel = !eFixo && bruto ? sanitizar(bruto) : "✏️ Outro…";
+    const outroSel   = !eFixo && bruto ? "selected" : "";
+    return `<select data-chave="${sanitizar(chave)}" class="tag-grupo bg-${slug} cursor-pointer outline-none w-full border-none admin-select">
+        ${opts}
+        <option value="__outro__" ${outroSel}>${outroLabel}</option>
+    </select>`;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1214,13 +1336,14 @@ async function fetchLiturgiaResumo(dia, mes, ano, elementId) {
     const el = document.getElementById(elementId);
     if (!el) return;
     try {
-        const res  = await fetch(`https://liturgia.up.railway.app/?dia=${dia}&mes=${mes}&ano=${ano}`);
+        const res  = await fetch(`https://liturgia.up.railway.app/v2/?dia=${dia}&mes=${mes}&ano=${ano}`);
         const data = await res.json();
-        const p1  = sanitizar(data.primeiraLeitura?.referencia  || "---");
-        const p2  = sanitizar(data.segundaLeitura?.referencia   || "---");
-        const sal = sanitizar(data.salmo?.refrao                || "---");
-        const ant = sanitizar(data.evangelho?.antifona          || "Glória a vós, ó Cristo...");
-        const ev  = sanitizar(data.evangelho?.referencia        || "---");
+        // v2: campos em data.leituras.*[0]
+        const leit = data.leituras || {};
+        const p1  = sanitizar(leit.primeiraLeitura?.[0]?.referencia || "---");
+        const p2  = sanitizar(leit.segundaLeitura?.[0]?.referencia  || "---");
+        const sal = sanitizar(leit.salmo?.[0]?.refrao               || "---");
+        const ev  = sanitizar(leit.evangelho?.[0]?.referencia       || "---");
         el.classList.remove("loading-pulse");
         el.innerHTML = `
             <div class="text-[13px] text-stone-500 mb-0.5"><b>1ªL:</b> ${p1} | <b>2ªL:</b> ${p2}</div>
@@ -1242,7 +1365,7 @@ async function carregarLeituraCompleta(dataStr) {
     display.textContent = d.toLocaleDateString("pt-BR", {weekday:"long", day:"numeric", month:"long", year:"numeric"});
 
     try {
-        const res  = await fetch(`https://liturgia.up.railway.app/?dia=${parseInt(dia)}&mes=${parseInt(mes)}&ano=${ano}`);
+        const res  = await fetch(`https://liturgia.up.railway.app/v2/?dia=${parseInt(dia)}&mes=${parseInt(mes)}&ano=${ano}`);
         const data = await res.json();
 
         const litInfo = getLiturgico(d);
@@ -1292,30 +1415,120 @@ async function carregarLeituraCompleta(dataStr) {
             </div>`;
         }
 
-        // Aclamação ao Evangelho
-        // A API retorna ev.antifona com ex: "Jo 11,25a. Eu sou a ressurreição e a vida..."
-        // Separamos referência bíblica (versículo numerado) do texto.
+        // ── Banco local de versículos aleluiáticos 2026 ─────────────────
+        // Fonte: Lecionário / Canção Nova · Ano Litúrgico C (Lucas) / A (Mateus)
+        // Indexado por "DD/MM" → {refrao, versiculo}
+        const VERSICULO_DB = {
+            // Fonte: Lecionário CNBB 2026 · Ano A (Mateus) · Chave: "DD/MM"
+            // ── JANEIRO ──────────────────────────────────────────────────
+            "01/01": { r:"Glória a vós, ó Cristo, Verbo de Deus.",   v:"De muitos modos Deus falou outrora... hoje falou-nos por seu Filho." },
+            "04/01": { r:"Glória a vós, ó Cristo, Verbo de Deus.",   v:"Viemos ver a sua estrela no Oriente e viemos adorar o Senhor." },
+            "11/01": { r:"Glória a vós, ó Cristo, Verbo de Deus.",   v:"Este é o meu Filho amado, no qual pus o meu bem-querer." },
+            "18/01": { r:"Aleluia, Aleluia, Aleluia!",               v:"Eis o Cordeiro de Deus, que tira o pecado do mundo." },
+            "25/01": { r:"Aleluia, Aleluia, Aleluia!",               v:"Jesus pregava o Evangelho e curava toda espécie de males." },
+            // ── FEVEREIRO ────────────────────────────────────────────────
+            "01/02": { r:"Aleluia, Aleluia, Aleluia!",               v:"Felizes os pobres em espírito, porque deles é o Reino dos Céus." },
+            "08/02": { r:"Aleluia, Aleluia, Aleluia!",               v:"Vós sois a luz do mundo; brilhe a vossa luz diante dos homens." },
+            "15/02": { r:"Aleluia, Aleluia, Aleluia!",               v:"Eu te louvo, ó Pai, porque revelaste os mistérios do Reino aos pequeninos." },
+            "18/02": { r:"Glória a vós, ó Cristo, Verbo de Deus.",   v:"Não fecheis o coração, ouvi hoje a voz de Deus." },
+            "22/02": { r:"Glória a vós, ó Cristo, Verbo de Deus.",   v:"Não só de pão vive o homem, mas de toda a palavra de Deus." },
+            // ── MARÇO ────────────────────────────────────────────────────
+            "01/03": { r:"Glória a vós, ó Cristo, Verbo de Deus.",   v:"Eis meu Filho muito amado, escutai-o todos vós!" },
+            "08/03": { r:"Glória a vós, ó Cristo, Verbo de Deus.",   v:"Convertei-vos, diz o Senhor, o Reino dos Céus está próximo." },
+            "15/03": { r:"Glória a vós, ó Cristo, Verbo de Deus.",   v:"Eu sou a luz do mundo; quem me segue terá a luz da vida." },
+            "22/03": { r:"Glória a vós, ó Cristo, Verbo de Deus.",   v:"Eu sou a ressurreição e a vida; quem crê em mim não morrerá eternamente." },
+            "29/03": { r:"Glória a vós, ó Cristo, Verbo de Deus.",   v:"Cristo fez-se por nós obediente até à morte e morte de cruz." },
+            // ── ABRIL ────────────────────────────────────────────────────
+            "05/04": { r:"Aleluia, Aleluia, Aleluia!",               v:"Cristo, nossa Páscoa, foi imolado; celebremos a festa no Senhor!" },
+            "12/04": { r:"Aleluia, Aleluia, Aleluia!",               v:"Acreditaste, Tomé, porque me viste; felizes os que creem sem ter visto." },
+            "19/04": { r:"Aleluia, Aleluia, Aleluia!",               v:"Senhor Jesus, revelai-nos o sentido da Escritura." },
+            "26/04": { r:"Aleluia, Aleluia, Aleluia!",               v:"Eu sou o bom pastor, diz o Senhor; conheço minhas ovelhas." },
+            // ── MAIO ─────────────────────────────────────────────────────
+            "03/05": { r:"Aleluia, Aleluia, Aleluia!",               v:"Eu sou o caminho, a verdade e a vida, diz o Senhor." },
+            "10/05": { r:"Aleluia, Aleluia, Aleluia!",               v:"Quem me ama guardará minha palavra e meu Pai o amará." },
+            "17/05": { r:"Aleluia, Aleluia, Aleluia!",               v:"Ide e fazei discípulos de todas as nações; eu estarei convosco todos os dias." },
+            "24/05": { r:"Aleluia, Aleluia, Aleluia!",               v:"Vinde, Espírito Santo, enchei os corações dos vossos fiéis." },
+            "31/05": { r:"Aleluia, Aleluia, Aleluia!",               v:"Glória ao Pai e ao Filho e ao Espírito Santo." },
+            // ── JUNHO ────────────────────────────────────────────────────
+            "04/06": { r:"Aleluia, Aleluia, Aleluia!",               v:"Eu sou o pão vivo descido do céu; quem come dele viverá." },
+            "07/06": { r:"Aleluia, Aleluia, Aleluia!",               v:"Ide e aprendei o que significa: Eu quero a misericórdia e não o sacrifício." },
+            "14/06": { r:"Aleluia, Aleluia, Aleluia!",               v:"O Reino de Deus está próximo; arrependei-vos e crede." },
+            "21/06": { r:"Aleluia, Aleluia, Aleluia!",               v:"O Espírito da Verdade dará testemunho de mim." },
+            "28/06": { r:"Aleluia, Aleluia, Aleluia!",               v:"Tu és Pedro e sobre esta pedra edificarei a minha Igreja." },
+            // ── JULHO ────────────────────────────────────────────────────
+            "05/07": { r:"Aleluia, Aleluia, Aleluia!",               v:"Vinde a mim, vós todos que estais cansados e eu vos aliviarei." },
+            "12/07": { r:"Aleluia, Aleluia, Aleluia!",               v:"A semente é a palavra de Deus; o semeador é Cristo." },
+            "19/07": { r:"Aleluia, Aleluia, Aleluia!",               v:"O justo brilhará como o sol no Reino de seu Pai." },
+            "26/07": { r:"Aleluia, Aleluia, Aleluia!",               v:"O Reino dos céus é como um tesouro escondido no campo." },
+            // ── AGOSTO ───────────────────────────────────────────────────
+            "02/08": { r:"Aleluia, Aleluia, Aleluia!",               v:"Nem só de pão vive o homem, mas de toda a palavra de Deus." },
+            "09/08": { r:"Aleluia, Aleluia, Aleluia!",               v:"Eu confio no Senhor, a minha alma espera na sua palavra." },
+            "16/08": { r:"Aleluia, Aleluia, Aleluia!",               v:"Maria é elevada ao céu; exultam os coros dos anjos." },
+            "23/08": { r:"Aleluia, Aleluia, Aleluia!",               v:"Tu és Pedro e sobre esta pedra edificarei a minha Igreja." },
+            "30/08": { r:"Aleluia, Aleluia, Aleluia!",               v:"Se alguém quer me seguir, renuncie a si mesmo e tome sua cruz." },
+            // ── SETEMBRO ─────────────────────────────────────────────────
+            "06/09": { r:"Aleluia, Aleluia, Aleluia!",               v:"Deus reconciliou o mundo consigo em Cristo." },
+            "13/09": { r:"Aleluia, Aleluia, Aleluia!",               v:"Eu vos dou um novo mandamento: amai-vos uns aos outros." },
+            "20/09": { r:"Aleluia, Aleluia, Aleluia!",               v:"Abri o nosso coração, ó Senhor, para ouvirmos a palavra do vosso Filho." },
+            "27/09": { r:"Aleluia, Aleluia, Aleluia!",               v:"Minhas ovelhas escutam minha voz, eu as conheço e elas me seguem." },
+            // ── OUTUBRO ──────────────────────────────────────────────────
+            "04/10": { r:"Aleluia, Aleluia, Aleluia!",               v:"Eu vos escolhi do mundo para que deis frutos." },
+            "11/10": { r:"Aleluia, Aleluia, Aleluia!",               v:"O Pai de nosso Senhor Jesus Cristo ilumine os olhos do nosso coração." },
+            "18/10": { r:"Aleluia, Aleluia, Aleluia!",               v:"Vós brilhais como astros no mundo, portadores da palavra da vida." },
+            "25/10": { r:"Aleluia, Aleluia, Aleluia!",               v:"Se alguém me ama, guardará a minha palavra." },
+            // ── NOVEMBRO ─────────────────────────────────────────────────
+            "01/11": { r:"Aleluia, Aleluia, Aleluia!",               v:"Vinde a mim, vós todos que estais cansados e eu vos aliviarei." },
+            "08/11": { r:"Aleluia, Aleluia, Aleluia!",               v:"Vigiai e ficai preparados, porque não sabeis a hora." },
+            "15/11": { r:"Aleluia, Aleluia, Aleluia!",               v:"Sede fiéis até a morte e eu vos darei a coroa da vida." },
+            "22/11": { r:"Aleluia, Aleluia, Aleluia!",               v:"Bendito o que vem em nome do Senhor! Bendito o Reino!" },
+            "29/11": { r:"Glória a vós, ó Cristo, Verbo de Deus.",   v:"Mostrai-nos, ó Senhor, vossa bondade e salvação." },
+            // ── DEZEMBRO ─────────────────────────────────────────────────
+            "06/12": { r:"Glória a vós, ó Cristo, Verbo de Deus.",   v:"Preparai o caminho do Senhor, aplainai suas veredas." },
+            "13/12": { r:"Glória a vós, ó Cristo, Verbo de Deus.",   v:"O Espírito do Senhor está sobre mim, para evangelizar os pobres." },
+            "20/12": { r:"Glória a vós, ó Cristo, Verbo de Deus.",   v:"A virgem conceberá e dará à luz um filho: Emanuel, Deus conosco." },
+            "25/12": { r:"Aleluia, Aleluia, Aleluia!",               v:"Eu vos anuncio uma grande alegria: nasceu o Salvador!" },
+            "27/12": { r:"Aleluia, Aleluia, Aleluia!",               v:"A paz de Cristo reine em vossos corações." },
+        }
+
+        // Busca versículo no banco local — instantâneo, sem rede
+        function buscarVersiculoLocal(dataStr) {
+            const [ano, mes, dia] = dataStr.split("-");
+            const chave = `${dia.padStart(2,"0")}/${mes.padStart(2,"0")}`;
+            return VERSICULO_DB[chave] || null;
+        }
+
+        // Mantém função assíncrona para compatibilidade com o .then() do blocoAclamacao
+        async function buscarVersiculoCancaoNova(dataStr) {
+            return buscarVersiculoLocal(dataStr);
+        }
         function blocoAclamacao(ev) {
             if (!ev) return "";
-            const antifonaRaw = ev.antifona || "";
 
-            // Tenta separar "Ref X,Ya. Texto" — referência termina no primeiro ponto após dígito
-            const matchRef = antifonaRaw.match(/^([A-Za-zÀ-ú0-9\s,]+\d[a-z]?\.\s*)(.+)$/s);
-            let refVersiculo = "";
-            let textoVers    = sanitizar(antifonaRaw);
-
-            if (matchRef) {
-                refVersiculo = sanitizar(matchRef[1].trim());
-                textoVers    = sanitizar(matchRef[2].trim());
-            }
-
-            // Refrão muda conforme o tempo litúrgico
-            const dataVal   = document.getElementById("data-leitura").value;
-            const litInfo   = dataVal ? getLiturgico(new Date(dataVal + "T12:00:00")) : getLiturgico(new Date());
+            const dataVal    = document.getElementById("data-leitura").value;
+            const litInfo    = dataVal ? getLiturgico(new Date(dataVal + "T12:00:00")) : getLiturgico(new Date());
             const isQuaresma = ["quaresma","advento"].some(t => litInfo.nome.toLowerCase().includes(t));
-            const refraoAcl  = isQuaresma
-                ? "Glória a vós, ó Cristo, Verbo de Deus."
-                : "Aleluia, Aleluia, Aleluia!";
+            const refEv      = sanitizar(ev.referencia || "");
+
+            // Busca síncrona no banco local — instantânea
+            const banco = dataVal ? buscarVersiculoLocal(dataVal) : null;
+            const refraoFinal   = banco?.r || (isQuaresma ? "Glória a vós, ó Cristo, Verbo de Deus." : "Aleluia, Aleluia, Aleluia!");
+            const versiculoHtml = banco?.v
+                ? `<div class="mt-1">
+                       <p class="text-[13px] font-bold text-purple-500 uppercase mb-1">℣. Versículo</p>
+                       <p class="text-base text-purple-900 italic leading-relaxed">${sanitizar(banco.v)}</p>
+                       <p class="text-[11px] text-stone-300 italic mt-2">Fonte: Lecionário · Ano A (Mateus)</p>
+                   </div>`
+                : `<div class="mt-1">
+                       <p class="text-[13px] text-stone-400 italic mb-2">Versículo não cadastrado para esta data.</p>
+                       <div class="flex flex-wrap gap-2">
+                           <a href="https://liturgia.cancaonova.com/pb/" target="_blank" rel="noopener"
+                              class="text-[12px] font-bold bg-purple-50 text-purple-700 px-3 py-1.5 rounded-lg border border-purple-200 hover:bg-purple-100 transition-colors">🎵 Canção Nova</a>
+                           <a href="https://www.cnbb.org.br/liturgia-diaria/" target="_blank" rel="noopener"
+                              class="text-[12px] font-bold bg-purple-50 text-purple-700 px-3 py-1.5 rounded-lg border border-purple-200 hover:bg-purple-100 transition-colors">🏛️ CNBB</a>
+                           <a href="https://play.google.com/store/apps/details?id=br.org.cnbb.liturgia" target="_blank" rel="noopener"
+                              class="text-[12px] font-bold bg-purple-50 text-purple-700 px-3 py-1.5 rounded-lg border border-purple-200 hover:bg-purple-100 transition-colors">📱 App CNBB</a>
+                       </div>
+                   </div>`;
 
             return `
             <div class="leitura-bloco bg-purple-50 rounded-xl border border-purple-100 shadow-sm p-4 sm:p-5 mb-5" style="border-left-color:#7c3aed">
@@ -1323,19 +1536,14 @@ async function carregarLeituraCompleta(dataStr) {
                     <span class="text-xl">🕊️</span>
                     <div>
                         <h3 class="font-cinzel font-bold text-purple-800 uppercase text-sm">Aclamação ao Evangelho</h3>
-                        <p class="text-[14px] text-purple-400 italic">Confira o número do canto no hinário da sua comunidade</p>
+                        ${refEv ? `<p class="text-[13px] text-purple-500 italic">Evangelho: ${refEv}</p>` : ""}
                     </div>
                 </div>
                 <div class="bg-purple-100 rounded-lg px-4 py-3 mb-3 border border-purple-200">
-                    <p class="text-[14px] font-bold text-purple-500 uppercase tracking-wider mb-1">R. <span class="font-normal normal-case">(bis)</span></p>
-                    <p class="text-sm font-bold text-purple-900 italic leading-snug">${sanitizar(refraoAcl)}</p>
+                    <p class="text-[13px] font-bold text-purple-500 uppercase tracking-wider mb-1">R. <span class="font-normal normal-case">(bis)</span></p>
+                    <p class="text-base font-bold text-purple-900 italic leading-snug">${sanitizar(refraoFinal)}</p>
                 </div>
-                <div class="mt-1">
-                    <p class="text-[14px] font-bold text-purple-500 uppercase tracking-wider mb-1">
-                        1. ${refVersiculo ? `<span class="font-normal normal-case text-purple-400">${refVersiculo}</span>` : ""}
-                    </p>
-                    <p class="text-sm text-purple-800 italic leading-relaxed">${textoVers || '<span class="text-stone-400">Versículo não disponível para esta data.</span>'}</p>
-                </div>
+                ${versiculoHtml}
             </div>`;
         }
 
@@ -1357,20 +1565,383 @@ async function carregarLeituraCompleta(dataStr) {
             </div>`;
         }
 
+        // ── Dados fixos da Semana Santa ───────────────────────────────────
+        // Complementam o que a API retorna, garantindo estrutura completa
+        const SEMANA_SANTA = {
+            // Quinta-Feira Santa — Missa da Ceia do Senhor
+            "quinta": {
+                cor: "branco", icone: "🍞",
+                titulo: "Quinta-Feira Santa — Missa da Ceia do Senhor",
+                subtitulo: "Início do Tríduo Pascal",
+                aviso: `<div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
+                    <p class="text-[13px] font-bold text-amber-800 mb-2">🍞 Início do Tríduo Pascal</p>
+                    <div class="grid grid-cols-1 gap-2 text-[12px] text-amber-700">
+                        <div class="bg-white rounded-lg p-2 border border-amber-100">
+                            <p class="font-bold mb-0.5">🕔 Celebração à tarde/noite</p>
+                            <p>Não há Missa de manhã. A única Missa do dia é a da Ceia do Senhor.</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-2 border border-amber-100">
+                            <p class="font-bold mb-0.5">🪣 Rito do Lava-Pés (Mandatum)</p>
+                            <p>Após a homilia, o celebrante lava os pés de 12 fiéis, em memória do gesto de Jesus.</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-2 border border-amber-100">
+                            <p class="font-bold mb-0.5">⛪ Procissão do Santíssimo</p>
+                            <p>Ao final, o Santíssimo é transferido em procissão para o altar da reposição. A Igreja fica em silêncio.</p>
+                        </div>
+                    </div>
+                </div>`,
+                versiculo: { r:"Glória a vós, ó Cristo, Verbo de Deus.", v:"Dou-vos um mandamento novo: amai-vos uns aos outros, como eu vos amei." },
+            },
+            // Sexta-Feira Santa — Paixão e Morte do Senhor
+            "sexta": {
+                cor: "vermelho", icone: "✝️",
+                titulo: "Sexta-Feira Santa — Paixão e Morte do Senhor",
+                subtitulo: "Dia de Jejum e Abstinência",
+                aviso: `<div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-4">
+                    <p class="text-[13px] font-bold text-red-800 mb-2">✝️ Ação Litúrgica da Paixão do Senhor</p>
+                    <div class="grid grid-cols-1 gap-2 text-[12px] text-red-700">
+                        <div class="bg-white rounded-lg p-2 border border-red-100">
+                            <p class="font-bold mb-0.5">⛔ Não há Missa hoje</p>
+                            <p>A celebração é a <strong>Ação Litúrgica da Paixão</strong>, composta por três partes:
+                            Liturgia da Palavra · Adoração da Santa Cruz · Comunhão.</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-2 border border-red-100">
+                            <p class="font-bold mb-0.5">🕐 Horário</p>
+                            <p>Celebrada às 15h (hora da morte de Jesus) ou à tarde/noite.</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-2 border border-red-100">
+                            <p class="font-bold mb-0.5">🍖 Jejum e abstinência</p>
+                            <p>Dia de <strong>jejum</strong> (uma refeição) e <strong>abstinência de carne</strong> para todos os maiores de 14 anos.</p>
+                        </div>
+                    </div>
+                </div>`,
+                versiculo: { r:"Glória a vós, ó Cristo, Verbo de Deus.", v:"Cristo fez-se por nós obediente até à morte e morte de cruz. Por isso Deus o exaltou." },
+                extra: `<div class="leitura-bloco bg-red-50 rounded-xl border border-red-100 shadow-sm p-4 sm:p-5 mb-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-xl">✝️</span>
+                        <div>
+                            <h3 class="font-cinzel font-bold text-red-800 uppercase text-sm">Paixão do Senhor</h3>
+                            <p class="text-[13px] text-red-600 italic">Jo 18,1–19,42 (forma longa) ou Jo 18,1–19,30 (forma breve)</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-stone-600 italic mb-2">Proclamada em <strong>três vozes</strong>: Narrador · Cristo · Povo (assembleia).</p>
+                    <p class="text-[12px] text-stone-400 italic">Nota: Na Sexta-Feira Santa proclama-se o Evangelho de João (não Mateus). A Aclamação abaixo substitui o Aleluia (suprimido na Quaresma e Paixão).</p>
+                </div>`,
+            },
+            // Sábado Santo — Vigília Pascal
+            "sabado": {
+                cor: "branco", icone: "🕯️",
+                titulo: "Sábado Santo — Vigília Pascal",
+                subtitulo: "Mãe de todas as Vigílias",
+                aviso: `<div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
+                    <p class="text-[13px] font-bold text-amber-800 mb-2">🕯️ Estrutura da Vigília Pascal</p>
+                    <div class="grid grid-cols-2 gap-2 text-[12px] text-amber-700">
+                        <div class="bg-white rounded-lg p-2 border border-amber-100">
+                            <p class="font-bold">1. Serviço da Luz</p>
+                            <p>Bênção do fogo · Círio Pascal · Pregão Pascal (Exsultet)</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-2 border border-amber-100">
+                            <p class="font-bold">2. Liturgia da Palavra</p>
+                            <p>7 leituras do AT + Epístola + Evangelho da Ressurreição</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-2 border border-amber-100">
+                            <p class="font-bold">3. Liturgia Batismal</p>
+                            <p>Bênção da água · Batismos · Renovação das promessas</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-2 border border-amber-100">
+                            <p class="font-bold">4. Liturgia Eucarística</p>
+                            <p>Primeira Missa da Páscoa</p>
+                        </div>
+                    </div>
+                </div>`,
+                leituras_at: [
+                    {
+                      n:"1ª", ref:"Gn 1,1–2,2", titulo:"A Criação do mundo",
+                      salmo:"Sl 103(104)", refrao:"Enviai o vosso Espírito e renovai a face da terra.",
+                      estrofes: [
+                        "Bendize, ó minha alma, o Senhor!\nÓ Senhor meu Deus, sois infinitamente grande!\nEstais revestido de beleza e majestade,\ncoberto de luz como de um manto.",
+                        "Vós que estendeis os céus como uma tenda,\nvós que edificastes sobre as águas vossos altos aposentos;\nvós que tomais as nuvens como carruagem,\nque viajais nas asas do vento.",
+                        "Como são numerosas as vossas obras, ó Senhor!\nCom sabedoria todas as criastes;\na terra está cheia das vossas riquezas.\nOlhai para a terra e ela treme,\ntoicai os montes e eles fumegam.",
+                        "Enviai o vosso Espírito: eles são criados,\ne renovais a face da terra.\nGlória ao Senhor por toda a eternidade!\nAlegre-se o Senhor nas suas obras.",
+                      ]
+                    },
+                    {
+                      n:"2ª", ref:"Gn 22,1-18", titulo:"O sacrifício de Abraão, nosso pai na fé",
+                      salmo:"Sl 15(16)", refrao:"Guardai-me, ó Deus, pois em vós me refugio.",
+                      estrofes: [
+                        "Guardai-me, ó Deus, pois em vós me refugio!\nDigo ao Senhor: vós sois meu Deus!\nO Senhor é a herança do meu quinhão e meu cálice;\nvós sois quem me assegurais meu quinhão.",
+                        "Bendito seja o Senhor, que me deu sabedoria!\nMesmo de noite meu coração me instrui.\nTenho o Senhor sempre diante de mim;\nestando ele à minha direita, não serei abalado.",
+                        "Por isso meu coração está em festa\ne minha alma se rejubila;\nainda o meu corpo repousará com confiança:\npois não abandonareis minha alma no abismo.",
+                        "Não deixareis que o vosso servo veja a corrupção.\nMostrai-me o caminho da vida;\nhá plenitude de alegria na vossa presença;\nà vossa direita, delícias eternas.",
+                      ]
+                    },
+                    {
+                      n:"3ª", ref:"Ex 14,15–15,1", titulo:"A passagem pelo Mar Vermelho",
+                      salmo:"Êx 15 (Cântico de Moisés)", refrao:"Cantemos ao Senhor, pois ele é glorioso!",
+                      estrofes: [
+                        "Cantemos ao Senhor, pois ele é glorioso!\nO cavalo e o cavaleiro atirou no mar.\nO Senhor é minha força e meu cântico,\nele foi minha salvação.",
+                        "Ele é meu Deus: cantarei o seu louvor;\né o Deus de meu pai: exaltarei o seu nome.\nO Senhor é um guerreiro;\no Senhor é o seu nome.",
+                        "Os carros do faraó e seu exército\natirou no mar;\nseus melhores oficiais\nafogaram-se no mar dos Juncos.",
+                        "Vossa destra, ó Senhor, é gloriosa no poder;\nvossa destra, ó Senhor, despedaçou o inimigo.\nQuem é como vós entre os deuses, ó Senhor?\nQuem é como vós, glorioso na santidade?",
+                      ]
+                    },
+                    {
+                      n:"4ª", ref:"Is 54,5-14", titulo:"A aliança de paz com Israel",
+                      salmo:"Sl 29(30)", refrao:"Dar-vos-ei graças, Senhor, pois me salvastes.",
+                      estrofes: [
+                        "Dar-vos-ei graças, Senhor, pois me salvastes\ne não deixastes meus inimigos triunfar sobre mim.\nÓ Senhor meu Deus, clamei a vós\ne me curastes.",
+                        "Tirastes minha alma do abismo,\nrestabelecestes-me dentre os que descem ao sepulcro.\nCantai ao Senhor, vós que sois seus santos,\ncelebrai a memória de sua santidade.",
+                        "Pois a sua ira dura um instante,\nmas a sua benevolência, a vida inteira;\nà tarde chegam as lágrimas,\nmas de manhã voltam os gritos de alegria.",
+                        "Ouvistes, Senhor, e tivestes piedade de mim;\nó Senhor, tornou-vos meu socorro.\nMudaste meu pranto em dança,\nminha roupa de luto em vestes de alegria.",
+                      ]
+                    },
+                    {
+                      n:"5ª", ref:"Is 55,1-11", titulo:"Apelo à conversão",
+                      salmo:"Is 12 (Cântico de Isaías)", refrao:"Alegrai-vos, pois é grande o Santo de Israel.",
+                      estrofes: [
+                        "Eis o Deus que me salva;\ntenho confiança e não terei medo,\npois o Senhor é minha força e meu cântico,\nele foi minha salvação.",
+                        "Tirareis água com alegria\ndas fontes da salvação.\nDar-vos-ei graças, ó Senhor;\nchamarei o vosso nome.",
+                        "Anunciai ao mundo os seus feitos;\nproclamai que o seu nome é excelso.\nEntoai louvores ao Senhor,\npois fez coisas maravilhosas.",
+                        "Que isso seja conhecido em toda a terra.\nAlegrai-vos e exultai, habitantes de Sião,\npois é grande em vós\no Santo de Israel.",
+                      ]
+                    },
+                    {
+                      n:"6ª", ref:"Br 3,9-15.32–4,4", titulo:"O caminho da Sabedoria",
+                      salmo:"Sl 18(19)", refrao:"Senhor, vós tendes palavras de vida eterna.",
+                      estrofes: [
+                        "A lei do Senhor é perfeita e restaura a alma;\no testemunho do Senhor é fiel e dá sabedoria ao simples.\nOs preceitos do Senhor são retos, alegram o coração;\nos mandamentos do Senhor são puros, iluminam os olhos.",
+                        "O temor do Senhor é puro, dura para sempre;\nos julgamentos do Senhor são verdadeiros,\ntodos eles são justos.\nSão mais preciosos que o ouro,\nmais que muito ouro refinado.",
+                        "São mais doces que o mel,\nque o mel do favo virgem.\nTeu servo também neles se instrui;\né grande a recompensa de os guardar.",
+                        "Quem pode conhecer seus próprios erros?\nPerdoai-me os pecados ocultos.\nGuardai vosso servo dos erros voluntários;\nque não me dominem. Sereis meu Deus e minha salvação.",
+                      ]
+                    },
+                    {
+                      n:"7ª", ref:"Ez 36,16-28", titulo:"O coração novo e o espírito novo",
+                      salmo:"Sl 41(42) e 42(43)", refrao:"Como a corça que aneia pelas águas, minha alma aneia por ti, meu Deus.",
+                      estrofes: [
+                        "Como a corça que aneia pelas correntes d'água,\nassim minha alma suspira por vós, ó meu Deus.\nMinha alma tem sede do Deus vivo;\nquando verei a face de Deus?",
+                        "Minhas lágrimas foram meu pão de dia e de noite,\nenquanto me dizem a toda hora: Onde está o teu Deus?\nIsso me lembro e derramo minha alma dentro de mim:\ncomo eu avançava entre a multidão em festa.",
+                        "Por que estás triste, minha alma,\npor que gemes dentro de mim?\nEspera em Deus, pois ainda o louvarei;\nele é meu Salvador e meu Deus.",
+                        "Enviai a vossa luz e a vossa verdade:\nelas serão meu guia,\nconduzir-me-ão à vossa santa montanha,\naté à vossa morada.",
+                      ]
+                    },
+                ],
+                versiculo: { r:"Aleluia, Aleluia, Aleluia!", v:"Cristo, nossa Páscoa, foi imolado; celebremos a festa no Senhor!" },
+            },
+            // Domingo de Páscoa
+            "pascoa": {
+                cor: "branco", icone: "✨",
+                titulo: "Domingo de Páscoa — Ressurreição do Senhor",
+                subtitulo: "A Festa das Festas · Senhor Ressuscitado!",
+                aviso: `<div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
+                    <p class="text-[13px] font-bold text-amber-800 mb-1">✨ Solenidade da Ressurreição</p>
+                    <p class="text-sm text-amber-700 leading-relaxed">
+                        A maior festa do ano cristão. O Aleluia ressoa após a Quaresma.
+                        Nas missas do dia, pode ser proclamada a <strong>Sequência Pascal</strong>
+                        (Victimae Paschali Laudes) antes da Aclamação ao Evangelho.
+                    </p>
+                </div>`,
+                versiculo: { r:"Aleluia, Aleluia, Aleluia!", v:"Cristo, nossa Páscoa, foi imolado; celebremos a festa no Senhor!" },
+            },
+        };
+
+        // Detecta se a data é um dos dias especiais da Semana Santa 2026
+        function detectarSemanaSanta(dataStr) {
+            const map = {
+                "2026-04-02": "quinta",  // Quinta-Feira Santa
+                "2026-04-03": "sexta",   // Sexta-Feira Santa
+                "2026-04-04": "sabado",  // Sábado Santo — Vigília Pascal
+                "2026-04-05": "pascoa",  // Domingo de Páscoa
+            };
+            return map[dataStr] || null;
+        }
+
+        // Renderiza a Vigília Pascal com as 7 leituras do AT
+        function renderVigiliaPascal(data, ss, litInfo) {
+            const leit2  = data.leituras || {};
+            // A API v2 retorna arrays — pode ter múltiplas leituras na Vigília
+            const todasPrimeiras = leit2.primeiraLeitura || [];
+            const epArr          = leit2.segundaLeitura  || [];
+            const evArr          = leit2.evangelho       || [];
+            const epObj  = epArr[0] || {};
+            const evObj  = evArr[0] || {};
+
+            // Mescla leituras AT: banco fixo como estrutura + texto da API quando disponível
+            const leitAT = ss.leituras_at.map((l, idx) => {
+                const apiLeit = todasPrimeiras[idx] || null;
+                const temTexto = apiLeit?.texto && apiLeit.texto.length > 20;
+
+                // Salmo completo: estrofes intercaladas com o refrão
+                const salmoHtml = l.estrofes ? l.estrofes.map((est, i) => `
+                    ${i > 0 ? `<div class="text-center my-2 text-[12px] font-bold text-amber-600 italic">R. ${sanitizar(l.refrao)}</div>` : ""}
+                    <div class="salmo-estrofe mb-1">${est.split("\n").map(linha => `<p class="text-stone-700 text-[15px] leading-relaxed">${sanitizar(linha)}</p>`).join("")}</div>
+                `).join("") + `<div class="text-center mt-2 text-[12px] font-bold text-amber-600 italic">R. ${sanitizar(l.refrao)}</div>` : "";
+
+                return `
+                <details class="leitura-bloco bg-white rounded-xl border border-stone-200 shadow-sm mb-3 group" open>
+                    <summary class="flex items-center gap-2 p-4 cursor-pointer select-none list-none">
+                        <span class="text-base">📜</span>
+                        <div class="flex-1">
+                            <h3 class="font-cinzel font-bold text-stone-700 text-sm uppercase">
+                                ${sanitizar(l.n)} Leitura — ${sanitizar(l.titulo)}
+                            </h3>
+                            <p class="text-[13px] text-stone-400 italic">${sanitizar(apiLeit?.referencia || l.ref)}</p>
+                        </div>
+                        <span class="text-stone-400 text-xs group-open:hidden">▼ ver</span>
+                        <span class="text-stone-400 text-xs hidden group-open:inline">▲ fechar</span>
+                    </summary>
+                    <div class="px-4 pb-4">
+                        ${temTexto
+                            ? `<div class="mb-3">${apiLeit.texto.split(/\n+/).filter(t=>t.trim()).map(t=>`<p class="leitura-texto text-stone-700 mb-1">${sanitizar(t)}</p>`).join("")}</div>`
+                            : ""
+                        }
+                        <!-- Salmo Responsorial Completo -->
+                        <div class="mt-3 bg-amber-50 rounded-xl border border-amber-100 px-4 pt-3 pb-4">
+                            <p class="text-[11px] font-bold text-amber-700 uppercase tracking-wider mb-2">
+                                🎵 Salmo Responsorial — ${sanitizar(l.salmo)}
+                            </p>
+                            <div class="text-center mb-3 bg-amber-100 rounded-lg px-3 py-2 border border-amber-200">
+                                <p class="text-[12px] font-bold text-amber-600 uppercase mb-0.5">R. (bis)</p>
+                                <p class="text-[14px] font-bold text-amber-900 italic">${sanitizar(l.refrao)}</p>
+                            </div>
+                            ${salmoHtml}
+                        </div>
+                    </div>
+                </details>`;
+            }).join("");
+
+            return `
+            <div class="mb-5 text-center">
+                <h2 class="font-cinzel text-lg sm:text-xl font-bold text-[var(--header)] uppercase">${sanitizar(ss.titulo)}</h2>
+                <p class="text-sm text-amber-600 italic mt-1">${sanitizar(ss.subtitulo)}</p>
+            </div>
+            ${ss.aviso}
+
+            <!-- 7 Leituras do Antigo Testamento -->
+            <div class="mb-4">
+                <p class="text-[12px] font-bold text-stone-400 uppercase tracking-wider mb-3">
+                    📜 Parte II — Liturgia da Palavra · 7 Leituras do Antigo Testamento
+                </p>
+                ${leitAT}
+            </div>
+
+            <!-- Epístola -->
+            ${epObj.texto ? `
+            <div class="mb-4">
+                <p class="text-[13px] font-bold text-stone-400 uppercase tracking-wider mb-2">📜 Epístola — Novo Testamento</p>
+                ${blocoLeitura("Epístola", epObj.texto, epObj.referencia, "📜")}
+            </div>` : `
+            <div class="mb-4">
+                <p class="text-[13px] font-bold text-stone-400 uppercase tracking-wider mb-2">📜 Epístola — Novo Testamento</p>
+                <div class="leitura-bloco bg-white rounded-xl border border-stone-200 shadow-sm p-4 mb-3">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-base">📜</span>
+                        <div>
+                            <h3 class="font-cinzel font-bold text-stone-700 text-sm uppercase">Epístola</h3>
+                            <p class="text-[13px] text-stone-400 italic">Rm 6,3-11</p>
+                        </div>
+                    </div>
+                    <p class="leitura-texto text-stone-700 mb-1">Irmãos, 3 todos nós que fomos batizados em Cristo Jesus, fomos batizados em sua morte. 4 Pela morte fomos com ele sepultados pelo batismo, para que, assim como Cristo ressuscitou dos mortos pela glória do Pai, também nós andemos em novidade de vida.</p>
+                    <p class="leitura-texto text-stone-700 mb-1">5 Com efeito, se fomos plantados com ele numa morte semelhante à sua, também o seremos numa ressurreição semelhante à sua. 6 Sabemos que o nosso homem velho foi crucificado com ele, para que o corpo do pecado fosse destruído e não sejamos mais escravos do pecado.</p>
+                    <p class="leitura-texto text-stone-700 mb-1">7 Pois quem morreu, foi libertado do pecado. 8 Mas se morremos com Cristo, cremos que também viveremos com ele. 9 Sabemos que Cristo, ressuscitado dos mortos, não morre mais; a morte não tem mais domínio sobre ele. 10 Pois a morte que ele morreu, morreu para o pecado, de uma vez por todas; a vida que ele vive, vive para Deus.</p>
+                    <p class="leitura-texto text-stone-700 mb-1">11 Assim também vós, considerai-vos mortos para o pecado e vivos para Deus em Cristo Jesus.</p>
+                    <div class="mt-3 bg-amber-50 rounded-lg px-3 py-2 border border-amber-100">
+                        <p class="text-[11px] font-bold text-amber-700 uppercase tracking-wider mb-0.5">Salmo Responsorial — Sl 117(118)</p>
+                        <p class="text-[13px] text-amber-900 italic">R. Aleluia, Aleluia, Aleluia!</p>
+                    </div>
+                </div>
+            </div>`}
+
+            <!-- Aclamação pascal -->
+            <div class="leitura-bloco bg-amber-50 rounded-xl border border-amber-200 p-4 mb-4">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="text-xl">🕊️</span>
+                    <h3 class="font-cinzel font-bold text-amber-800 uppercase text-sm">Aleluia Pascal — pela primeira vez!</h3>
+                </div>
+                <div class="bg-amber-100 rounded-lg px-4 py-3 border border-amber-200">
+                    <p class="text-[13px] font-bold text-amber-600 uppercase mb-1">R. (três vezes)</p>
+                    <p class="text-lg font-bold text-amber-900 italic">Aleluia, Aleluia, Aleluia!</p>
+                </div>
+                <p class="text-sm text-amber-800 italic mt-3">
+                    ℣. ${sanitizar(ss.versiculo.v)}
+                </p>
+            </div>
+
+            <!-- Evangelho -->
+            ${evObj.texto ? blocoEvangelho(evObj) : `
+            <div class="leitura-bloco bg-green-50 rounded-xl border border-green-100 p-4 mb-5">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="text-xl">✝️</span>
+                    <div>
+                        <h3 class="font-cinzel font-bold text-green-900 uppercase text-sm">Evangelho da Ressurreição</h3>
+                        <p class="text-[13px] text-green-600 italic">Mt 28,1-10 — Ressuscitou; não está aqui!</p>
+                    </div>
+                </div>
+            </div>`}
+            <p class="text-center text-[13px] text-stone-300 mt-4 italic">Fonte: liturgia.up.railway.app/v2 + Lecionário CNBB</p>`;
+        }
+
+        // v2: campos em data.leituras.*[0]
+        const leit2 = data.leituras || {};
+        const p1Obj  = leit2.primeiraLeitura?.[0] || {};
+        const p2Obj  = leit2.segundaLeitura?.[0]  || {};
+        const salObj = leit2.salmo?.[0]            || {};
+        const evObj  = leit2.evangelho?.[0]        || {};
+
         const titulo = sanitizar(data.liturgia || data.titulo || "Liturgia do Dia");
+
+        // ── Detecta Semana Santa ──────────────────────────────────────────
+        const diaEspecial = detectarSemanaSanta(dataStr);
+        const ss = diaEspecial ? SEMANA_SANTA[diaEspecial] : null;
+
+        if (ss) {
+            // Renderização especial
+            if (diaEspecial === "sabado") {
+                container.innerHTML = renderVigiliaPascal(data, ss, litInfo);
+            } else {
+                // Qui/Sex/Páscoa: aviso + leituras da API + versículo fixo
+                const versiculoLocal = ss.versiculo;
+                container.innerHTML = `
+                <div class="mb-5 text-center">
+                    <h2 class="font-cinzel text-lg sm:text-xl font-bold text-[var(--header)] uppercase">${sanitizar(ss.titulo)}</h2>
+                    <p class="text-sm italic text-stone-400 mt-1">${sanitizar(ss.subtitulo)}</p>
+                </div>
+                ${ss.aviso}
+                ${blocoLeitura("1ª Leitura", p1Obj.texto, p1Obj.referencia, "📜")}
+                ${blocoSalmo(salObj)}
+                ${p2Obj.texto ? blocoLeitura("2ª Leitura", p2Obj.texto, p2Obj.referencia, "📜") : ""}
+                ${ss.extra || ""}
+                <div class="leitura-bloco bg-purple-50 rounded-xl border border-purple-100 shadow-sm p-4 sm:p-5 mb-5" style="border-left-color:#7c3aed">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-xl">🕊️</span>
+                        <h3 class="font-cinzel font-bold text-purple-800 uppercase text-sm">Aclamação ao Evangelho</h3>
+                    </div>
+                    <div class="bg-purple-100 rounded-lg px-4 py-3 mb-3 border border-purple-200">
+                        <p class="text-[13px] font-bold text-purple-500 uppercase mb-1">R. (bis)</p>
+                        <p class="text-base font-bold text-purple-900 italic">${sanitizar(versiculoLocal.r)}</p>
+                    </div>
+                    <p class="text-[13px] font-bold text-purple-500 uppercase mb-1">℣. Versículo</p>
+                    <p class="text-base text-purple-900 italic leading-relaxed">${sanitizar(versiculoLocal.v)}</p>
+                    <p class="text-[11px] text-stone-300 italic mt-2">Fonte: Lecionário CNBB · Semana Santa</p>
+                </div>
+                ${evObj.texto ? blocoEvangelho(evObj) : ""}
+                <p class="text-center text-[13px] text-stone-300 mt-4 italic">Fonte: liturgia.up.railway.app/v2 + Lecionário CNBB</p>`;
+            }
+        } else {
 
         container.innerHTML = `
             <div class="mb-5 text-center">
                 <h2 class="font-cinzel text-lg sm:text-xl font-bold text-[var(--header)] uppercase">${titulo}</h2>
                 <p class="text-xs text-stone-400 mt-1">Tempo ${sanitizar(litInfo.nome)}</p>
             </div>
-            ${blocoLeitura("1ª Leitura", data.primeiraLeitura?.texto, data.primeiraLeitura?.referencia, "📜")}
-            ${blocoSalmo(data.salmo)}
-            ${data.segundaLeitura?.texto ? blocoLeitura("2ª Leitura", data.segundaLeitura.texto, data.segundaLeitura.referencia, "📜") : ""}
-            ${blocoAclamacao(data.evangelho)}
-            ${blocoEvangelho(data.evangelho)}
-            <p class="text-center text-[14px] text-stone-300 mt-4 italic">Fonte: liturgia.up.railway.app</p>
+            ${blocoLeitura("1ª Leitura", p1Obj.texto, p1Obj.referencia, "📜")}
+            ${blocoSalmo(salObj)}
+            ${p2Obj.texto ? blocoLeitura("2ª Leitura", p2Obj.texto, p2Obj.referencia, "📜") : ""}
+            ${blocoAclamacao(evObj)}
+            ${blocoEvangelho(evObj)}
+            <p class="text-center text-[14px] text-stone-300 mt-4 italic">Fonte: liturgia.up.railway.app/v2</p>
         `;
+        } // fim else (dias comuns)
     } catch(e) {
         container.innerHTML = `<div class="text-center py-12 text-red-400"><div class="text-4xl mb-2">⚠️</div><p class="text-sm">Não foi possível carregar as leituras.<br><span class="text-xs opacity-70">Verifique sua conexão ou tente outra data.</span></p></div>`;
     }
@@ -1400,7 +1971,22 @@ function renderTabs() {
         const btn = document.createElement("button");
         btn.className = `flex-1 py-2 sm:py-3 text-[13px] sm:text-[14px] font-bold uppercase border-r border-stone-200 ${mesAtualIdx===i?"tab-active":"text-stone-500"}`;
         btn.textContent = nome.substring(0,3);
-        btn.addEventListener("click", ()=>{ mesAtualIdx=i; render(); });
+        btn.addEventListener("click", ()=>{
+            mesAtualIdx=i;
+            const dataInput = document.getElementById("data-leitura");
+            if (dataInput) {
+                const mes  = (i+1).toString().padStart(2,"0");
+                const iso  = `${anoAtual}-${mes}-01`;
+                dataInput.value = iso;
+                const info = getLiturgico(new Date(anoAtual, i, 1));
+                document.getElementById("main-body").className = `p-1 sm:p-2 md:p-6 transition-colors duration-700 ${info.css}`;
+                document.getElementById("lit-tempo-nome").textContent        = "Tempo " + info.nome;
+                document.getElementById("lit-tempo-significado").textContent = info.sig;
+                // Auto-carrega leituras sempre (independente do painel visível)
+                carregarLeituraCompleta(iso);
+            }
+            render();
+        });
         c.appendChild(btn);
     });
 }
@@ -1414,25 +2000,31 @@ function renderTabs() {
 // ── Missas feriais ────────────────────────────────────────────────
 // dow: 0=dom,1=seg,2=ter,3=qua,4=qui,5=sex,6=sáb
 function temMissa730(dow)  { return [1,3,4,5,6].includes(dow); }  // Seg Qua Qui Sex Sáb
-function temMissa19(dow)   { return [1,3,5].includes(dow); }       // Seg Qua Sex
+function temMissa19(dow)   { return [1,3,4,5].includes(dow); }     // Seg Qua Qui Sex
 
 function chaveFerial(tipo, dataIso) { return `${tipo}-${dataIso}`; }
 
 function getTagFerial(tipo, dataIso) {
-    const chave = chaveFerial(tipo, dataIso);
-    const salvo = localStorage.getItem(chave);
-    const grupo = salvo && grupos.includes(salvo) ? salvo : null;
+    const chave  = chaveFerial(tipo, dataIso);
+    const bruto  = localStorage.getItem(chave) || "";
+    const eFixo  = grupos.includes(bruto);
+    const grupo  = bruto || null;
 
     if (!isAdmin) {
         if (!grupo) return `<span class="text-[12px] text-stone-300 italic">—</span>`;
-        return `<span class="tag-grupo bg-${grupo.toLowerCase().replace(/\s/g,"")} text-[15px]">${sanitizar(grupo)}</span>`;
+        return `<span class="tag-grupo bg-definir text-[12px]">${sanitizar(grupo)}</span>`;
     }
-    // Modo admin: select
+    // Modo admin: select + opção Outro
     const opts = [`<option value="">— grupo —</option>`,
-        ...grupos.map(g => `<option value="${g}"${g===grupo?" selected":""}>${sanitizar(g)}</option>`)
+        ...grupos.map(g => `<option value="${sanitizar(g)}"${g===bruto?" selected":""}>${sanitizar(g)}</option>`)
     ].join("");
+    const outroLabel = !eFixo && bruto ? sanitizar(bruto) : "✏️ Outro…";
+    const outroSel   = !eFixo && bruto ? "selected" : "";
     return `<select class="admin-select text-[12px] rounded px-1 py-0 border border-stone-200 bg-white w-full"
-                    data-chave="${sanitizar(chave)}">${opts}</select>`;
+                    data-chave="${sanitizar(chave)}">
+        ${opts}
+        <option value="__outro__" ${outroSel}>${outroLabel}</option>
+    </select>`;
 }
 
 function nomeDow(dow) {
@@ -1657,15 +2249,137 @@ function renderLista() {
 // ═══════════════════════════════════════════════════════════════════
 // RENDER: FESTIVIDADES
 // ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
+// LOG DE OCORRÊNCIAS
+// ═══════════════════════════════════════════════════════════════════
+const LOG_KEY = "escala_log_v1";
+
+const LOG_TIPO_CFG = {
+    troca:  { label:"Troca de Grupo",     cor:"bg-blue-50 border-blue-200",   badge:"bg-blue-100 text-blue-800",  icone:"🔄" },
+    grupo:  { label:"Grupo Cadastrado",   cor:"bg-green-50 border-green-200", badge:"bg-green-100 text-green-800",icone:"👥" },
+    manual: { label:"Ocorrência Manual",  cor:"bg-amber-50 border-amber-200", badge:"bg-amber-100 text-amber-800",icone:"📝" },
+};
+
+function carregarLog() {
+    try { return JSON.parse(localStorage.getItem(LOG_KEY) || "[]"); } catch(e) { return []; }
+}
+function salvarLog(entradas) {
+    localStorage.setItem(LOG_KEY, JSON.stringify(entradas));
+}
+function registrarLog(tipo, dados) {
+    // dados: { data, horario?, descricao, de?, para? }
+    const entradas = carregarLog();
+    entradas.unshift({
+        id:   Date.now(),
+        tipo,
+        ts:   new Date().toISOString(),
+        ...dados,
+    });
+    // Limite de 500 entradas
+    salvarLog(entradas.slice(0, 500));
+}
+
+let logFiltroAtivo = "todos";
+
+function renderLog() {
+    const lista = document.getElementById("log-lista");
+    if (!lista) return;
+    const todas = carregarLog();
+    const exibir = logFiltroAtivo === "todos"
+        ? todas
+        : todas.filter(e => e.tipo === logFiltroAtivo);
+
+    if (!exibir.length) {
+        lista.innerHTML = `<div class="text-center py-10 text-stone-300">
+            <div class="text-3xl mb-2">📋</div>
+            <p class="text-sm font-cinzel">Nenhuma ocorrência registrada</p>
+        </div>`;
+        return;
+    }
+
+    lista.innerHTML = exibir.map(e => {
+        const cfg = LOG_TIPO_CFG[e.tipo] || LOG_TIPO_CFG.manual;
+        const tsFormatado = e.ts
+            ? new Date(e.ts).toLocaleString("pt-BR", {day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"})
+            : "";
+        const dataEvento = e.data
+            ? `<span class="text-[12px] font-bold text-stone-600">${sanitizar(e.data)}${e.horario ? " · " + sanitizar(e.horario) : ""}</span>`
+            : "";
+        const detalhe = e.de && e.para
+            ? `<span class="text-stone-400">${sanitizar(e.de)}</span> → <span class="font-bold text-stone-700">${sanitizar(e.para)}</span>`
+            : `<span class="text-stone-700">${sanitizar(e.descricao || "")}</span>`;
+
+        return `<div class="flex gap-3 p-3 rounded-xl border ${cfg.cor} items-start">
+            <span class="text-lg flex-shrink-0 mt-0.5">${cfg.icone}</span>
+            <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-2 mb-0.5">
+                    <span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${cfg.badge}">${cfg.label}</span>
+                    ${dataEvento}
+                </div>
+                <p class="text-[13px] leading-snug">${detalhe}</p>
+                ${e.descricao && (e.de || e.para) ? `<p class="text-[12px] text-stone-400 italic mt-0.5">${sanitizar(e.descricao)}</p>` : ""}
+            </div>
+            <div class="flex flex-col items-end gap-1 flex-shrink-0">
+                <span class="text-[11px] text-stone-300 text-right">${tsFormatado}</span>
+                <button class="log-del-btn text-[11px] text-red-300 hover:text-red-600 transition-colors font-bold" data-id="${e.id}" title="Excluir esta ocorrência">🗑️</button>
+            </div>
+        </div>`;
+    }).join("");
+}
+
 function renderFestividades() {
-    const div     = document.getElementById("important-dates-list");
-    const mesPad  = (mesAtualIdx+1).toString().padStart(2,"0");
-    const eventos = datasOficiais.filter(f=>f.d.endsWith(`/${mesPad}`));
-    if (!eventos.length) {
+    const div    = document.getElementById("important-dates-list");
+    const mesPad = (mesAtualIdx+1).toString().padStart(2,"0");
+    const ocultos = carregarOcultos();
+    const todos   = datasOficiais.filter(f => f.d.endsWith(`/${mesPad}`));
+    const eventos = todos.filter(f => !ocultos.includes(f.d));
+    const nOcultos = todos.length - eventos.length;
+
+    if (!eventos.length && !nOcultos) {
         div.innerHTML = `<p class="text-[14px] italic text-center text-stone-400">Sem festividades.</p>`;
         return;
     }
-    div.innerHTML = eventos.map(f=>`
+
+    // Busca grupos escalados para cada data de festividade (retorna {grupo, horario})
+    function gruposEscaladosParaData(dataIso) {
+        const d   = new Date(dataIso + "T12:00:00");
+        const dow = d.getDay();
+        const MAPA = [];
+        if (dow === 0) {
+            MAPA.push({c:`d1-${dataIso}`, h:"07h30"},{c:`d2-${dataIso}`, h:"09h00"},
+                      {c:`d3-${dataIso}`, h:"17h00"},{c:`d4-${dataIso}`, h:"19h00"});
+        }
+        if (dow === 6) MAPA.push({c:`sab-${dataIso}`, h:"16h00"});
+        if (temMissa730(dow) && dow !== 0) MAPA.push({c:`f730-${dataIso}`, h:"07h30"});
+        if (temMissa19(dow))               MAPA.push({c:`f19-${dataIso}`,  h:"19h00"});
+        const encontrados = [];
+        MAPA.forEach(({c, h}) => {
+            const v = localStorage.getItem(c);
+            if (v) encontrados.push({grupo: v, horario: h});
+        });
+        return encontrados;
+    }
+
+    div.innerHTML = eventos.map(f => {
+        // Converte DD/MM → YYYY-MM-DD usando anoAtual
+        const [dd, mm] = f.d.split("/");
+        const dataIso  = `${anoAtual}-${mm}-${dd}`;
+        const grupos_  = gruposEscaladosParaData(dataIso);
+        const tagGrupos = (() => {
+            // Grupos das missas normais do dia
+            const tags = grupos_.map(({grupo, horario}) =>
+                `<span class="text-[11px] font-bold bg-[var(--header)] text-white px-2 py-0.5 rounded-full">🎵 ${sanitizar(horario)} · ${sanitizar(grupo)}</span>`
+            );
+            // Equipes específicas da festividade
+            const festEquipes = carregarEscalaFest(dataIso);
+            festEquipes.forEach(({horario, grupo}) => {
+                tags.push(`<span class="text-[11px] font-bold bg-amber-600 text-white px-2 py-0.5 rounded-full">🌟 ${sanitizar(horario)} · ${sanitizar(grupo)}</span>`);
+            });
+            return tags.length
+                ? `<div class="flex flex-wrap gap-1 mt-1">${tags.join("")}</div>`
+                : "";
+        })();
+        return `
         <div class="fest-item p-2 bg-white border-l-4 border-[var(--header)] shadow-sm rounded-r"
              data-fest-titulo="${sanitizar(f.t)}" data-fest-data="${sanitizar(f.d)}"
              title="Clique para saber mais sobre ${sanitizar(f.t)}">
@@ -1674,7 +2388,13 @@ function renderFestividades() {
                 <p class="text-[14px] text-stone-700 font-medium leading-snug">${sanitizar(f.t)}</p>
                 <span class="text-[13px] text-[var(--header)] opacity-60 ml-1 flex-shrink-0">🔍</span>
             </div>
-        </div>`).join("");
+            ${tagGrupos}
+        </div>`;
+    }).join("") + (nOcultos > 0 && isAdmin
+        ? `<button id="btn-restaurar-ocultos" class="w-full mt-2 text-[12px] text-stone-400 hover:text-stone-600 font-bold px-2 py-1.5 rounded border border-dashed border-stone-300 hover:border-stone-400 transition-colors">
+               👁️ ${nOcultos} evento${nOcultos>1?"s":""} oculto${nOcultos>1?"s":""} — restaurar todos
+           </button>`
+        : "");
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1689,7 +2409,6 @@ function render() {
 }
 
 function renderEscalaAtiva() {
-    // Esconde todos os sub-painéis
     document.querySelectorAll(".escala-sub").forEach(el=>el.classList.add("hidden"));
     const sub = document.getElementById(`sub-${subEscalaAtiva}`);
     if (sub) sub.classList.remove("hidden");
@@ -1698,6 +2417,11 @@ function renderEscalaAtiva() {
     if (subEscalaAtiva === "domingos")   renderTabelaDomingos();
     if (subEscalaAtiva === "sabados")    renderTabelaSabados();
     if (subEscalaAtiva === "lista")      renderLista();
+    if (subEscalaAtiva === "log")        renderLog();
+
+    // Aba log só visível em modo admin
+    const tabLog = document.getElementById("tab-log");
+    if (tabLog) tabLog.classList.toggle("hidden", !isAdmin);
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1749,14 +2473,53 @@ function atualizarBtnAdm() {
 
 // Admin selects (event delegation)
 document.addEventListener("change", e => {
-    if (e.target.classList.contains("admin-select")) {
-        const chave = e.target.dataset.chave;
-        const valor = e.target.value;
-        if (chave && grupos.includes(valor)) {
+    if (!e.target.classList.contains("admin-select")) return;
+    const chave = e.target.dataset.chave;
+    if (!chave) return;
+    let valor = e.target.value;
+
+    // Extrai data ISO e horário legível da chave (ex: "d1-2026-06-01", "f730-2026-06-05", "sab-2026-06-07")
+    const isoMatch  = chave.match(/(\d{4}-\d{2}-\d{2})$/);
+    const dataIso   = isoMatch ? isoMatch[1] : "";
+    const dataFmt   = dataIso ? dataIso.split("-").reverse().join("/") : "";
+    const prefixo   = chave.replace(/-\d{4}-\d{2}-\d{2}$/, "");
+    const HORARIOS  = { d1:"07h30", d2:"09h00", d3:"17h00", d4:"19h00", sab:"16h00", f730:"07h30", f19:"19h00" };
+    const horario   = HORARIOS[prefixo] || "";
+    const anterior  = localStorage.getItem(chave) || "—";
+
+    if (valor === "__outro__") {
+        const digitado = prompt("Digite o nome do grupo ou formação musical:", "");
+        if (digitado && digitado.trim()) {
+            valor = digitado.trim().toUpperCase();
             localStorage.setItem(chave, valor);
-            renderEscalaAtiva();
+            registrarLog("grupo", {
+                data: dataFmt, horario,
+                descricao: `Grupo personalizado cadastrado para ${dataFmt}${horario ? " · " + horario : ""}`,
+                de: anterior, para: valor,
+            });
+        } else {
+            const ant = localStorage.getItem(chave) || "";
+            e.target.value = grupos.includes(ant) ? ant : "__outro__";
+            return;
         }
+    } else if (valor === "") {
+        const old = localStorage.getItem(chave) || "";
+        localStorage.removeItem(chave);
+        if (old) registrarLog("troca", {
+            data: dataFmt, horario,
+            descricao: `Grupo removido em ${dataFmt}${horario ? " · " + horario : ""}`,
+            de: old, para: "—",
+        });
+    } else {
+        localStorage.setItem(chave, valor);
+        registrarLog("troca", {
+            data: dataFmt, horario,
+            descricao: `Escala atualizada em ${dataFmt}${horario ? " · " + horario : ""}`,
+            de: anterior, para: valor,
+        });
     }
+    renderEscalaAtiva();
+    renderFestividades();
 });
 
 // Abas principais: Escala / Leituras
@@ -1826,6 +2589,75 @@ document.getElementById("data-leitura").value = dataHojeStr;
 document.getElementById("btn-carregar-leitura").addEventListener("click", () => {
     const data = document.getElementById("data-leitura").value;
     if (data) carregarLeituraCompleta(data);
+});
+
+// Ao mudar data no input → atualiza cor litúrgica E auto-carrega leituras
+document.getElementById("data-leitura").addEventListener("change", () => {
+    const val = document.getElementById("data-leitura").value;
+    if (!val) return;
+    const d    = new Date(val + "T12:00:00");
+    const info = getLiturgico(d);
+    document.getElementById("main-body").className = `p-1 sm:p-2 md:p-6 transition-colors duration-700 ${info.css}`;
+    document.getElementById("lit-tempo-nome").textContent        = "Tempo " + info.nome;
+    document.getElementById("lit-tempo-significado").textContent = info.sig;
+    mesAtualIdx = d.getMonth();
+    anoAtual    = d.getFullYear();
+    renderCabecalho();
+    renderTabs();
+    // Auto-carrega leituras sempre ao mudar a data
+    carregarLeituraCompleta(val);
+});
+
+// ── Log: botão registrar, filtros, limpar ────────────────────────
+document.getElementById("btn-log-add")?.addEventListener("click", () => {
+    const texto = document.getElementById("log-texto-input")?.value?.trim();
+    const data  = document.getElementById("log-data-input")?.value;
+    if (!texto) { alert("Descreva a ocorrência antes de registrar."); return; }
+    const dataFmt = data ? data.split("-").reverse().join("/") : "";
+    registrarLog("manual", {
+        data: dataFmt,
+        descricao: texto,
+    });
+    document.getElementById("log-texto-input").value = "";
+    renderLog();
+});
+
+document.getElementById("log-lista")?.addEventListener("click", e => {
+    const btn = e.target.closest(".log-del-btn");
+    if (!btn) return;
+    const id = parseInt(btn.dataset.id);
+    const entradas = carregarLog().filter(e => e.id !== id);
+    salvarLog(entradas);
+    renderLog();
+});
+
+document.addEventListener("click", e => {
+    const fb = e.target.closest(".log-filtro-btn");
+    if (fb) {
+        document.querySelectorAll(".log-filtro-btn").forEach(b => {
+            b.classList.remove("bg-stone-700","text-white");
+            b.classList.add("border");
+        });
+        fb.classList.add("bg-stone-700","text-white");
+        logFiltroAtivo = fb.dataset.logfiltro;
+        renderLog();
+        return;
+    }
+    const lb = e.target.closest("#btn-log-limpar");
+    if (lb) {
+        if (confirm("Limpar todo o log de ocorrências? Esta ação não pode ser desfeita.")) {
+            salvarLog([]);
+            renderLog();
+        }
+    }
+});
+
+// Preenche data do log com hoje ao abrir
+document.getElementById("tab-log")?.addEventListener("click", () => {
+    const inp = document.getElementById("log-data-input");
+    if (inp && !inp.value) {
+        inp.value = new Date().toISOString().split("T")[0];
+    }
 });
 
 // WhatsApp
@@ -1920,6 +2752,26 @@ const CANTOS_BASE = [
     {id:"gl2",titulo:"Glória",artista:"Canção Nova",momento:"gloria",estilo:"carismatico",
      tom:"D",youtube:"https://www.youtube.com/results?search_query=gloria+cancao+nova+missa",spotify:"",partitura:"",
      cifra:"TOM: D\n\n[Refrão]\nD              G\nGlória a Deus nas alturas!\nA              D\nGlória, glória ao Senhor!\nG              D\nPaz na terra aos homens\nA7             D\nque ele ama!\n\n[Verso 1]\nBm             G\nTe louvamos, te bendizemos,\nA              D\nte adoramos, te glorificamos!\nBm             G\nTe damos graças por tua imensa glória,\nA7             D\nSenhor Deus, Rei dos céus!\n\n[Verso 2]\nBm             G\nSenhor Jesus Cristo, Filho unigênito,\nA              D\nCordeiro de Deus, Filho do Pai!\nBm             G\nVós que tirais os pecados do mundo,\nA7             D\ntende piedade de nós!"},
+
+    {id:"gl3",titulo:"Glória a Deus nas Alturas",artista:"Eliana Ribeiro",momento:"gloria",estilo:"liturgico",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=gloria+a+deus+nas+alturas+eliana+ribeiro",
+     cifra:"TOM: G\n\n[Refrão]\nG              Em\nGlória a Deus nas alturas,\nC              D\npaz na terra aos homens!\nG              Em\nLouvamos-te, bendizemos-te,\nC         D    G\nadoramos-te, Senhor!\n\n[Verso 1]\nC              G\nSenhor Deus, Rei dos céus,\nD              G\nDeus Pai todo-poderoso!\nC              G\nSenhor Filho unigênito,\nD7             G\nJesus Cristo, Senhor!\n\n[Verso 2]\nC              G\nVós que tirais os pecados do mundo,\nD              G\ntende piedade de nós!\nC              G\nVós que estais à direita do Pai,\nD7             G\nrecebei a nossa oração!"},
+
+    {id:"en6",titulo:"Cristãos, Cantai",artista:"Pe. Zezinho scj",momento:"entrada",estilo:"liturgico",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=cristaos+cantai+pe+zezinho",
+     cifra:"TOM: G\n\n[Refrão]\nG              C\nCristãos, cantai! Cantai ao Senhor!\nD              G\nCantai com alegria ao Rei!\nC              G\nCristãos, cantai! Louvai o Senhor!\nD7             G\nBendito seja o seu nome!\n\n[Verso 1]\nEm             C\nEntrai com alegria em sua presença,\nD              G\nlouvai ao Senhor com cânticos.\nEm             C\nO Senhor é bom, eterno é o seu amor,\nD7             G\nde geração em geração.\n\n[Verso 2]\nEm             C\nSabemos que o Senhor é nosso Deus,\nD              G\nnós somos o povo do seu pasto.\nEm             C\nEntrai pelos seus átrios com louvor,\nD7             G\nbendizei o seu santo nome!"},
+
+    {id:"seq3",titulo:"Salve a Vítima Pascal",artista:"Eliana Ribeiro / Litúrgico",momento:"sequencia",estilo:"liturgico",
+     tom:"D",youtube:"https://www.youtube.com/results?search_query=salve+a+vitima+pascal+eliana+ribeiro",
+     cifra:"TOM: D\n[SEQUÊNCIA PASCAL CANTADA]\n\n[Refrão]\nD              G\nSalve a vítima pascal!\nA              D\nSalve o Cordeiro que nos salvou!\nG              D\nCristo venceu a morte,\nA7             D\nreina vivo o Senhor!\n\n[Verso 1]\nG              D\nLouvem os cristãos a vítima pascal!\nA              D\nO Cordeiro resgatou o rebanho.\nG              D\nCristo inocente reconciliou\nA7             D\nos pecadores com o Pai.\n\n[Verso 2]\nG              D\nMorte e vida travam combate assombroso;\nA              D\no Senhor da vida, morto, reina vivo.\nG              D\nConta-nos, Maria, o que viste no caminho:\nA7             D\n\"Vi o sepulcro de Cristo vivo!\"\n\n[Final]\nG              D\nSabemos que Cristo ressuscitou dos mortos.\nA7             D\nAmém. Aleluia!"},
+
+    {id:"co4",titulo:"Vem, Senhor Jesus",artista:"Eliana Ribeiro",momento:"comunhao",estilo:"liturgico",
+     tom:"C",youtube:"https://www.youtube.com/results?search_query=vem+senhor+jesus+eliana+ribeiro+comunhao",
+     cifra:"TOM: C\n\n[Refrão]\nC              F\nVem, Senhor Jesus, vem!\nG              C\nVem habitar em mim.\nF              C\nTu és o pão da vida,\nG7             C\nvem me alimentar!\n\n[Verso 1]\nAm             F\nFelizes os chamados\nC              G\npara a Ceia do Senhor.\nAm             F\nSenhor, não sou digno\nG7             C\nde que entreis em mim.\n\n[Verso 2]\nAm             F\nMas dizei uma só palavra\nC              G\ne serei salvo, Senhor.\nAm             F\nVosso corpo e vosso sangue\nG7             C\nsão minha força e amor."},
+
+    {id:"en7",titulo:"Ressuscitou, Aleluia",artista:"Comunidade Recado",momento:"entrada",estilo:"carismatico",
+     tom:"A",youtube:"https://www.youtube.com/results?search_query=ressuscitou+aleluia+comunidade+recado",
+     cifra:"TOM: A\n\n[Refrão]\nA              E\nRessuscitou! Aleluia!\nD              A\nRessuscitou! Aleluia!\nE              A\nCristo venceu a morte!\nD         E    A\nAleluia, Aleluia!\n\n[Verso 1]\nD              A\nEle não está mais aqui,\nE              A\ncomo disse, ressuscitou!\nD              A\nVinde e vede o lugar\nE7             A\nonde ele foi posto.\n\n[Verso 2]\nD              A\nEle vai adiante de vós,\nE              A\nna Galileia o encontrareis.\nD              A\nEis o que vos anuncio,\nE7             A\naleluia, o Senhor!"},
 
     // ── 04 SALMO ──────────────────────────────────────────────────
     {id:"sal1",titulo:"O Senhor É Meu Pastor — Sl 22",artista:"Litúrgico Responsorial",momento:"salmo",estilo:"liturgico",
@@ -2032,7 +2884,72 @@ const CANTOS_BASE = [
      tom:"G",youtube:"https://www.youtube.com/results?search_query=acao+de+gracas+shalom+pos+comunhao",spotify:"",partitura:"",
      cifra:"TOM: G\n\n[Refrão]\nG              Em\nAção de graças, Senhor,\nC              D\npelo que fizeste em mim!\nG              Em\nTua bondade e teu amor\nC         D    G\nsão eternos, Senhor!\n\n[Verso 1]\nG              Em\nEncheste minha vida\nC              D\nde tua santa presença.\nG              Em\nRecebo com gratidão\nC         D    G\neste dom do teu amor!\n\n[Verso 2]\nG              Em\nTu me amaste primeiro,\nC              D\nquando eu não merecia.\nG              Em\nTeu amor me transformou,\nC         D    G\nalegria de viver!"},
 
-    // ── 15 FINAL ──────────────────────────────────────────────────
+    // ── 04 SALMO ──────────────────────────────────────────────────
+    // tipo: louvor | confianca | arrependimento | meditacao
+    // compasso, clima: informações para o músico
+    {id:"sal1",titulo:"Sl 22 — O Senhor É o Meu Pastor",artista:"Cindy Ferrarezi",momento:"salmo",estilo:"liturgico",
+     tipo:"confianca",compasso:"4/4 (Dedilhado)",clima:"Suave, notas sustentadas.",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=salmo+22+o+senhor+e+meu+pastor+cindy+ferrarezi",
+     cifra:"TOM: G\n\n[Refrão]\nG              C\nO Senhor é o meu pastor,\nD              G\nnada me faltará.\nC              G\nEm verdes pastagens me faz repousar\nD7             G\ne me conduz às águas tranquilas.\n\n[Estrofe 1]\nEm             C\nRestaurando minhas forças,\nD              G\nguia-me por retas veredas.\nEm             C\nMesmo que eu passe por vales sombrios,\nD7             G\nnão temerei o mal algum.\n\n[Estrofe 2]\nEm             C\nTeu cajado e teu báculo\nD              G\nsão meu amparo e consolo.\nEm             C\nPreparas para mim uma mesa\nD7             G\nna presença dos meus adversários."},
+
+    {id:"sal2",titulo:"Sl 33 — Gustad e Vede",artista:"Damasceno",momento:"salmo",estilo:"liturgico",
+     tipo:"louvor",compasso:"4/4",clima:"Animado, batida aberta.",
+     tom:"D",youtube:"https://www.youtube.com/results?search_query=salmo+33+gustai+e+vede+damasceno",
+     cifra:"TOM: D\n\n[Refrão]\nD              G\nGustai e vede que o Senhor é bom!\nA              D\nFeliz o homem que nele se refugia!\n\n[Estrofe 1]\nG              D\nBendirei o Senhor em todo tempo,\nA              D\nseu louvor sempre em meus lábios.\nG              D\nNo Senhor se gloriará minha alma;\nA7             D\nos humildes ouvirão e se alegrarão.\n\n[Estrofe 2]\nG              D\nEngrandecei o Senhor comigo,\nA              D\nexaltemos juntos o seu nome!\nG              D\nBusquei o Senhor e ele me respondeu;\nA7             D\nme livrou de todos os meus temores."},
+
+    {id:"sal3",titulo:"Sl 50 — Misericórdia, Senhor",artista:"Salmos para Rezar",momento:"salmo",estilo:"liturgico",
+     tipo:"arrependimento",compasso:"3/4",clima:"Reflexivo, ritmo de valsa/balada.",
+     tom:"Am",youtube:"https://www.youtube.com/results?search_query=salmo+50+misericordia+senhor+salmos+para+rezar",
+     cifra:"TOM: Am\n\n[Refrão]\nAm             F\nMisericórdia, Senhor,\nC              G\npois somos pecadores!\nAm             F\nMisericórdia, Senhor,\nG              Am\ntende piedade de nós!\n\n[Estrofe 1]\nF              C\nPiedade de mim, ó Deus,\nG              Am\npor vossa misericórdia!\nF              C\nApagai minha iniquidade\nG              Am\npela vossa compaixão.\n\n[Estrofe 2]\nF              C\nCriai em mim, ó Deus, um coração puro,\nG              Am\nrenovai em mim um espírito firme.\nF              C\nNão me rejeiteis da vossa presença,\nG              Am\nnão retireis de mim o Espírito Santo."},
+
+    {id:"sal4",titulo:"Sl 62 — Meu Deus, Minha Sede",artista:"Frutos da Cruz",momento:"salmo",estilo:"liturgico",
+     tipo:"meditacao",compasso:"Ritmo Livre",clima:"Quase sem pulso definido (estilo Taizé).",
+     tom:"C",youtube:"https://www.youtube.com/results?search_query=salmo+62+meu+deus+minha+sede+frutos+da+cruz",
+     cifra:"TOM: C\n\n[Refrão — Livre]\nC              Am\nÓ Deus, tu és meu Deus,\nF              G\ne eu te busco desde o amanhecer.\nC              Am\nMinha alma tem sede de ti,\nF         G    C\nmeu corpo suspira por ti.\n\n[Estrofe 1 — Livre]\nF              C\nNo santuário te contemplei\nG              C\nvendo tua glória e poder.\nF              C\nTeu amor vale mais que a vida,\nG              C\nmeus lábios te louvam.\n\n[Estrofe 2 — Livre]\nF              C\nAssim eu te bendigo em vida,\nG              C\nem teu nome ergo minhas mãos.\nF              C\nMinha alma fica saciada,\nG              C\ncomo de gordura e abundância."},
+
+    {id:"sal5",titulo:"Sl 90 — No Abrigo do Senhor",artista:"Irmã Miriam Kolin",momento:"salmo",estilo:"liturgico",
+     tipo:"confianca",compasso:"4/4 (Dedilhado)",clima:"Suave, notas sustentadas.",
+     tom:"F",youtube:"https://www.youtube.com/results?search_query=salmo+90+no+abrigo+do+senhor+irma+miriam+kolin",
+     cifra:"TOM: F\n\n[Refrão]\nF              Bb\nNo abrigo do Altíssimo\nC              F\nviverei em seu amparo.\nBb             F\nDirei ao Senhor: tu és meu refúgio,\nC7             F\nmeu Deus em quem confio!\n\n[Estrofe 1]\nBb             F\nCobre-te ele com suas asas,\nC              F\nsob suas penas encontras abrigo.\nBb             F\nO Senhor é teu escudo e defesa,\nC7             F\nnão temerás terror noturno.\n\n[Estrofe 2]\nBb             F\nPois seus anjos te protegem\nC              F\nem todos os teus caminhos.\nBb             F\nNas palmas das mãos te carregarão\nC7             F\npara que não tropeces em pedra."},
+
+    {id:"sal6",titulo:"Sl 129 — Das Profundezas",artista:"Salmos Orante",momento:"salmo",estilo:"liturgico",
+     tipo:"arrependimento",compasso:"6/8",clima:"Reflexivo, ritmo de balada.",
+     tom:"Dm",youtube:"https://www.youtube.com/results?search_query=salmo+129+das+profundezas+salmos+orante",
+     cifra:"TOM: Dm\n\n[Refrão]\nDm             Bb\nDas profundezas eu clamo a vós,\nC              Dm\nScutor meu clamor, ó Senhor!\nBb             F\nVossos ouvidos atentos à minha voz,\nC              Dm\nauvi minha súplica!\n\n[Estrofe 1]\nBb             F\nSe levardes em conta nossas faltas,\nC              Dm\nquem haverá de subsistir?\nBb             F\nMas em vós se encontra o perdão,\nC              Dm\ncu vos temo e em vós espero.\n\n[Estrofe 2]\nBb             F\nNo Senhor ponho minha esperança,\nC              Dm\nespero em sua palavra.\nBb             F\nMinha alma espera no Senhor\nC              Dm\nmais que o vigia pela aurora."},
+
+    {id:"sal7",titulo:"Sl 117 — Este É o Dia",artista:"Comunidade Recado",momento:"salmo",estilo:"carismatico",
+     tipo:"louvor",compasso:"2/4",clima:"Animado, batida aberta.",
+     tom:"E",youtube:"https://www.youtube.com/results?search_query=salmo+117+este+e+o+dia+comunidade+recado",
+     cifra:"TOM: E\n\n[Refrão]\nE              A\nEste é o dia que fez o Senhor!\nB              E\nAlegremo-nos e exultemos!\nA              E\nDai graças ao Senhor, pois ele é bom,\nB7             E\nseu amor é para sempre!\n\n[Estrofe 1]\nA              E\nA pedra que os construtores rejeitaram\nB              E\ntornou-se a pedra angular.\nA              E\nEsta é a obra do Senhor,\nB7             E\nque maravilha aos nossos olhos!\n\n[Estrofe 2]\nA              E\nBendito o que vem em nome do Senhor!\nB              E\nDo templo do Senhor vos abençoamos.\nA              E\nO Senhor é Deus, ele nos iluminou,\nB7             E\nformemos o cortejo com folhas!"},
+
+    // ── Cantos das comunidades/artistas sugeridos ──────────────────
+    {id:"er1",titulo:"Magnificat",artista:"Eliana Ribeiro",momento:"entrada",estilo:"liturgico",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=magnificat+eliana+ribeiro",
+     cifra:"TOM: G\n\n[Refrão]\nG              D\nMagnificat, magnificat,\nEm             C\nmahnifica o Senhor minha alma!\nG              D\nMagnificat, magnificat,\nC         D    G\nexultou meu espírito em Deus!\n\n[Estrofe 1]\nG              Em\nPorque olhou a humildade\nC              D\nda sua serva.\nG              Em\nAgora me chamarão feliz\nC         D    G\ntodas as nações.\n\n[Estrofe 2]\nG              Em\nO poderoso fez grandes coisas\nC              D\npara mim.\nG              Em\nSanto é o seu nome,\nC         D    G\nsua misericórdia de geração em geração."},
+
+    {id:"er2",titulo:"Jesus, Tu És Tudo Pra Mim",artista:"Eliana Ribeiro",momento:"comunhao",estilo:"liturgico",
+     tom:"D",youtube:"https://www.youtube.com/results?search_query=jesus+tu+es+tudo+pra+mim+eliana+ribeiro",
+     cifra:"TOM: D\n\n[Refrão]\nD              G\nJesus, tu és tudo pra mim,\nA              D\ntu és a minha razão de viver.\nG              D\nNo teu amor encontrei a paz,\nA7             D\nno teu nome quero crer.\n\n[Estrofe 1]\nG              D\nPão partido, sangue derramado,\nA              D\namor sem medida dado.\nG              D\nNa mesa da tua aliança\nA7             D\nme fazes filho e herdeiro.\n\n[Estrofe 2]\nG              D\nNão há outro nome debaixo do céu\nA              D\npelo qual possamos ser salvos.\nG              D\nSomente em Jesus há redenção,\nA7             D\nem ti está minha esperança."},
+
+    {id:"rc1",titulo:"Sois a Nossa Alegria",artista:"Comunidade Recado",momento:"entrada",estilo:"carismatico",
+     tom:"A",youtube:"https://www.youtube.com/results?search_query=sois+a+nossa+alegria+comunidade+recado",
+     cifra:"TOM: A\n\n[Refrão]\nA              D\nSois a nossa alegria, Senhor,\nE              A\nvosso nome louvaremos!\nD              A\nSois a nossa alegria, Senhor,\nE7             A\nna vossa presença viveremos!\n\n[Estrofe 1]\nD              A\nEntrai com alegria no santuário,\nE              A\ntrazei oferenda ao Senhor!\nD              A\nProstrai-vos diante do Altíssimo,\nE7             A\ntoda a terra cante ao Senhor!\n\n[Estrofe 2]\nD              A\nO Senhor é nosso Deus e Rei,\nE              A\nnós somos o povo do seu pasto.\nD              A\nEle nos criou, a ele pertencemos,\nE7             A\nsomos as ovelhas de sua mão."},
+
+    {id:"cs1",titulo:"Hosana",artista:"Comunidade Shalon",momento:"entrada",estilo:"carismatico",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=hosana+comunidade+shalon",
+     cifra:"TOM: G\n\n[Refrão]\nG              D\nHosana, hosana, hosana!\nEm             C\nHosana, hosana ao Senhor!\nG              D\nBendito o que vem em nome do Senhor,\nC         D    G\nhosana nas alturas!\n\n[Estrofe 1]\nEm             C\nExaltamos o teu nome, Senhor,\nD              G\nreina sobre toda a terra.\nEm             C\nTodo joelho se dobrará,\nD              G\ntoda língua proclamará.\n\n[Estrofe 2]\nEm             C\nTu és o Rei dos reis,\nD              G\no Senhor dos senhores.\nEm             C\nSeja exaltado o teu nome\nD              G\npor toda a eternidade."},
+
+    {id:"bc1",titulo:"Deus Fiel",artista:"Banda Capella",momento:"final",estilo:"carismatico",
+     tom:"E",youtube:"https://www.youtube.com/results?search_query=deus+fiel+banda+capella",
+     cifra:"TOM: E\n\n[Refrão]\nE              A\nDeus fiel, Deus fiel,\nB              E\nfiel és tu, Senhor!\nA              E\nTuas misericórdias se renovam\nB7             E\na cada novo dia!\n\n[Estrofe 1]\nC#m            A\nAinda que a figueira não floresça,\nB              E\nainda que a vinha seque,\nC#m            A\nainda que não haja frutos,\nB7             E\neu me alegrarei no Senhor.\n\n[Estrofe 2]\nC#m            A\nO Senhor é minha força,\nB              E\nfaz meus pés como de corça.\nC#m            A\nMe conduz sobre as alturas,\nB7             E\nel é o meu Deus!"},
+
+    {id:"smj1",titulo:"Cordeiro Imolado",artista:"Santa Missa Jovem",momento:"cordeiro",estilo:"carismatico",
+     tom:"D",youtube:"https://www.youtube.com/results?search_query=cordeiro+imolado+santa+missa+jovem",
+     cifra:"TOM: D\n\n[Refrão]\nD              G\nCordeiro imolado!\nA              D\nCordeiro de Deus!\nG              D\nQue tirais o pecado do mundo,\nA7             D\ntende piedade de nós!\n\n[Estrofe 1]\nG              D\nQue tirais o pecado do mundo,\nA              D\ntende piedade, Senhor!\nG              D\nQue tirais o pecado do mundo,\nA7             D\ndai-nos a paz!\n\n[Final]\nG              D\nCordeiro de Deus,\nA              D\nfilho do Pai eterno,\nG              D\nte adoramos, te louvamos,\nA7             D\nte glorificamos!"},
+
+    {id:"cm1",titulo:"Espírito de Deus",artista:"Um Carismático na Missa",momento:"ofertorio",estilo:"carismatico",
+     tom:"G",youtube:"https://www.youtube.com/results?search_query=espirito+de+deus+carismatico+missa",
+     cifra:"TOM: G\n\n[Refrão]\nG              Em\nEspírito de Deus,\nC              D\nvem renovar a terra!\nG              Em\nEspírito de Deus,\nC         D    G\nvem transformar nossos corações!\n\n[Estrofe 1]\nG              Em\nComo o fogo, como o vento,\nC              D\nassim tu vens, Senhor.\nG              Em\nTua chama nos purifica,\nC         D    G\nteu sopro nos renova.\n\n[Estrofe 2]\nG              Em\nVem, Espírito Santo,\nC              D\nvem encher nossa vida.\nG              Em\nQue possamos ser testemunhas\nC         D    G\ndo teu amor no mundo."},
     {id:"f1",titulo:"Ide Por Todo o Mundo",artista:"Comunidade Shalom",momento:"final",estilo:"carismatico",
      tom:"D",youtube:"https://www.youtube.com/results?search_query=ide+por+todo+o+mundo+shalom+missao",spotify:"",partitura:"",
      cifra:"TOM: D\n\n[Refrão]\nD              G\nIde por todo o mundo,\nA              D\nanunciai o Evangelho!\nG              D\nEu estarei convosco\nA7             D\naté o fim dos tempos!\n\n[Verso 1]\nG              D\nIde e fazei discípulos\nA              D\nde todos os povos da terra.\nG              D\nBaptizai-os em nome do Pai,\nA7             D\ndo Filho e do Espírito Santo!\n\n[Verso 2]\nG              D\nEnsinai-os a guardar\nA              D\ntudo o que vos mandei.\nG              D\nE eis que estou convosco\nA7             D\ntodos os dias até o fim!"},
@@ -2066,30 +2983,71 @@ const LABEL_MOMENTO = {
     comunhao:"13 · Comunhão", poscomunhao:"14 · Pós-Comunhão", final:"15 · Final"
 };
 
-function urlCifraClub(titulo, artista) {
-    const q = encodeURIComponent((titulo + " " + (artista||"")).trim());
-    return `https://www.cifraclub.com.br/busca/?q=${q}`;
+function slugify(str) {
+    return (str||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+        .toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 }
+// Busca pré-preenchida com título + artista — confiável para todas as músicas
+function urlCifraClubDireto(titulo, artista) {
+    const q = encodeURIComponent([titulo, artista].filter(Boolean).join(" "));
+    return `https://www.cifraclub.com.br/busca/?q=${q}&type=cifra`;
+}
+function urlBananaCifrasDireto(titulo, artista) {
+    const q = encodeURIComponent([titulo, artista].filter(Boolean).join(" "));
+    return `https://www.bananacifras.com.br/?s=${q}`;
+}
+function urlYouTubeAudio(titulo, artista) {
+    const q = encodeURIComponent([titulo, artista, "missa"].filter(Boolean).join(" "));
+    return `https://www.youtube.com/results?search_query=${q}`;
+}
+function urlCancaoNova(titulo, artista) {
+    const q = encodeURIComponent([titulo, artista].filter(Boolean).join(" "));
+    return `https://musicas.cancaonova.com/?s=${q}`;
+}
+function urlMuseScore(titulo, artista) {
+    const q = encodeURIComponent([titulo, artista].filter(Boolean).join(" "));
+    return `https://musescore.com/sheetmusic?text=${q}`;
+}
+function urlCifraClub(titulo, artista) { return urlCifraClubDireto(titulo, artista); }
+
+let tipoFiltro = "todos";
+
+const TIPO_LABEL = {
+    louvor:         { label:"🎉 Louvor / Festa",      cor:"bg-amber-100 text-amber-800 border-amber-200" },
+    confianca:      { label:"🕊️ Confiança / Entrega", cor:"bg-blue-100 text-blue-800 border-blue-200" },
+    arrependimento: { label:"🙏 Arrependimento",      cor:"bg-purple-100 text-purple-800 border-purple-200" },
+    meditacao:      { label:"🌿 Meditação / Silêncio", cor:"bg-teal-100 text-teal-800 border-teal-200" },
+};
 
 function renderCantos() {
     const grid = document.getElementById("cantos-grid");
+    const busca = (document.getElementById("cantos-busca")?.value || "").toLowerCase().trim();
 
-    // Filtra e ordena na ordem litúrgica
-    let todos = todosOsCantos().filter(c =>
-        momentoFiltro === "todos" || c.momento === momentoFiltro
-    );
+    // Filtra por momento, tipo e busca textual — independentes
+    let todos = todosOsCantos().filter(c => {
+        if (momentoFiltro !== "todos" && c.momento !== momentoFiltro) return false;
+        if (tipoFiltro   !== "todos" && c.tipo    !== tipoFiltro)    return false;
+        if (busca) {
+            const haystack = [c.titulo, c.artista, c.cifra, c.clima, c.compasso].join(" ").toLowerCase();
+            if (!haystack.includes(busca)) return false;
+        }
+        return true;
+    });
     todos.sort((a, b) => {
         const ia = ORDEM_MOMENTOS.indexOf(a.momento);
         const ib = ORDEM_MOMENTOS.indexOf(b.momento);
         return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
     });
 
+    // Mostrar/ocultar filtro de tipo salmo
+    const tipoDiv = document.getElementById("salmo-tipo-filtros");
+    if (tipoDiv) tipoDiv.classList.toggle("hidden", momentoFiltro !== "salmo" && momentoFiltro !== "todos");
+
     if (!todos.length) {
-        grid.innerHTML = `<div class="col-span-full text-center py-12 text-stone-300"><div class="text-4xl mb-2">🎵</div><p class="text-sm font-cinzel">Nenhum canto cadastrado neste momento</p></div>`;
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-stone-300"><div class="text-4xl mb-2">🎵</div><p class="text-sm font-cinzel">Nenhum canto encontrado</p></div>`;
         return;
     }
 
-    // Agrupa por momento quando exibe "Todos"
     let html = "";
     let ultimoMomento = null;
     todos.forEach(c => {
@@ -2101,28 +3059,53 @@ function renderCantos() {
                 </span>
             </div>`;
         }
+
         const badge = c.estilo === "carismatico"
-            ? `<span class="badge-carismatico text-[13px] font-bold uppercase px-2 py-0.5 rounded-full">Carismático</span>`
-            : `<span class="badge-liturgico text-[13px] font-bold uppercase px-2 py-0.5 rounded-full">Litúrgico</span>`;
-        const tom = c.tom ? `<span class="text-[13px] bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full font-bold">Tom: ${sanitizar(c.tom)}</span>` : "";
-        const labelMom = momentoFiltro !== "todos" ? `<span class="text-[13px] text-stone-400 font-bold uppercase">${sanitizar(LABEL_MOMENTO[c.momento]||c.momento)}</span>` : "";
+            ? `<span class="badge-carismatico text-[12px] font-bold uppercase px-2 py-0.5 rounded-full">Carismático</span>`
+            : `<span class="badge-liturgico text-[12px] font-bold uppercase px-2 py-0.5 rounded-full">Litúrgico</span>`;
+        const tom = c.tom ? `<span class="text-[12px] bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full font-bold">Tom: ${sanitizar(c.tom)}</span>` : "";
+        const labelMom = momentoFiltro !== "todos" ? `<span class="text-[12px] text-stone-400 font-bold uppercase">${sanitizar(LABEL_MOMENTO[c.momento]||c.momento)}</span>` : "";
+
+        // Badge de tipo/clima para salmos
+        const tipoBadge = c.tipo && TIPO_LABEL[c.tipo] ? `
+            <div class="flex flex-wrap gap-1 mt-1">
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded-full border ${TIPO_LABEL[c.tipo].cor}">${TIPO_LABEL[c.tipo].label}</span>
+                ${c.compasso ? `<span class="text-[11px] bg-stone-50 text-stone-500 px-2 py-0.5 rounded-full border border-stone-200 font-bold">♩ ${sanitizar(c.compasso)}</span>` : ""}
+            </div>
+            ${c.clima ? `<p class="text-[12px] text-stone-400 italic mt-0.5">🎸 ${sanitizar(c.clima)}</p>` : ""}` : "";
+
+        const ccUrl  = urlCifraClubDireto(c.titulo, c.artista);
+        const banUrl = urlBananaCifrasDireto(c.titulo, c.artista);
+        const cnUrl  = urlCancaoNova(c.titulo, c.artista);
+        const ytUrl  = c.youtube || urlYouTubeAudio(c.titulo, c.artista);
+
         html += `<div class="canto-card bg-white rounded-xl border border-stone-200 shadow-sm p-4 flex flex-col gap-3">
             <div>
                 <div class="flex items-start justify-between gap-2 mb-1">
                     <h3 class="font-cinzel font-bold text-[var(--header)] text-sm leading-snug">${sanitizar(c.titulo)}</h3>${badge}
                 </div>
-                <p class="text-[15px] text-stone-400 mb-1">${sanitizar(c.artista||"")}</p>
+                <p class="text-[14px] text-stone-400 mb-1">${sanitizar(c.artista||"")}</p>
                 <div class="flex flex-wrap gap-1">${labelMom} ${tom}</div>
+                ${tipoBadge}
             </div>
-            <div class="flex flex-wrap gap-2 mt-auto">
-                ${c.cifra ? `<button data-id="${sanitizar(c.id)}" class="btn-ver-cifra text-[14px] font-bold bg-[var(--bg-main)] text-[var(--header)] px-3 py-1.5 rounded-lg border border-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition-colors">🎸 Cifra / Tom</button>` : ""}
-                <a href="${sanitizar(urlCifraClub(c.titulo, c.artista))}" target="_blank" rel="noopener"
-                   class="text-[14px] font-bold bg-orange-50 text-orange-700 px-3 py-1.5 rounded-lg border border-orange-200 hover:bg-orange-600 hover:text-white transition-colors">
+            <div class="flex flex-wrap gap-1 mt-auto">
+                ${c.cifra ? `<button data-id="${sanitizar(c.id)}" class="btn-ver-cifra text-[12px] font-bold bg-[var(--bg-main)] text-[var(--header)] px-2.5 py-1.5 rounded-lg border border-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition-colors">🎸 Cifra</button>` : ""}
+                <a href="${sanitizar(ccUrl)}" target="_blank" rel="noopener" title="Buscar '${sanitizar(c.titulo)}' no Cifra Club"
+                   class="text-[12px] font-bold bg-orange-50 text-orange-700 px-2.5 py-1.5 rounded-lg border border-orange-200 hover:bg-orange-600 hover:text-white transition-colors">
                    🔍 Cifra Club
                 </a>
-                ${c.youtube ? `<a href="${sanitizar(c.youtube)}" target="_blank" rel="noopener" class="text-[14px] font-bold bg-red-50 text-red-600 px-3 py-1.5 rounded-lg border border-red-200 hover:bg-red-600 hover:text-white transition-colors">▶ YouTube</a>` : ""}
-                ${c.spotify ? `<a href="${sanitizar(c.spotify)}" target="_blank" rel="noopener" class="text-[14px] font-bold bg-green-50 text-green-700 px-3 py-1.5 rounded-lg border border-green-200 hover:bg-green-600 hover:text-white transition-colors">♫ Spotify</a>` : ""}
-                ${c.partitura ? `<a href="${sanitizar(c.partitura)}" target="_blank" rel="noopener" class="text-[14px] font-bold bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg border border-blue-200 hover:bg-blue-600 hover:text-white transition-colors">📄 Partitura</a>` : ""}
+                <a href="${sanitizar(banUrl)}" target="_blank" rel="noopener" title="Buscar '${sanitizar(c.titulo)}' no Banana Cifras"
+                   class="text-[12px] font-bold bg-yellow-50 text-yellow-700 px-2.5 py-1.5 rounded-lg border border-yellow-300 hover:bg-yellow-500 hover:text-white transition-colors">
+                   🍌 Banana
+                </a>
+                <a href="${sanitizar(ytUrl)}" target="_blank" rel="noopener" title="Ouvir '${sanitizar(c.titulo)}' no YouTube"
+                   class="text-[12px] font-bold bg-red-50 text-red-600 px-2.5 py-1.5 rounded-lg border border-red-200 hover:bg-red-600 hover:text-white transition-colors">
+                   ▶ YouTube
+                </a>
+                <a href="${sanitizar(cnUrl)}" target="_blank" rel="noopener" title="Partitura/letra no site Canção Nova Músicas"
+                   class="text-[12px] font-bold bg-blue-50 text-blue-700 px-2.5 py-1.5 rounded-lg border border-blue-200 hover:bg-blue-600 hover:text-white transition-colors">
+                   🎵 C. Nova
+                </a>
             </div>
         </div>`;
     });
@@ -2141,14 +3124,17 @@ function abrirCifra(id) {
 
 function atualizarModalCifra() {
     if (!cantoAtual) return;
-    document.getElementById("modal-titulo").textContent  = cantoAtual.titulo;
-    document.getElementById("modal-artista").textContent = cantoAtual.artista || "";
+    const t = cantoAtual.titulo, a = cantoAtual.artista;
+    document.getElementById("modal-titulo").textContent  = t;
+    document.getElementById("modal-artista").textContent = a || "";
     document.getElementById("trans-tom").textContent = cantoAtual.tom ? transporTom(cantoAtual.tom, semitonsAtual) : "—";
     document.getElementById("trans-semitons").textContent = semitonsAtual === 0 ? "tom original" : (semitonsAtual > 0 ? "+" : "") + semitonsAtual + " semitons";
     document.getElementById("modal-cifra-texto").textContent = transporCifra(cantoAtual.cifra || "", semitonsAtual);
-    // Cifra Club link
-    const ccLink = document.getElementById("modal-cifraclub-link");
-    if (ccLink) ccLink.href = urlCifraClub(cantoAtual.titulo, cantoAtual.artista);
+    const set = (id, url) => { const el = document.getElementById(id); if (el) el.href = url; };
+    set("modal-cifraclub-link",  urlCifraClubDireto(t, a));
+    set("modal-banana-link",     urlBananaCifrasDireto(t, a));
+    set("modal-youtube-link",    cantoAtual.youtube || urlYouTubeAudio(t, a));
+    set("modal-cancaonova-link", urlCancaoNova(t, a));
 }
 
 function fecharModalCifra() {
@@ -2180,6 +3166,26 @@ document.getElementById("momento-filtros").addEventListener("click", e => {
     btn.classList.add("active");
     momentoFiltro = btn.dataset.momento;
     renderCantos();
+});
+
+// Filtro de tipo salmo
+document.addEventListener("click", e => {
+    const btn = e.target.closest(".tipo-btn");
+    if (!btn) return;
+    document.querySelectorAll(".tipo-btn").forEach(b => {
+        b.classList.remove("active","bg-stone-700","text-white");
+        b.classList.add("border");
+    });
+    btn.classList.add("active","bg-stone-700","text-white");
+    tipoFiltro = btn.dataset.tipo;
+    renderCantos();
+});
+
+// Busca textual — debounce leve
+let _buscaTimer;
+document.getElementById("cantos-busca")?.addEventListener("input", () => {
+    clearTimeout(_buscaTimer);
+    _buscaTimer = setTimeout(renderCantos, 200);
 });
 
 document.getElementById("btn-add-canto").addEventListener("click", () => {
@@ -2251,8 +3257,19 @@ async function gerarRoteiro() {
     // Busca leitura da API
     let litData = null;
     try {
-        const res = await fetch(`https://liturgia.up.railway.app/?dia=${dia}&mes=${mes}&ano=${ano}`);
-        litData = await res.json();
+        const res = await fetch(`https://liturgia.up.railway.app/v2/?dia=${dia}&mes=${mes}&ano=${ano}`);
+        const _raw = await res.json();
+        // Normaliza v2 para estrutura interna
+        const _leit = _raw.leituras || {};
+        litData = {
+            liturgia:        _raw.liturgia || _raw.titulo || "",
+            cor:             _raw.cor || "",
+            primeiraLeitura: _leit.primeiraLeitura?.[0] || null,
+            segundaLeitura:  _leit.segundaLeitura?.[0]  || null,
+            salmo:           _leit.salmo?.[0]            || null,
+            evangelho:       _leit.evangelho?.[0]        || null,
+            antifonas:       _raw.antifonas              || {},
+        };
     } catch(e) {
         container.innerHTML = `<div class="text-center py-12 text-red-400"><div class="text-4xl mb-2">⚠️</div><p>Erro ao carregar liturgia. Verifique a conexão.</p></div>`;
         return;
@@ -2287,10 +3304,9 @@ async function gerarRoteiro() {
     const refraoAcl = isQuaresmaOuAdvento ? "Glória a vós, ó Cristo, Verbo de Deus." : "Aleluia, Aleluia, Aleluia!";
 
     // Extrai versículo da antífona
-    const antifonaRaw = litData.evangelho?.antifona || "";
-    const matchAnt = antifonaRaw.match(/^([A-Za-zÀ-ú0-9\s,]+\d[a-z]?\.\s*)(.+)$/s);
-    const refVers = matchAnt ? sanitizar(matchAnt[1].trim()) : "";
-    const textoVers = matchAnt ? sanitizar(matchAnt[2].trim()) : sanitizar(antifonaRaw);
+    // Versículo da aclamação não disponível na API v2
+    const refVers   = "";
+    const textoVers = "";
 
     // Grupo escalado no dia (domingos: d1..d4; sábados: sab)
     const dow = d.getDay();
@@ -3348,6 +4364,42 @@ function buscarPorNome(nome) {
     }
 }
 
+// ─── Escala de festividade ─────────────────────────────────────────
+// Chave: "fest-equipe-YYYY-MM-DD"  →  JSON: [{horario, grupo}]
+function chaveEscalaFest(dataIso) { return `fest-equipe-${dataIso}`; }
+
+function carregarEscalaFest(dataIso) {
+    try { return JSON.parse(localStorage.getItem(chaveEscalaFest(dataIso)) || "[]"); }
+    catch(e) { return []; }
+}
+function salvarEscalaFest(dataIso, arr) {
+    localStorage.setItem(chaveEscalaFest(dataIso), JSON.stringify(arr));
+}
+
+// dataFmt = "DD/MM", dataIso = "YYYY-MM-DD"
+let _festModalDataIso = "";
+
+function renderEquipesFest() {
+    const arr  = carregarEscalaFest(_festModalDataIso);
+    const cont = document.getElementById("fest-equipes-salvas");
+    const vazio = document.getElementById("fest-escala-vazio");
+    if (!cont) return;
+
+    if (!arr.length) {
+        cont.innerHTML = "";
+        if (vazio) vazio.classList.remove("hidden");
+        return;
+    }
+    if (vazio) vazio.classList.add("hidden");
+    cont.innerHTML = arr.map((item, idx) => `
+        <span class="inline-flex items-center gap-1 text-[12px] font-bold bg-[var(--header)] text-white px-2 py-0.5 rounded-full">
+            🎵 ${sanitizar(item.horario)} · ${sanitizar(item.grupo)}
+            ${isAdmin
+                ? `<button class="fest-equipe-del ml-1 opacity-70 hover:opacity-100 text-white font-bold leading-none" data-idx="${idx}" title="Remover">×</button>`
+                : ""}
+        </span>`).join("");
+}
+
 function abrirModalFestividade(titulo, data) {
     const modal  = document.getElementById("modal-festividade");
     const body   = document.getElementById("fest-modal-body");
@@ -3359,26 +4411,47 @@ function abrirModalFestividade(titulo, data) {
     modal.classList.remove("hidden");
     document.body.style.overflow = "hidden";
 
+    // Converte DD/MM → YYYY-MM-DD
+    const [dd, mm] = data.split("/");
+    _festModalDataIso = `${anoAtual}-${mm}-${dd}`;
+
+    // Mostra/oculta painel admin
+    const adminSection = document.getElementById("fest-escala-admin");
+    if (adminSection) adminSection.classList.toggle("hidden", !isAdmin);
+
+    // Atualiza label do botão ocultar conforme estado atual
+    const btnOcultar = document.getElementById("fest-ocultar-evento");
+    if (btnOcultar) {
+        const [dd2, mm2] = data.split("/");
+        const jaOculto = carregarOcultos().includes(`${dd2}/${mm2}`);
+        btnOcultar.textContent = jaOculto ? "👁️ Mostrar evento" : "👁️ Ocultar este evento";
+    }
+
+    // Popula select de grupos (fixos + personalizados já usados)
+    const sel = document.getElementById("fest-grupo-select");
+    if (sel) {
+        const extras = carregarEscalaFest(_festModalDataIso).map(e => e.grupo)
+            .filter(g => !grupos.includes(g));
+        const todos = [...grupos, ...extras.filter((v,i,a) => a.indexOf(v)===i)];
+        sel.innerHTML = `<option value="">— selecione —</option>`
+            + todos.map(g => `<option value="${sanitizar(g)}">${sanitizar(g)}</option>`).join("")
+            + `<option value="__outro__">✏️ Outro…</option>`;
+    }
+
+    renderEquipesFest();
+
+    // Conteúdo descritivo
     const dados    = consultarSanto(titulo);
     const wikiUrl  = urlWikipedia(titulo);
     const googleUrl = urlGoogle(titulo);
 
-    let html = "";
-
-    // Ícone SVG por categoria — pequeno, contextual
-    if (dados?.desc) {
-        html += `
-        <div class="bg-white border border-stone-200 rounded-xl p-4 mb-3 shadow-sm">
-            <p class="text-sm text-stone-700 leading-relaxed">${sanitizar(dados.desc)}</p>
-        </div>`;
-    } else {
-        html += `
-        <p class="text-sm text-stone-400 italic text-center py-3">
-            Consulte os links abaixo para informações detalhadas sobre esta celebração.
-        </p>`;
-    }
-
-    body.innerHTML = html;
+    body.innerHTML = dados?.desc
+        ? `<div class="bg-white border border-stone-200 rounded-xl p-4 mb-3 shadow-sm">
+               <p class="text-sm text-stone-700 leading-relaxed">${sanitizar(dados.desc)}</p>
+           </div>`
+        : `<p class="text-sm text-stone-400 italic text-center py-3">
+               Consulte os links abaixo para informações detalhadas sobre esta celebração.
+           </p>`;
 
     links.innerHTML = `
         <a href="${sanitizar(wikiUrl)}" target="_blank" rel="noopener"
@@ -3390,6 +4463,121 @@ function abrirModalFestividade(titulo, data) {
            🔍 Google
         </a>`;
 }
+
+// Botão + Adicionar equipe
+document.getElementById("fest-escala-add")?.addEventListener("click", () => {
+    if (!_festModalDataIso) return;
+    const selH = document.getElementById("fest-horario-select");
+    const selG = document.getElementById("fest-grupo-select");
+    let horario = selH?.value || "07h30";
+    let grupo   = selG?.value || "";
+
+    // Horário livre
+    if (horario === "__livre__") {
+        const liv = document.getElementById("fest-horario-livre")?.value?.trim();
+        if (!liv) { alert("Digite o horário."); return; }
+        horario = liv;
+    }
+    // Grupo personalizado
+    if (grupo === "__outro__") {
+        const dig = prompt("Nome do grupo ou formação:", "");
+        if (!dig?.trim()) return;
+        grupo = dig.trim().toUpperCase();
+    }
+    if (!grupo) { alert("Selecione um grupo."); return; }
+
+    const arr = carregarEscalaFest(_festModalDataIso);
+    // Evita duplicata exata
+    if (arr.some(e => e.horario === horario && e.grupo === grupo)) return;
+    arr.push({ horario, grupo });
+    arr.sort((a,b) => a.horario.localeCompare(b.horario));
+    salvarEscalaFest(_festModalDataIso, arr);
+
+    registrarLog("troca", {
+        data: `${_festModalDataIso.split("-").reverse().join("/")}`,
+        horario,
+        descricao: `Equipe escalada para festividade`,
+        de: "—", para: grupo,
+    });
+
+    renderEquipesFest();
+    renderFestividades(); // atualiza sidebar
+});
+
+// Limpar todas as equipes de uma festividade
+document.getElementById("fest-limpar-equipes")?.addEventListener("click", () => {
+    if (!_festModalDataIso) return;
+    const arr = carregarEscalaFest(_festModalDataIso);
+    if (!arr.length) return;
+    if (!confirm("Remover todas as equipes escaladas para este evento?")) return;
+    salvarEscalaFest(_festModalDataIso, []);
+    registrarLog("manual", {
+        data: _festModalDataIso.split("-").reverse().join("/"),
+        descricao: "Equipes do evento removidas",
+    });
+    renderEquipesFest();
+    renderFestividades();
+});
+
+// Ocultar / restaurar evento no painel lateral
+const FEST_OCULTOS_KEY = "fest_ocultos_v1";
+function carregarOcultos() {
+    try { return JSON.parse(localStorage.getItem(FEST_OCULTOS_KEY) || "[]"); } catch(e) { return []; }
+}
+function toggleOcultarFest(dataFmt) {
+    const ocultos = carregarOcultos();
+    const idx = ocultos.indexOf(dataFmt);
+    if (idx === -1) ocultos.push(dataFmt);
+    else ocultos.splice(idx, 1);
+    localStorage.setItem(FEST_OCULTOS_KEY, JSON.stringify(ocultos));
+    return idx === -1; // true = ocultou, false = restaurou
+}
+document.getElementById("fest-ocultar-evento")?.addEventListener("click", () => {
+    if (!_festModalDataIso) return;
+    const [y,m,d] = _festModalDataIso.split("-");
+    const dataFmt = `${d}/${m}`;
+    const ocultou = toggleOcultarFest(dataFmt);
+    const btn = document.getElementById("fest-ocultar-evento");
+    if (btn) btn.textContent = ocultou ? "👁️ Mostrar evento" : "👁️ Ocultar este evento";
+    registrarLog("manual", {
+        data: `${d}/${m}`,
+        descricao: ocultou ? "Evento ocultado do painel de festividades" : "Evento restaurado no painel de festividades",
+    });
+    renderFestividades();
+});
+
+// Botão "Restaurar todos" no painel lateral (aparece quando há ocultos)
+document.getElementById("important-dates-list")?.addEventListener("click", e => {
+    const btn = e.target.closest("#btn-restaurar-ocultos");
+    if (!btn) return;
+    localStorage.removeItem(FEST_OCULTOS_KEY);
+    renderFestividades();
+});
+
+// Horário livre — mostra/oculta input
+document.getElementById("fest-horario-select")?.addEventListener("change", e => {
+    const wrap = document.getElementById("fest-horario-livre-wrap");
+    if (wrap) wrap.classList.toggle("hidden", e.target.value !== "__livre__");
+});
+
+// Remover equipe (delegação)
+document.getElementById("fest-equipes-salvas")?.addEventListener("click", e => {
+    const btn = e.target.closest(".fest-equipe-del");
+    if (!btn || !isAdmin) return;
+    const idx = parseInt(btn.dataset.idx);
+    const arr = carregarEscalaFest(_festModalDataIso);
+    const removido = arr[idx];
+    arr.splice(idx, 1);
+    salvarEscalaFest(_festModalDataIso, arr);
+    if (removido) registrarLog("troca", {
+        data: _festModalDataIso.split("-").reverse().join("/"),
+        horario: removido.horario,
+        descricao: "Equipe removida da festividade",
+        de: removido.grupo, para: "—",
+    });
+    renderEquipesFest();
+    renderFestividades();
+});
 
 // Eventos do painel Celebração
 document.getElementById("btn-carregar-celebracao").addEventListener("click", carregarCelebracao);
