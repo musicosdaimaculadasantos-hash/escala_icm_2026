@@ -305,6 +305,9 @@
             </div>
             <div class="flex flex-col items-center md:items-end gap-2 no-print">
                 <div class="flex items-center gap-2">
+                    <button id="btn-publicar" class="hidden text-[13px] bg-green-500/80 hover:bg-green-400 px-2 py-1 rounded border border-green-300/60 transition-colors font-bold text-white">
+                        ☁️ <span id="sync-status-text">Publicar</span>
+                    </button>
                     <button id="btn-adm" class="text-[14px] bg-white/10 hover:bg-white/20 px-2 py-1 rounded border border-white/30 transition-colors">
                         <span id="lock-icon">🔒</span> <span id="adm-text">Acesso Restrito</span>
                     </button>
@@ -313,6 +316,7 @@
                         <option value="2027" class="text-black">2027</option>
                     </select>
                 </div>
+                <p id="sync-ultima" class="text-[11px] text-white/50 hidden"></p>
                 <p id="display-month-year" class="text-lg font-bold font-cinzel">Janeiro</p>
             </div>
         </div>
@@ -3041,21 +3045,27 @@ function renderEscalaAtiva() {
 // ═══════════════════════════════════════════════════════════════════
 async function toggleAdmin() {
     if (isAdmin) {
-        // Já está no modo admin — só confirma para sair
-        const confirmar = confirm("Sair do Modo Editor?\nTodas as alterações já foram salvas.");
-        if (!confirmar) return;
+        // Pergunta se quer publicar antes de sair
+        const publicar = confirm("Deseja publicar as alterações para a equipe antes de sair do Modo Editor?");
+        if (publicar) {
+            await publicarSync(false);
+        } else {
+            const sairSemPublicar = confirm("Sair do Modo Editor sem publicar?\n\nAs alterações ficam salvas localmente neste dispositivo.");
+            if (!sairSemPublicar) return;
+        }
         isAdmin = false;
         atualizarBtnAdm();
+        atualizarBotaoPublicar();
         render();
         if (typeof atualizarLembretesAdmin === "function") atualizarLembretesAdmin();
     } else {
-        // Modo visualização — pede a senha para entrar
         const s = prompt("Senha de Administrador:");
         if (!s) return;
         const h = await hashSenha(s);
         if (h === SENHA_HASH) {
             isAdmin = true;
             atualizarBtnAdm();
+            atualizarBotaoPublicar();
             render();
             if (typeof atualizarLembretesAdmin === "function") atualizarLembretesAdmin();
         } else {
@@ -3083,6 +3093,8 @@ function atualizarBtnAdm() {
     // Aba Log: só visível no modo admin
     const tabLog = document.getElementById("tab-log");
     if (tabLog) tabLog.classList.toggle("hidden", !isAdmin);
+    // Botão publicar
+    atualizarBotaoPublicar();
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -3211,6 +3223,7 @@ document.querySelectorAll(".escala-tab").forEach(btn => {
 
 // Controles do header
 document.getElementById("btn-adm").addEventListener("click", toggleAdmin);
+document.getElementById("btn-publicar")?.addEventListener("click", () => publicarSync(false));
 document.getElementById("year-selector").addEventListener("change", function() {
     anoAtual = parseInt(this.value, 10);
     render();
@@ -5337,7 +5350,6 @@ document.getElementById("modal-trein-edit")?.addEventListener("click", e => {
     if (e.target === document.getElementById("modal-trein-edit")) fecharTreinModal();
 });
 
-
 // ═══════════════════════════════════════════════════════════════════
 const GRUPOS_INICIAIS = [
     {
@@ -5494,10 +5506,152 @@ function renderTreinamentos() {
     }).join("");
 }
 
-window.addEventListener("load", () => {
+// ═══════════════════════════════════════════════════════════════════
+// SINCRONIZAÇÃO JSONBIN
+// ═══════════════════════════════════════════════════════════════════
+const SYNC_BIN_ID  = "69c125edaa77b81da90ec069";
+const SYNC_API_KEY = "$2a$10$eaPvC45HUl3MpgWIJsYCj.YGTPcW9OTPHwDduu7Jjv/ntnG/iYGhK";
+const SYNC_BASE    = `https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}`;
+const SYNC_TS_KEY  = "sync_ultima_pub";
+
+// Coleta todos os dados locais a sincronizar
+function coletarDadosSync() {
+    // Escala: todas as chaves que começam com d1-,d2-,d3-,d4-,sab-,f730-,f19-
+    const escala = {};
+    for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (/^(d[1-4]|sab|f730|f19)-\d{4}-\d{2}-\d{2}$/.test(k)) {
+            escala[k] = localStorage.getItem(k);
+        }
+    }
+    // Equipes de festividades
+    const festEquipes = {};
+    for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k.startsWith("fest-equipe-")) {
+            festEquipes[k] = localStorage.getItem(k);
+        }
+    }
+    // Eventos ocultos
+    const ocultos = localStorage.getItem(FEST_OCULTOS_KEY) || "[]";
+
+    return {
+        versao: 2,
+        publicadoEm: new Date().toISOString(),
+        escala,
+        festEquipes,
+        ocultos,
+        grupos:       localStorage.getItem(GRUPOS_KEY)  || "[]",
+        treinamentos: localStorage.getItem(TREIN_KEY)   || "[]",
+    };
+}
+
+// Aplica dados recebidos da nuvem no localStorage local
+function aplicarDadosSync(dados) {
+    if (!dados || dados.versao < 2) return;
+    // Escala
+    if (dados.escala) {
+        Object.entries(dados.escala).forEach(([k, v]) => localStorage.setItem(k, v));
+    }
+    // Equipes de festividades
+    if (dados.festEquipes) {
+        Object.entries(dados.festEquipes).forEach(([k, v]) => localStorage.setItem(k, v));
+    }
+    // Eventos ocultos
+    if (dados.ocultos) localStorage.setItem(FEST_OCULTOS_KEY, dados.ocultos);
+    // Grupos e treinamentos
+    if (dados.grupos)       localStorage.setItem(GRUPOS_KEY, dados.grupos);
+    if (dados.treinamentos) localStorage.setItem(TREIN_KEY, dados.treinamentos);
+}
+
+// Publica dados no JSONBin
+async function publicarSync(silencioso = false) {
+    const btnPublicar  = document.getElementById("btn-publicar");
+    const statusText   = document.getElementById("sync-status-text");
+    const syncUltima   = document.getElementById("sync-ultima");
+    if (btnPublicar) { btnPublicar.disabled = true; btnPublicar.classList.add("opacity-60"); }
+    if (statusText) statusText.textContent = "Publicando…";
+    try {
+        const dados = coletarDadosSync();
+        const res = await fetch(SYNC_BASE, {
+            method:  "PUT",
+            headers: {
+                "Content-Type":    "application/json",
+                "X-Master-Key":    SYNC_API_KEY,
+                "X-Bin-Versioning":"false",
+            },
+            body: JSON.stringify(dados),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const ts = new Date().toLocaleString("pt-BR", {day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+        localStorage.setItem(SYNC_TS_KEY, ts);
+        if (statusText) statusText.textContent = "Publicar";
+        if (syncUltima) { syncUltima.textContent = `☁️ Publicado ${ts}`; syncUltima.classList.remove("hidden"); }
+        if (!silencioso) alert("✅ Dados publicados com sucesso!\nA equipe verá as atualizações ao abrir o app.");
+        registrarLog("manual", { descricao: `Dados publicados para a equipe (JSONBin)` });
+    } catch(err) {
+        if (statusText) statusText.textContent = "Erro — tentar de novo";
+        if (!silencioso) alert(`❌ Erro ao publicar: ${err.message}`);
+    } finally {
+        if (btnPublicar) { btnPublicar.disabled = false; btnPublicar.classList.remove("opacity-60"); }
+    }
+}
+
+// Lê dados da nuvem (equipe sem login)
+async function lerSync() {
+    try {
+        const res = await fetch(SYNC_BASE, {
+            headers: {
+                "X-Master-Key": SYNC_API_KEY,
+                "X-Bin-Meta":   "false",
+            },
+        });
+        if (!res.ok) return;
+        const json  = await res.json();
+        const dados = json.record || json;
+        if (!dados || !dados.versao) return;
+        aplicarDadosSync(dados);
+        if (dados.publicadoEm) {
+            const ts = new Date(dados.publicadoEm).toLocaleString("pt-BR",
+                {day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+            const el = document.getElementById("sync-ultima");
+            if (el && !isAdmin) {
+                el.textContent = `☁️ Atualizado ${ts}`;
+                el.classList.remove("hidden");
+            }
+        }
+        render();
+    } catch(err) {
+        console.warn("Sync leitura falhou:", err.message);
+    }
+}
+
+// Inicializa sync: ADM só mostra timestamp, equipe lê da nuvem
+async function inicializarSync() {
+    if (isAdmin) {
+        atualizarBotaoPublicar();
+    } else {
+        await lerSync();
+    }
+}
+
+// Mostra/oculta botão publicar conforme modo ADM
+function atualizarBotaoPublicar() {
+    const btn      = document.getElementById("btn-publicar");
+    const ultima   = document.getElementById("sync-ultima");
+    if (!btn) return;
+    btn.classList.toggle("hidden", !isAdmin);
+    if (isAdmin) {
+        const ts = localStorage.getItem(SYNC_TS_KEY);
+        if (ultima && ts) { ultima.textContent = `☁️ Última pub: ${ts}`; ultima.classList.remove("hidden"); }
+    }
+}
+
+window.addEventListener("load", async () => {
     try {
         inicializarGrupos();
         render();
+        await inicializarSync(); // Lê da nuvem para equipe; mostra timestamp para ADM
     } catch(err) {
         console.error("Erro em render():", err);
         document.getElementById("corpo-domingo").innerHTML =
