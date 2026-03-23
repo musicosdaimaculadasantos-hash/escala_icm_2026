@@ -341,6 +341,8 @@
         <button id="main-tab-leituras" class="main-tab-btn font-cinzel text-sm sm:text-base font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 mr-1 whitespace-nowrap">📖 Leituras</button>
         <button id="main-tab-cantos"   class="main-tab-btn font-cinzel text-sm sm:text-base font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">🎵 Cantos</button>
         <button id="main-tab-roteiro"  class="main-tab-btn font-cinzel text-sm sm:text-base font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">📜 Roteiro</button>
+        <button id="main-tab-grupos"   class="main-tab-btn font-cinzel text-sm sm:text-base font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">👥 Grupos</button>
+        <button id="main-tab-treinamentos" class="main-tab-btn hidden font-cinzel text-sm sm:text-base font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">🎓 Treinamentos</button>
         <button id="main-tab-celebracao" class="main-tab-btn font-cinzel text-sm sm:text-base font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">🌟 Santo do Dia</button>
     </div>
 
@@ -738,6 +740,99 @@
     <!-- ══════════════════════════════════════════════════════════════ -->
     <!-- PAINEL: CELEBRAÇÃO DO DIA                                       -->
     <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- PAINEL GRUPOS                                                   -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- PAINEL: TREINAMENTOS (só admin)                               -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <div id="painel-treinamentos" class="hidden p-2 sm:p-4 md:p-6">
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+            <div>
+                <h2 class="font-cinzel font-bold text-[var(--header)] text-base uppercase">🎓 Treinamentos e Cursos</h2>
+                <p class="text-[13px] text-stone-400 mt-0.5">Liturgia · Música · Formação · Curso Superior</p>
+            </div>
+            <button id="btn-novo-trein" class="ml-auto flex items-center gap-1 bg-[var(--header)] text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:opacity-90">
+                ＋ Novo
+            </button>
+        </div>
+
+        <!-- Filtros de tipo -->
+        <div class="flex flex-wrap gap-2 mb-4">
+            <button data-trfiltro="todos"    class="trein-filtro-btn active text-[12px] font-bold px-3 py-1 rounded-full border bg-stone-700 text-white">Todos</button>
+            <button data-trfiltro="liturgia" class="trein-filtro-btn text-[12px] font-bold px-3 py-1 rounded-full border border-purple-300 text-purple-700">📖 Liturgia</button>
+            <button data-trfiltro="musica"   class="trein-filtro-btn text-[12px] font-bold px-3 py-1 rounded-full border border-blue-300 text-blue-700">🎵 Música</button>
+            <button data-trfiltro="superior" class="trein-filtro-btn text-[12px] font-bold px-3 py-1 rounded-full border border-amber-300 text-amber-700">🎓 Curso Superior</button>
+            <button data-trfiltro="workshop" class="trein-filtro-btn text-[12px] font-bold px-3 py-1 rounded-full border border-green-300 text-green-700">⛺ Workshop</button>
+            <button data-trfiltro="outro"    class="trein-filtro-btn text-[12px] font-bold px-3 py-1 rounded-full border border-stone-300 text-stone-500">📌 Outro</button>
+        </div>
+
+        <!-- Lista de treinamentos -->
+        <div id="trein-conteudo" class="space-y-3"></div>
+    </div>
+
+    <!-- MODAL: Edição de treinamento -->
+    <div id="modal-trein-edit" class="fixed inset-0 z-[80] hidden" style="background:rgba(0,0,0,0.6)">
+        <div class="flex items-start justify-center min-h-screen p-4 pt-10">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col max-h-[90vh]">
+                <div class="flex items-center justify-between px-5 py-4 border-b flex-shrink-0">
+                    <h3 class="font-cinzel font-bold text-[var(--header)] text-sm uppercase" id="modal-trein-titulo">Treinamento</h3>
+                    <button id="modal-trein-fechar" class="text-stone-400 hover:text-stone-700 text-2xl leading-none">&times;</button>
+                </div>
+                <div class="overflow-y-auto flex-1 p-5 space-y-3">
+                    <input type="hidden" id="trein-id">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Tipo *</label>
+                            <select id="trein-tipo" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+                                <option value="liturgia">📖 Liturgia</option>
+                                <option value="musica">🎵 Música</option>
+                                <option value="superior">🎓 Curso Superior</option>
+                                <option value="workshop">⛺ Workshop / Retiro</option>
+                                <option value="outro">📌 Outro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Data</label>
+                            <input id="trein-data" type="date" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Título / Nome do Curso *</label>
+                        <input id="trein-titulo-input" type="text" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Ex: Curso de Liturgia — Fase II">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Instituição / Responsável</label>
+                        <input id="trein-instituicao" type="text" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Ex: Diocese de Santos, CNBB, IAM…">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Local</label>
+                        <input id="trein-local" type="text" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Ex: Paróquia ICM, Online, São Paulo…">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Descrição</label>
+                        <textarea id="trein-desc" rows="3" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)] resize-none" placeholder="Breve descrição do conteúdo…"></textarea>
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Link (inscrição / mais info)</label>
+                        <input id="trein-link" type="url" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="https://…">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Participantes (nomes separados por vírgula)</label>
+                        <input id="trein-membros" type="text" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Ex: Maria, João, Ana…">
+                    </div>
+                </div>
+                <div class="px-5 py-3 border-t flex-shrink-0 flex gap-2 justify-between">
+                    <button id="btn-trein-del-modal" class="text-[13px] text-red-400 hover:text-red-600 font-bold px-3 py-1.5 rounded border border-red-200 hidden">🗑️ Excluir</button>
+                    <div class="flex gap-2 ml-auto">
+                        <button id="modal-trein-cancelar" class="px-4 py-2 text-sm font-bold text-stone-500 hover:text-stone-700">Cancelar</button>
+                        <button id="modal-trein-salvar" class="bg-[var(--header)] text-white px-4 py-2 rounded-lg text-sm font-bold hover:opacity-90">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="painel-celebracao" class="hidden p-3 sm:p-6 md:p-8">
 
         <!-- Controles: por data OU por nome -->
@@ -938,6 +1033,144 @@
         </div>
     </div>
 
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- PAINEL: GRUPOS                                                  -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <div id="painel-grupos" class="hidden p-2 sm:p-4 md:p-6">
+
+        <!-- Cabeçalho + botão admin -->
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+            <div>
+                <h2 class="font-cinzel font-bold text-[var(--header)] text-base uppercase">👥 Grupos de Música</h2>
+                <p class="text-[13px] text-stone-400 mt-0.5">Composição e contatos de cada equipe</p>
+            </div>
+            <div id="grupos-admin-bar" class="hidden ml-auto flex flex-wrap gap-2">
+                <button id="btn-novo-grupo"
+                    class="flex items-center gap-1 bg-[var(--header)] text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:opacity-90">
+                    ＋ Novo Grupo
+                </button>
+                <button id="btn-resetar-grupos"
+                    class="flex items-center gap-1 border border-stone-300 text-stone-500 px-3 py-1.5 rounded-lg text-sm font-bold hover:border-[var(--header)] hover:text-[var(--header)] transition-colors"
+                    title="Recarregar grupos padrão (mantém dados existentes)">
+                    ↺ Padrão
+                </button>
+            </div>
+        </div>
+
+        <!-- Seletor de grupo -->
+        <div class="flex flex-wrap gap-2 mb-5" id="grupo-tabs"></div>
+
+        <!-- Conteúdo do grupo selecionado -->
+        <div id="grupo-conteudo"></div>
+    </div>
+
+    <!-- MODAL: Detalhes / Edição de membro -->
+    <div id="modal-membro" class="fixed inset-0 z-[80] hidden" style="background:rgba(0,0,0,0.6)">
+        <div class="flex items-start justify-center min-h-screen p-4 pt-10">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[85vh]">
+                <div class="flex items-center justify-between px-5 py-4 border-b flex-shrink-0">
+                    <h3 class="font-cinzel font-bold text-[var(--header)] text-sm uppercase" id="modal-membro-titulo">Membro</h3>
+                    <button id="modal-membro-fechar" class="text-stone-400 hover:text-stone-700 text-2xl leading-none">&times;</button>
+                </div>
+                <div class="overflow-y-auto flex-1 p-5" id="modal-membro-body"></div>
+                <div class="px-5 py-3 border-t flex-shrink-0 flex gap-2 justify-end" id="modal-membro-actions"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Edição de grupo (admin) -->
+    <div id="modal-grupo-edit" class="fixed inset-0 z-[80] hidden" style="background:rgba(0,0,0,0.6)">
+        <div class="flex items-start justify-center min-h-screen p-4 pt-10">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[85vh]">
+                <div class="flex items-center justify-between px-5 py-4 border-b flex-shrink-0">
+                    <h3 class="font-cinzel font-bold text-[var(--header)] text-sm uppercase" id="modal-grupo-titulo">Grupo</h3>
+                    <button id="modal-grupo-fechar" class="text-stone-400 hover:text-stone-700 text-2xl leading-none">&times;</button>
+                </div>
+                <div class="overflow-y-auto flex-1 p-5 space-y-3">
+                    <div>
+                        <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Nome do Grupo *</label>
+                        <input id="ge-nome" type="text" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Ex: VOZES DO CORAÇÃO">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Descrição / Estilo</label>
+                        <input id="ge-desc" type="text" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Ex: Grupo vocal misto, estilo litúrgico">
+                    </div>
+                </div>
+                <div class="px-5 py-3 border-t flex-shrink-0 flex gap-2 justify-end">
+                    <button id="modal-grupo-cancelar" class="px-4 py-2 text-sm font-bold text-stone-500 hover:text-stone-700">Cancelar</button>
+                    <button id="modal-grupo-salvar" class="bg-[var(--header)] text-white px-4 py-2 rounded-lg text-sm font-bold hover:opacity-90">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Edição de membro (admin) -->
+    <div id="modal-membro-edit" class="fixed inset-0 z-[80] hidden" style="background:rgba(0,0,0,0.6)">
+        <div class="flex items-start justify-center min-h-screen p-4 pt-10">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[85vh]">
+                <div class="flex items-center justify-between px-5 py-4 border-b flex-shrink-0">
+                    <h3 class="font-cinzel font-bold text-[var(--header)] text-sm uppercase" id="modal-membro-edit-titulo">Membro</h3>
+                    <button id="modal-membro-edit-fechar" class="text-stone-400 hover:text-stone-700 text-2xl leading-none">&times;</button>
+                </div>
+                <div class="overflow-y-auto flex-1 p-5 space-y-3">
+                    <input type="hidden" id="me-grupo-id">
+                    <input type="hidden" id="me-membro-id">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div id="me-foto-preview" class="w-14 h-14 rounded-full bg-stone-200 flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden"></div>
+                        <div class="flex-1">
+                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">URL da Foto (opcional)</label>
+                            <input id="me-foto" type="url" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="https://…">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Nome Completo *</label>
+                            <input id="me-nome" type="text" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Nome">
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Apelido no Grupo</label>
+                            <input id="me-apelido" type="text" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Como é chamado">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Especialidade *</label>
+                            <select id="me-especialidade" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+                                <option value="voz">🎤 Só Voz</option>
+                                <option value="voz-instrumento">🎤🎸 Voz + Instrumento</option>
+                                <option value="instrumento">🎸 Instrumento</option>
+                                <option value="regente">🎼 Regente / Maestro</option>
+                                <option value="sonorizacao">🎚️ Sonorização</option>
+                                <option value="multiplo">🎵 Múltiplos Talentos</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Instrumento(s)</label>
+                            <input id="me-instrumento" type="text" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Ex: Violão, Teclado">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">WhatsApp / Contato</label>
+                        <input id="me-contato" type="text" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="(13) 9 9999-9999">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Observações</label>
+                        <textarea id="me-obs" rows="2" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Disponibilidade, restrições, etc."></textarea>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="me-responsavel" class="w-4 h-4 accent-[var(--header)]">
+                        <label for="me-responsavel" class="text-sm font-bold text-stone-600">👑 Responsável pelo grupo</label>
+                    </div>
+                </div>
+                <div class="px-5 py-3 border-t flex-shrink-0 flex gap-2 justify-end">
+                    <button id="me-excluir" class="mr-auto text-[13px] text-red-400 hover:text-red-600 font-bold px-3 py-1.5 rounded border border-red-200 hover:border-red-400 transition-colors hidden">🗑️ Excluir</button>
+                    <button id="modal-membro-edit-cancelar" class="px-4 py-2 text-sm font-bold text-stone-500 hover:text-stone-700">Cancelar</button>
+                    <button id="modal-membro-edit-salvar" class="bg-[var(--header)] text-white px-4 py-2 rounded-lg text-sm font-bold hover:opacity-90">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- RODAPÉ -->
     <footer class="bg-[var(--header)] text-white px-4 sm:px-8 py-6 border-t-4 border-[var(--accent)] no-print">
@@ -2247,8 +2480,387 @@ function renderLista() {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// RENDER: FESTIVIDADES
+// SISTEMA DE GRUPOS
 // ═══════════════════════════════════════════════════════════════════
+const GRUPOS_KEY = "grupos_musica_v1";
+const ESPECIALIDADE_CFG = {
+    "voz":             { label:"Só Voz",              icone:"🎤", cor:"bg-purple-100 text-purple-800" },
+    "voz-instrumento": { label:"Voz + Instrumento",   icone:"🎤🎸", cor:"bg-blue-100 text-blue-800" },
+    "instrumento":     { label:"Instrumento",          icone:"🎸", cor:"bg-green-100 text-green-800" },
+    "regente":         { label:"Regente",              icone:"🎼", cor:"bg-amber-100 text-amber-800" },
+    "sonorizacao":     { label:"Sonorização",          icone:"🎚️", cor:"bg-stone-100 text-stone-700" },
+    "multiplo":        { label:"Múltiplos Talentos",   icone:"🎵", cor:"bg-rose-100 text-rose-800" },
+};
+
+function carregarGrupos() {
+    try { return JSON.parse(localStorage.getItem(GRUPOS_KEY) || "[]"); } catch(e) { return []; }
+}
+function salvarGrupos(arr) { localStorage.setItem(GRUPOS_KEY, JSON.stringify(arr)); }
+
+function gerarId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+let grupoAtivoId = null;
+
+// Avatar colorido por inicial quando não há foto
+function avatarIniciais(nome, size="w-14 h-14") {
+    const cores = ["bg-red-400","bg-blue-400","bg-green-400","bg-purple-400","bg-amber-400","bg-rose-400","bg-teal-400"];
+    const idx   = (nome.charCodeAt(0) || 0) % cores.length;
+    const ini   = (nome || "?")[0].toUpperCase();
+    return `<div class="${size} rounded-full ${cores[idx]} flex items-center justify-center text-white font-bold text-xl flex-shrink-0">${ini}</div>`;
+}
+function avatarOuFoto(membro, size="w-14 h-14") {
+    if (membro.foto) return `<img src="${sanitizar(membro.foto)}" alt="${sanitizar(membro.nome)}" class="${size} rounded-full object-cover flex-shrink-0" onerror="this.replaceWith(document.querySelector('#_av_${membro.id || 0}'))">`;
+    return avatarIniciais(membro.nome || "?", size);
+}
+
+// ── Render principal da aba Grupos ──────────────────────────────────
+function renderGrupos() {
+    const tabsEl   = document.getElementById("grupo-tabs");
+    const contEl   = document.getElementById("grupo-conteudo");
+    const adminBar = document.getElementById("grupos-admin-bar");
+    if (!tabsEl || !contEl) return;
+
+    if (adminBar) adminBar.classList.toggle("hidden", !isAdmin);
+
+    const gds = carregarGrupos();
+
+    // Tabs de seleção de grupo
+    tabsEl.innerHTML = gds.map(g => `
+        <button data-gid="${g.id}"
+            class="grupo-tab text-[13px] font-bold px-3 py-1.5 rounded-full border transition-colors ${g.id === grupoAtivoId
+                ? "bg-[var(--header)] text-white border-[var(--header)]"
+                : "border-stone-300 text-stone-600 hover:border-[var(--header)]"}">
+            ${sanitizar(g.nome)}
+            <span class="ml-1 text-[11px] opacity-70">${(g.membros||[]).length}</span>
+        </button>`).join("")
+        + (isAdmin ? `<button id="btn-novo-grupo-tab" class="text-[13px] font-bold px-3 py-1.5 rounded-full border border-dashed border-stone-300 text-stone-400 hover:border-[var(--header)] transition-colors">＋ Grupo</button>` : "");
+
+    if (!gds.length) {
+        contEl.innerHTML = `<div class="text-center py-16 text-stone-300"><div class="text-5xl mb-3">👥</div>
+            <p class="font-cinzel text-sm">${isAdmin ? "Clique em ＋ Grupo para começar" : "Nenhum grupo cadastrado ainda"}</p></div>`;
+        return;
+    }
+
+    const g = grupoAtivoId ? gds.find(x => x.id === grupoAtivoId) : gds[0];
+    if (!g) { grupoAtivoId = gds[0]?.id; renderGrupos(); return; }
+    grupoAtivoId = g.id;
+
+    const membros = (g.membros || []).slice().sort((a,b) => (b.responsavel ? 1 : 0) - (a.responsavel ? 1 : 0));
+    const resp    = membros.find(m => m.responsavel);
+
+    // Resumo do grupo
+    const resumo = (() => {
+        const cnt = {};
+        membros.forEach(m => { cnt[m.especialidade] = (cnt[m.especialidade]||0)+1; });
+        return Object.entries(cnt).map(([k,v]) => {
+            const cfg = ESPECIALIDADE_CFG[k] || {icone:"🎵", label:k};
+            return `<span class="text-[12px] font-bold px-2 py-0.5 rounded-full ${(ESPECIALIDADE_CFG[k]||{cor:"bg-stone-100 text-stone-600"}).cor}">${cfg.icone} ${v} ${cfg.label}</span>`;
+        }).join("");
+    })();
+
+    contEl.innerHTML = `
+        <div class="bg-white rounded-xl border border-stone-200 shadow-sm p-4 mb-4">
+            <div class="flex items-start justify-between gap-3 flex-wrap">
+                <div>
+                    <h3 class="font-cinzel font-bold text-[var(--header)] text-base uppercase">${sanitizar(g.nome)}</h3>
+                    ${g.desc ? `<p class="text-sm text-stone-500 mt-0.5">${sanitizar(g.desc)}</p>` : ""}
+                    <div class="flex flex-wrap gap-1 mt-2">${resumo || `<span class="text-[12px] text-stone-300 italic">Sem membros ainda</span>`}</div>
+                </div>
+                ${isAdmin ? `<div class="flex gap-2 flex-shrink-0">
+                    <button class="btn-editar-grupo text-[12px] font-bold px-2 py-1 rounded border border-stone-200 text-stone-500 hover:border-[var(--header)] transition-colors" data-gid="${g.id}">✏️ Editar</button>
+                    <button class="btn-excluir-grupo text-[12px] font-bold px-2 py-1 rounded border border-red-200 text-red-400 hover:text-red-600 transition-colors" data-gid="${g.id}">🗑️</button>
+                </div>` : ""}
+            </div>
+            ${resp ? `<div class="mt-3 pt-3 border-t border-stone-100 flex items-center gap-2">
+                ${avatarOuFoto(resp, "w-8 h-8")}
+                <div>
+                    <p class="text-[11px] font-bold text-amber-600 uppercase">👑 Responsável</p>
+                    <p class="text-sm font-bold text-stone-700">${sanitizar(resp.apelido || resp.nome)}</p>
+                </div>
+                ${resp.contato ? `<a href="https://wa.me/55${resp.contato.replace(/\D/g,'')}" target="_blank" rel="noopener" class="ml-auto text-[12px] font-bold bg-green-50 text-green-700 px-2 py-1 rounded border border-green-200 hover:bg-green-600 hover:text-white transition-colors">📲 WhatsApp</a>` : ""}
+            </div>` : ""}
+        </div>
+
+        <!-- Grade de membros -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 mb-4" id="grade-membros">
+            ${membros.map(m => {
+                const esp = ESPECIALIDADE_CFG[m.especialidade] || {icone:"🎵", label:m.especialidade, cor:"bg-stone-100 text-stone-600"};
+                return `<div class="membro-card bg-white rounded-xl border ${m.responsavel ? "border-amber-300 shadow-md" : "border-stone-200 shadow-sm"} p-3 flex flex-col items-center gap-2 cursor-pointer hover:shadow-md transition-shadow" data-mid="${m.id}" data-gid="${g.id}">
+                    <div class="relative">
+                        ${avatarOuFoto(m, "w-14 h-14")}
+                        ${m.responsavel ? `<span class="absolute -top-1 -right-1 text-base" title="Responsável">👑</span>` : ""}
+                    </div>
+                    <div class="text-center w-full">
+                        <p class="font-bold text-stone-800 text-sm leading-tight truncate">${sanitizar(m.apelido || m.nome)}</p>
+                        <span class="text-[11px] font-bold px-1.5 py-0.5 rounded-full ${esp.cor}">${esp.icone} ${esp.label}</span>
+                        ${m.instrumento ? `<p class="text-[11px] text-stone-400 mt-0.5 truncate">${sanitizar(m.instrumento)}</p>` : ""}
+                    </div>
+                </div>`;
+            }).join("")}
+            ${isAdmin ? `<div id="btn-add-membro" data-gid="${g.id}" class="bg-stone-50 rounded-xl border-2 border-dashed border-stone-200 p-3 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-[var(--header)] transition-colors min-h-[120px]">
+                <span class="text-2xl text-stone-300">＋</span>
+                <p class="text-[12px] font-bold text-stone-300">Adicionar</p>
+            </div>` : ""}
+        </div>
+
+        <!-- Lista compacta -->
+        <div class="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
+            <p class="px-4 py-2 text-[11px] font-bold text-stone-400 uppercase border-b bg-stone-50">Lista completa — ${membros.length} membro${membros.length!==1?"s":""}</p>
+            ${membros.map((m,i) => {
+                const esp = ESPECIALIDADE_CFG[m.especialidade] || {icone:"🎵"};
+                return `<div class="flex items-center gap-3 px-4 py-2.5 ${i<membros.length-1?"border-b":""}  hover:bg-stone-50 cursor-pointer membro-card" data-mid="${m.id}" data-gid="${g.id}">
+                    ${avatarOuFoto(m,"w-8 h-8")}
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-sm text-stone-800">${m.responsavel?"👑 ":""}${sanitizar(m.apelido || m.nome)}</p>
+                        <p class="text-[12px] text-stone-400">${esp.icone} ${m.instrumento ? sanitizar(m.instrumento) : (ESPECIALIDADE_CFG[m.especialidade]?.label||"")}</p>
+                    </div>
+                    ${m.contato ? `<a href="https://wa.me/55${m.contato.replace(/\D/g,'')}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="text-green-500 hover:text-green-700 text-lg flex-shrink-0">📲</a>` : ""}
+                </div>`;
+            }).join("") || `<p class="px-4 py-6 text-center text-[13px] text-stone-300 italic">Nenhum membro cadastrado.</p>`}
+        </div>`;
+}
+
+// ── Modal ver membro ────────────────────────────────────────────────
+function abrirVerMembro(gid, mid) {
+    const g = carregarGrupos().find(x => x.id === gid);
+    const m = g?.membros?.find(x => x.id === mid);
+    if (!m) return;
+    const esp = ESPECIALIDADE_CFG[m.especialidade] || {icone:"🎵", label:m.especialidade, cor:"bg-stone-100 text-stone-600"};
+    document.getElementById("modal-membro-titulo").textContent = m.apelido || m.nome;
+    document.getElementById("modal-membro-body").innerHTML = `
+        <div class="flex flex-col items-center gap-3 mb-4">
+            ${avatarOuFoto(m,"w-20 h-20")}
+            ${m.responsavel ? `<span class="text-[12px] font-bold text-amber-600 bg-amber-50 px-3 py-0.5 rounded-full border border-amber-200">👑 Responsável pelo grupo</span>` : ""}
+        </div>
+        <div class="space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+                <div><p class="text-[11px] font-bold text-stone-400 uppercase">Nome completo</p><p class="text-sm font-bold text-stone-700">${sanitizar(m.nome)}</p></div>
+                ${m.apelido ? `<div><p class="text-[11px] font-bold text-stone-400 uppercase">Apelido</p><p class="text-sm font-bold text-stone-700">${sanitizar(m.apelido)}</p></div>` : ""}
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div><p class="text-[11px] font-bold text-stone-400 uppercase">Especialidade</p>
+                    <span class="text-[12px] font-bold px-2 py-0.5 rounded-full ${esp.cor}">${esp.icone} ${esp.label}</span>
+                </div>
+                ${m.instrumento ? `<div><p class="text-[11px] font-bold text-stone-400 uppercase">Instrumento(s)</p><p class="text-sm text-stone-700">${sanitizar(m.instrumento)}</p></div>` : ""}
+            </div>
+            ${m.contato ? `<div><p class="text-[11px] font-bold text-stone-400 uppercase">Contato</p>
+                <a href="https://wa.me/55${m.contato.replace(/\D/g,'')}" target="_blank" rel="noopener"
+                   class="inline-flex items-center gap-1 text-sm font-bold text-green-600 hover:underline">
+                   📲 ${sanitizar(m.contato)}
+                </a></div>` : ""}
+            ${m.obs ? `<div><p class="text-[11px] font-bold text-stone-400 uppercase">Observações</p><p class="text-sm text-stone-600 italic">${sanitizar(m.obs)}</p></div>` : ""}
+        </div>`;
+    const actions = document.getElementById("modal-membro-actions");
+    actions.innerHTML = isAdmin
+        ? `<button class="text-[13px] font-bold text-[var(--header)] border border-[var(--header)] px-4 py-1.5 rounded-lg hover:bg-[var(--header)] hover:text-white transition-colors" id="btn-membro-editar-from-view" data-gid="${gid}" data-mid="${mid}">✏️ Editar</button>`
+        : "";
+    document.getElementById("modal-membro").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+}
+
+// ── Modal editar/criar membro ───────────────────────────────────────
+function abrirEditarMembro(gid, mid) {
+    const g = carregarGrupos().find(x => x.id === gid);
+    const m = mid ? g?.membros?.find(x => x.id === mid) : null;
+    document.getElementById("modal-membro-edit-titulo").textContent = m ? "Editar Membro" : "Novo Membro";
+    document.getElementById("me-grupo-id").value  = gid;
+    document.getElementById("me-membro-id").value = mid || "";
+    document.getElementById("me-nome").value          = m?.nome || "";
+    document.getElementById("me-apelido").value        = m?.apelido || "";
+    document.getElementById("me-foto").value           = m?.foto || "";
+    document.getElementById("me-especialidade").value  = m?.especialidade || "voz";
+    document.getElementById("me-instrumento").value    = m?.instrumento || "";
+    document.getElementById("me-contato").value        = m?.contato || "";
+    document.getElementById("me-obs").value            = m?.obs || "";
+    document.getElementById("me-responsavel").checked  = m?.responsavel || false;
+    document.getElementById("me-excluir").classList.toggle("hidden", !mid);
+    atualizarFotoPreview();
+    document.getElementById("modal-membro").classList.add("hidden");
+    document.getElementById("modal-membro-edit").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+}
+
+function atualizarFotoPreview() {
+    const url  = document.getElementById("me-foto")?.value?.trim();
+    const prev = document.getElementById("me-foto-preview");
+    const nome = document.getElementById("me-nome")?.value || "?";
+    if (!prev) return;
+    prev.innerHTML = url
+        ? `<img src="${sanitizar(url)}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='${avatarIniciais(nome).replace(/'/g,"\\'")}'">`
+        : avatarIniciais(nome, "w-14 h-14");
+}
+document.getElementById("me-foto")?.addEventListener("input", atualizarFotoPreview);
+document.getElementById("me-nome")?.addEventListener("input", atualizarFotoPreview);
+
+function salvarMembro() {
+    const gid   = document.getElementById("me-grupo-id").value;
+    const mid   = document.getElementById("me-membro-id").value;
+    const nome  = document.getElementById("me-nome").value.trim();
+    if (!nome) { alert("Nome é obrigatório."); return; }
+
+    const dados = {
+        id:           mid || gerarId(),
+        nome,
+        apelido:      document.getElementById("me-apelido").value.trim(),
+        foto:         document.getElementById("me-foto").value.trim(),
+        especialidade:document.getElementById("me-especialidade").value,
+        instrumento:  document.getElementById("me-instrumento").value.trim(),
+        contato:      document.getElementById("me-contato").value.trim(),
+        obs:          document.getElementById("me-obs").value.trim(),
+        responsavel:  document.getElementById("me-responsavel").checked,
+    };
+
+    const gds = carregarGrupos();
+    const g   = gds.find(x => x.id === gid);
+    if (!g) return;
+    if (!g.membros) g.membros = [];
+
+    // Se marcado como responsável, desmarca os outros
+    if (dados.responsavel) g.membros.forEach(m => { m.responsavel = false; });
+
+    if (mid) {
+        const idx = g.membros.findIndex(x => x.id === mid);
+        if (idx !== -1) g.membros[idx] = dados;
+    } else {
+        g.membros.push(dados);
+    }
+    salvarGrupos(gds);
+    registrarLog(mid ? "troca" : "grupo", {
+        descricao: mid ? `Membro editado: ${nome} (${g.nome})` : `Novo membro: ${nome} (${g.nome})`,
+    });
+    fecharModaisGrupo();
+    renderGrupos();
+}
+
+function excluirMembro() {
+    const gid = document.getElementById("me-grupo-id").value;
+    const mid = document.getElementById("me-membro-id").value;
+    if (!mid || !confirm("Excluir este membro?")) return;
+    const gds = carregarGrupos();
+    const g   = gds.find(x => x.id === gid);
+    if (!g) return;
+    const m = g.membros?.find(x => x.id === mid);
+    g.membros = (g.membros||[]).filter(x => x.id !== mid);
+    salvarGrupos(gds);
+    registrarLog("manual", { descricao: `Membro excluído: ${m?.nome || mid} (${g.nome})` });
+    fecharModaisGrupo();
+    renderGrupos();
+}
+
+// ── Modal criar/editar grupo ────────────────────────────────────────
+let _editandoGrupoId = null;
+function abrirEditarGrupo(gid) {
+    _editandoGrupoId = gid || null;
+    const g = gid ? carregarGrupos().find(x => x.id === gid) : null;
+    document.getElementById("modal-grupo-titulo").textContent = g ? "Editar Grupo" : "Novo Grupo";
+    document.getElementById("ge-nome").value = g?.nome || "";
+    document.getElementById("ge-desc").value = g?.desc || "";
+    document.getElementById("modal-grupo-edit").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+}
+function salvarGrupoEdit() {
+    const nome = document.getElementById("ge-nome").value.trim().toUpperCase();
+    if (!nome) { alert("Nome obrigatório."); return; }
+    const gds = carregarGrupos();
+    if (_editandoGrupoId) {
+        const g = gds.find(x => x.id === _editandoGrupoId);
+        if (g) { g.nome = nome; g.desc = document.getElementById("ge-desc").value.trim(); }
+        registrarLog("troca", { descricao: `Grupo renomeado: ${nome}` });
+    } else {
+        const novo = { id: gerarId(), nome, desc: document.getElementById("ge-desc").value.trim(), membros: [] };
+        gds.push(novo);
+        grupoAtivoId = novo.id;
+        registrarLog("grupo", { descricao: `Novo grupo criado: ${nome}` });
+    }
+    salvarGrupos(gds);
+    document.getElementById("modal-grupo-edit").classList.add("hidden");
+    document.body.style.overflow = "";
+    renderGrupos();
+}
+function excluirGrupo(gid) {
+    const gds = carregarGrupos();
+    const g   = gds.find(x => x.id === gid);
+    if (!g) return;
+    if (!confirm(`Excluir o grupo "${g.nome}" e todos os seus membros?`)) return;
+    const novo = gds.filter(x => x.id !== gid);
+    salvarGrupos(novo);
+    grupoAtivoId = novo[0]?.id || null;
+    registrarLog("manual", { descricao: `Grupo excluído: ${g.nome}` });
+    renderGrupos();
+}
+
+function fecharModaisGrupo() {
+    ["modal-membro","modal-membro-edit","modal-grupo-edit"].forEach(id => {
+        document.getElementById(id)?.classList.add("hidden");
+    });
+    document.body.style.overflow = "";
+}
+
+// ── Event listeners Grupos ──────────────────────────────────────────
+// Tabs de grupo
+document.getElementById("grupo-tabs")?.addEventListener("click", e => {
+    const btn = e.target.closest("[data-gid]");
+    if (btn?.id === "btn-novo-grupo-tab") { abrirEditarGrupo(null); return; }
+    if (btn) { grupoAtivoId = btn.dataset.gid; renderGrupos(); }
+});
+// Botão novo grupo no cabeçalho
+document.getElementById("btn-novo-grupo")?.addEventListener("click", () => abrirEditarGrupo(null));
+
+document.getElementById("btn-resetar-grupos")?.addEventListener("click", () => {
+    if (!confirm("Adicionar grupos padrão que estiverem faltando?\n(Grupos e membros já cadastrados serão mantidos.)")) return;
+    const existentes = carregarGrupos();
+    const ids = existentes.map(g => g.id);
+    const faltando = GRUPOS_INICIAIS.filter(g => !ids.includes(g.id));
+    if (!faltando.length) { alert("Todos os grupos padrão já estão cadastrados."); return; }
+    salvarGrupos([...existentes, ...faltando]);
+    registrarLog("grupo", { descricao: `Grupos padrão restaurados: ${faltando.map(g=>g.nome).join(", ")}` });
+    renderGrupos();
+});
+
+// Cliques no conteúdo do grupo (delegação)
+document.getElementById("grupo-conteudo")?.addEventListener("click", e => {
+    const card   = e.target.closest(".membro-card");
+    const addBtn = e.target.closest("#btn-add-membro");
+    const editG  = e.target.closest(".btn-editar-grupo");
+    const delG   = e.target.closest(".btn-excluir-grupo");
+    if (addBtn) { abrirEditarMembro(addBtn.dataset.gid, null); return; }
+    if (editG)  { abrirEditarGrupo(editG.dataset.gid); return; }
+    if (delG)   { excluirGrupo(delG.dataset.gid); return; }
+    if (card)   { abrirVerMembro(card.dataset.gid, card.dataset.mid); return; }
+});
+
+// Botão editar dentro do modal de visualização
+document.getElementById("modal-membro-body")?.addEventListener("click", e => {});
+document.getElementById("modal-membro-actions")?.addEventListener("click", e => {
+    const btn = e.target.closest("#btn-membro-editar-from-view");
+    if (btn) abrirEditarMembro(btn.dataset.gid, btn.dataset.mid);
+});
+
+// Modal membro edit: fechar, salvar, excluir
+document.getElementById("modal-membro-fechar")?.addEventListener("click", fecharModaisGrupo);
+document.getElementById("modal-membro-edit-fechar")?.addEventListener("click", fecharModaisGrupo);
+document.getElementById("modal-membro-edit-cancelar")?.addEventListener("click", fecharModaisGrupo);
+document.getElementById("modal-membro-edit-salvar")?.addEventListener("click", salvarMembro);
+document.getElementById("me-excluir")?.addEventListener("click", excluirMembro);
+
+// Modal grupo edit
+document.getElementById("modal-grupo-fechar")?.addEventListener("click", () => {
+    document.getElementById("modal-grupo-edit").classList.add("hidden");
+    document.body.style.overflow = "";
+});
+document.getElementById("modal-grupo-cancelar")?.addEventListener("click", () => {
+    document.getElementById("modal-grupo-edit").classList.add("hidden");
+    document.body.style.overflow = "";
+});
+document.getElementById("modal-grupo-salvar")?.addEventListener("click", salvarGrupoEdit);
+
+// Fechar modais ao clicar no overlay
+["modal-membro","modal-membro-edit","modal-grupo-edit"].forEach(id => {
+    document.getElementById(id)?.addEventListener("click", e => {
+        if (e.target === document.getElementById(id)) fecharModaisGrupo();
+    });
+});
+
 // ═══════════════════════════════════════════════════════════════════
 // LOG DE OCORRÊNCIAS
 // ═══════════════════════════════════════════════════════════════════
@@ -2465,6 +3077,12 @@ function atualizarBtnAdm() {
         txt.textContent  = "Acesso Restrito";
         btn.className    = "text-[14px] bg-white/10 hover:bg-white/20 px-2 py-1 rounded border border-white/30 transition-colors";
     }
+    // Aba Treinamentos: só visível no modo admin
+    const tabTrein = document.getElementById("main-tab-treinamentos");
+    if (tabTrein) tabTrein.classList.toggle("hidden", !isAdmin);
+    // Aba Log: só visível no modo admin
+    const tabLog = document.getElementById("tab-log");
+    if (tabLog) tabLog.classList.toggle("hidden", !isAdmin);
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2531,22 +3149,37 @@ function irParaLeitura(dataIso) {
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-// Delegação de clique nos tags de grupo (escala → leituras)
+// Delegação de clique nos tags de grupo (escala → leituras ou grupos)
 document.addEventListener("click", e => {
     const tag = e.target.closest(".tag-grupo[data-leitura-data]");
     if (tag && tag.dataset.leituraData) {
         irParaLeitura(tag.dataset.leituraData);
+        return;
+    }
+    // Clique no texto do tag (não no select) → abre aba Grupos filtrado
+    const tagSpan = e.target.closest("span.tag-grupo");
+    if (tagSpan && !isAdmin) {
+        const nomeGrupo = tagSpan.textContent.trim();
+        const gds = carregarGrupos();
+        const g   = gds.find(x => x.nome === nomeGrupo);
+        if (g) {
+            grupoAtivoId = g.id;
+            switchMainTab("grupos");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
     }
 });
 
 function switchMainTab(ativo) {
-    ["escala","leituras","cantos","roteiro","celebracao"].forEach(t => {
-        document.getElementById("painel-" + t).classList.toggle("hidden", t !== ativo);
-        document.getElementById("main-tab-" + t).classList.toggle("active", t === ativo);
-        document.getElementById("main-tab-" + t).classList.toggle("text-stone-400", t !== ativo);
+    ["escala","leituras","cantos","roteiro","grupos","treinamentos","celebracao"].forEach(t => {
+        document.getElementById("painel-" + t)?.classList.toggle("hidden", t !== ativo);
+        document.getElementById("main-tab-" + t)?.classList.toggle("active", t === ativo);
+        document.getElementById("main-tab-" + t)?.classList.toggle("text-stone-400", t !== ativo);
     });
-    if (ativo === "cantos") renderCantos();
-    if (ativo === "roteiro") iniciarRoteiro();
+    if (ativo === "cantos")        renderCantos();
+    if (ativo === "roteiro")       iniciarRoteiro();
+    if (ativo === "grupos")        renderGrupos();
+    if (ativo === "treinamentos")  renderTreinamentos();
 }
 
 document.getElementById("main-tab-escala").addEventListener("click",   () => switchMainTab("escala"));
@@ -2558,6 +3191,8 @@ document.getElementById("main-tab-leituras").addEventListener("click", () => {
 });
 document.getElementById("main-tab-cantos").addEventListener("click",   () => switchMainTab("cantos"));
 document.getElementById("main-tab-roteiro").addEventListener("click",  () => { switchMainTab("roteiro"); iniciarRoteiro(); });
+document.getElementById("main-tab-grupos").addEventListener("click",   () => switchMainTab("grupos"));
+document.getElementById("main-tab-treinamentos")?.addEventListener("click", () => switchMainTab("treinamentos"));
 document.getElementById("main-tab-celebracao").addEventListener("click", () => { switchMainTab("celebracao"); iniciarCelebracao(); });
 
 // Sub-abas da escala
@@ -4602,8 +5237,266 @@ document.querySelectorAll(".sugestao-btn").forEach(btn => {
 
 // INICIALIZAÇÃO
 // ═══════════════════════════════════════════════════════════════════
+// ── Treinamentos: filtros ────────────────────────────────────────────
+document.addEventListener("click", e => {
+    const fb = e.target.closest(".trein-filtro-btn");
+    if (fb) {
+        document.querySelectorAll(".trein-filtro-btn").forEach(b => {
+            b.classList.remove("bg-stone-700","text-white");
+            b.classList.add("border");
+        });
+        fb.classList.add("bg-stone-700","text-white");
+        treinFiltro = fb.dataset.trfiltro;
+        renderTreinamentos();
+        return;
+    }
+    // Editar
+    const editBtn = e.target.closest(".btn-trein-edit");
+    if (editBtn) { abrirTreinEdit(editBtn.dataset.tid); return; }
+    // Excluir inline
+    const delBtn = e.target.closest(".btn-trein-del");
+    if (delBtn) { excluirTrein(delBtn.dataset.tid); return; }
+});
+
+// Botão novo treinamento
+document.getElementById("btn-novo-trein")?.addEventListener("click", () => abrirTreinEdit(null));
+
+function abrirTreinEdit(tid) {
+    const arr = carregarTreinamentos();
+    const t   = tid ? arr.find(x => x.id === tid) : null;
+    document.getElementById("modal-trein-titulo").textContent = t ? "Editar Treinamento" : "Novo Treinamento";
+    document.getElementById("trein-id").value               = tid || "";
+    document.getElementById("trein-tipo").value             = t?.tipo || "liturgia";
+    document.getElementById("trein-data").value             = t?.data || "";
+    document.getElementById("trein-titulo-input").value     = t?.titulo || "";
+    document.getElementById("trein-instituicao").value      = t?.instituicao || "";
+    document.getElementById("trein-local").value            = t?.local || "";
+    document.getElementById("trein-desc").value             = t?.desc || "";
+    document.getElementById("trein-link").value             = t?.link || "";
+    document.getElementById("trein-membros").value          = (t?.membros || []).join(", ");
+    document.getElementById("btn-trein-del-modal").classList.toggle("hidden", !tid);
+    document.getElementById("modal-trein-edit").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+}
+
+function fecharTreinModal() {
+    document.getElementById("modal-trein-edit").classList.add("hidden");
+    document.body.style.overflow = "";
+}
+
+function salvarTrein() {
+    const titulo = document.getElementById("trein-titulo-input").value.trim();
+    if (!titulo) { alert("Título obrigatório."); return; }
+    const tid = document.getElementById("trein-id").value;
+    const membrosRaw = document.getElementById("trein-membros").value;
+    const membros = membrosRaw.split(",").map(s=>s.trim()).filter(Boolean);
+
+    const dados = {
+        id:          tid || gerarId(),
+        tipo:        document.getElementById("trein-tipo").value,
+        data:        document.getElementById("trein-data").value,
+        titulo,
+        instituicao: document.getElementById("trein-instituicao").value.trim(),
+        local:       document.getElementById("trein-local").value.trim(),
+        desc:        document.getElementById("trein-desc").value.trim(),
+        link:        document.getElementById("trein-link").value.trim(),
+        membros,
+    };
+
+    const arr = carregarTreinamentos();
+    if (tid) {
+        const idx = arr.findIndex(x => x.id === tid);
+        if (idx !== -1) arr[idx] = dados;
+    } else {
+        arr.push(dados);
+    }
+    salvarTreinamentos(arr);
+    registrarLog(tid ? "troca" : "grupo", { descricao: `${tid ? "Treinamento editado" : "Novo treinamento"}: ${titulo}` });
+    fecharTreinModal();
+    renderTreinamentos();
+}
+
+function excluirTrein(tid) {
+    if (!confirm("Excluir este treinamento?")) return;
+    const arr = carregarTreinamentos();
+    const t   = arr.find(x => x.id === tid);
+    salvarTreinamentos(arr.filter(x => x.id !== tid));
+    registrarLog("manual", { descricao: `Treinamento excluído: ${t?.titulo || tid}` });
+    fecharTreinModal();
+    renderTreinamentos();
+}
+
+document.getElementById("modal-trein-fechar")?.addEventListener("click", fecharTreinModal);
+document.getElementById("modal-trein-cancelar")?.addEventListener("click", fecharTreinModal);
+document.getElementById("modal-trein-salvar")?.addEventListener("click", salvarTrein);
+document.getElementById("btn-trein-del-modal")?.addEventListener("click", () => {
+    const tid = document.getElementById("trein-id").value;
+    if (tid) excluirTrein(tid);
+});
+document.getElementById("modal-trein-edit")?.addEventListener("click", e => {
+    if (e.target === document.getElementById("modal-trein-edit")) fecharTreinModal();
+});
+
+
+// ═══════════════════════════════════════════════════════════════════
+const GRUPOS_INICIAIS = [
+    {
+        id:"g-vozes", nome:"VOZES DO CORAÇÃO",
+        desc:"Grupo vocal misto — estilo litúrgico contemporâneo · Missa 17h domingo",
+        membros:[
+            {id:"m-v1",nome:"(Nome do Responsável)",apelido:"Coordenador",foto:"",especialidade:"regente",instrumento:"",contato:"",obs:"Edite este card com o nome e contato do responsável.",responsavel:true},
+            {id:"m-v2",nome:"(Cantor 1)",apelido:"",foto:"",especialidade:"voz",instrumento:"",contato:"",obs:"Soprano / Contralto",responsavel:false},
+            {id:"m-v3",nome:"(Cantor 2)",apelido:"",foto:"",especialidade:"voz",instrumento:"",contato:"",obs:"Tenor / Barítono",responsavel:false},
+            {id:"m-v4",nome:"(Instrumentista)",apelido:"",foto:"",especialidade:"instrumento",instrumento:"Teclado",contato:"",obs:"",responsavel:false},
+        ]
+    },
+    {
+        id:"g-jovens", nome:"JOVENS",
+        desc:"Grupo jovem — estilo animado e carismático · Missa 19h domingo",
+        membros:[
+            {id:"m-j1",nome:"(Nome do Responsável)",apelido:"Coordenador",foto:"",especialidade:"regente",instrumento:"",contato:"",obs:"Edite este card com o nome e contato do responsável.",responsavel:true},
+            {id:"m-j2",nome:"(Vocalista)",apelido:"",foto:"",especialidade:"voz-instrumento",instrumento:"Violão",contato:"",obs:"",responsavel:false},
+            {id:"m-j3",nome:"(Percussionista)",apelido:"",foto:"",especialidade:"instrumento",instrumento:"Cajón / Bateria",contato:"",obs:"",responsavel:false},
+            {id:"m-j4",nome:"(Baixista)",apelido:"",foto:"",especialidade:"instrumento",instrumento:"Contrabaixo",contato:"",obs:"",responsavel:false},
+        ]
+    },
+    {
+        id:"g-marco", nome:"MARCO",
+        desc:"Grupo de instrumentistas e vozes · Missas variadas",
+        membros:[
+            {id:"m-m1",nome:"(Nome do Responsável)",apelido:"Coordenador",foto:"",especialidade:"regente",instrumento:"",contato:"",obs:"Edite este card com o nome e contato do responsável.",responsavel:true},
+            {id:"m-m2",nome:"(Vocalista)",apelido:"",foto:"",especialidade:"voz-instrumento",instrumento:"Violão",contato:"",obs:"",responsavel:false},
+            {id:"m-m3",nome:"(Tecladista)",apelido:"",foto:"",especialidade:"instrumento",instrumento:"Teclado",contato:"",obs:"",responsavel:false},
+        ]
+    },
+    {
+        id:"g-casais", nome:"CASAIS",
+        desc:"Grupo de casais — missa de domingo 07h30",
+        membros:[
+            {id:"m-c1",nome:"(Nome do Responsável)",apelido:"Coordenador",foto:"",especialidade:"regente",instrumento:"",contato:"",obs:"Edite este card com o nome e contato do responsável.",responsavel:true},
+            {id:"m-c2",nome:"(Cantor/a)",apelido:"",foto:"",especialidade:"voz",instrumento:"",contato:"",obs:"",responsavel:false},
+            {id:"m-c3",nome:"(Instrumentista)",apelido:"",foto:"",especialidade:"instrumento",instrumento:"Violão",contato:"",obs:"",responsavel:false},
+        ]
+    },
+    {
+        id:"g-fatima", nome:"FÁTIMA",
+        desc:"Grupo Nossa Senhora de Fátima — missa 09h00 domingo",
+        membros:[
+            {id:"m-f1",nome:"(Nome do Responsável)",apelido:"Coordenador",foto:"",especialidade:"regente",instrumento:"",contato:"",obs:"Edite este card com o nome e contato do responsável.",responsavel:true},
+            {id:"m-f2",nome:"(Cantor/a)",apelido:"",foto:"",especialidade:"voz",instrumento:"",contato:"",obs:"",responsavel:false},
+            {id:"m-f3",nome:"(Tecladista)",apelido:"",foto:"",especialidade:"instrumento",instrumento:"Teclado / Órgão",contato:"",obs:"",responsavel:false},
+        ]
+    },
+    {
+        id:"g-eac", nome:"EAC",
+        desc:"Equipe de Animação e Canto — missas feriais 07h30 e 19h",
+        membros:[
+            {id:"m-e1",nome:"(Nome do Responsável)",apelido:"Coordenador",foto:"",especialidade:"regente",instrumento:"",contato:"",obs:"Edite este card com o nome e contato do responsável.",responsavel:true},
+            {id:"m-e2",nome:"(Cantor/a 1)",apelido:"",foto:"",especialidade:"voz",instrumento:"",contato:"",obs:"Ferial manhã",responsavel:false},
+            {id:"m-e3",nome:"(Cantor/a 2)",apelido:"",foto:"",especialidade:"voz",instrumento:"",contato:"",obs:"Ferial noite",responsavel:false},
+        ]
+    },
+    {
+        id:"g-sabsanto", nome:"SÁBADO SANTO",
+        desc:"Grupo responsável pelas missas de sábado — 16h00",
+        membros:[
+            {id:"m-s1",nome:"(Nome do Responsável)",apelido:"Coordenador",foto:"",especialidade:"regente",instrumento:"",contato:"",obs:"Edite este card com o nome e contato do responsável.",responsavel:true},
+            {id:"m-s2",nome:"(Cantor/a)",apelido:"",foto:"",especialidade:"voz-instrumento",instrumento:"Violão",contato:"",obs:"",responsavel:false},
+        ]
+    },
+];
+
+function inicializarGrupos() {
+    const existentes = carregarGrupos();
+    // Se já há grupos com membros reais (não só placeholders), não sobrescreve
+    const temDadosReais = existentes.some(g => g.membros?.some(m => m.nome !== "Responsável do Grupo"));
+    if (temDadosReais) return;
+
+    // Mescla: preserva grupos existentes, adiciona os que faltam
+    const ids = existentes.map(g => g.id);
+    const faltando = GRUPOS_INICIAIS.filter(g => !ids.includes(g.id));
+    const merged = existentes.length ? [...existentes, ...faltando] : GRUPOS_INICIAIS;
+    salvarGrupos(merged);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ABA TREINAMENTOS (só admin)
+// ═══════════════════════════════════════════════════════════════════
+const TREIN_KEY = "treinamentos_v1";
+
+const TREIN_TIPOS = {
+    liturgia:   { label:"Liturgia",          icone:"📖", cor:"bg-purple-100 text-purple-800 border-purple-200" },
+    musica:     { label:"Música",            icone:"🎵", cor:"bg-blue-100 text-blue-800 border-blue-200" },
+    superior:   { label:"Curso Superior",    icone:"🎓", cor:"bg-amber-100 text-amber-800 border-amber-200" },
+    workshop:   { label:"Workshop / Retiro", icone:"⛺", cor:"bg-green-100 text-green-800 border-green-200" },
+    outro:      { label:"Outro",             icone:"📌", cor:"bg-stone-100 text-stone-600 border-stone-200" },
+};
+
+function carregarTreinamentos() {
+    try { return JSON.parse(localStorage.getItem(TREIN_KEY) || "[]"); } catch(e) { return []; }
+}
+function salvarTreinamentos(arr) { localStorage.setItem(TREIN_KEY, JSON.stringify(arr)); }
+
+let treinFiltro = "todos";
+
+function renderTreinamentos() {
+    const cont = document.getElementById("trein-conteudo");
+    if (!cont) return;
+
+    const todos = carregarTreinamentos();
+    const exibir = treinFiltro === "todos" ? todos : todos.filter(t => t.tipo === treinFiltro);
+
+    // Ordena: próximos primeiro, depois passados
+    const hoje = new Date().toISOString().split("T")[0];
+    exibir.sort((a,b) => {
+        const aFut = a.data >= hoje, bFut = b.data >= hoje;
+        if (aFut && !bFut) return -1;
+        if (!aFut && bFut) return 1;
+        return aFut ? a.data.localeCompare(b.data) : b.data.localeCompare(a.data);
+    });
+
+    if (!exibir.length) {
+        cont.innerHTML = `<div class="text-center py-16 text-stone-300"><div class="text-4xl mb-3">🎓</div>
+            <p class="font-cinzel text-sm">Nenhum treinamento cadastrado</p>
+            ${isAdmin ? `<p class="text-[12px] mt-1">Clique em ＋ Novo para adicionar</p>` : ""}</div>`;
+        return;
+    }
+
+    cont.innerHTML = exibir.map(t => {
+        const cfg = TREIN_TIPOS[t.tipo] || TREIN_TIPOS.outro;
+        const dataFmt = t.data ? t.data.split("-").reverse().join("/") : "—";
+        const passado = t.data && t.data < hoje;
+        const membTag = (t.membros||[]).length
+            ? `<div class="flex flex-wrap gap-1 mt-2">${t.membros.map(n =>
+                `<span class="text-[11px] bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full font-bold">👤 ${sanitizar(n)}</span>`
+              ).join("")}</div>`
+            : "";
+        return `<div class="bg-white rounded-xl border border-stone-200 shadow-sm p-4 ${passado ? "opacity-60" : ""}" data-tid="${t.id}">
+            <div class="flex items-start justify-between gap-2">
+                <div class="flex-1 min-w-0">
+                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                        <span class="text-[11px] font-bold px-2 py-0.5 rounded-full border ${cfg.cor}">${cfg.icone} ${cfg.label}</span>
+                        <span class="text-[12px] font-bold text-stone-500">${dataFmt}${t.local ? " · " + sanitizar(t.local) : ""}</span>
+                        ${passado ? `<span class="text-[11px] text-stone-300 italic">Concluído</span>` : `<span class="text-[11px] font-bold text-green-600">● Próximo</span>`}
+                    </div>
+                    <h4 class="font-cinzel font-bold text-stone-800 text-sm leading-snug">${sanitizar(t.titulo)}</h4>
+                    ${t.instituicao ? `<p class="text-[12px] text-stone-400 mt-0.5">🏛️ ${sanitizar(t.instituicao)}</p>` : ""}
+                    ${t.desc ? `<p class="text-[13px] text-stone-600 mt-1 leading-relaxed">${sanitizar(t.desc)}</p>` : ""}
+                    ${t.link ? `<a href="${sanitizar(t.link)}" target="_blank" rel="noopener" class="text-[12px] font-bold text-[var(--accent)] hover:underline mt-1 inline-block">🔗 Mais informações</a>` : ""}
+                    ${membTag}
+                </div>
+                ${isAdmin ? `<div class="flex gap-1 flex-shrink-0">
+                    <button class="btn-trein-edit text-[12px] font-bold px-2 py-1 rounded border border-stone-200 text-stone-400 hover:border-[var(--header)] transition-colors" data-tid="${t.id}">✏️</button>
+                    <button class="btn-trein-del text-[12px] font-bold px-2 py-1 rounded border border-red-200 text-red-400 hover:text-red-600 transition-colors" data-tid="${t.id}">🗑️</button>
+                </div>` : ""}
+            </div>
+        </div>`;
+    }).join("");
+}
+
 window.addEventListener("load", () => {
     try {
+        inicializarGrupos();
         render();
     } catch(err) {
         console.error("Erro em render():", err);
