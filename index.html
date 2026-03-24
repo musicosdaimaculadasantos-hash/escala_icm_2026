@@ -200,6 +200,68 @@
         /* Rodapé */
         footer p, footer a { font-size: 13px !important; line-height: 1.7; }
 
+        /* ── BOTTOM NAV MOBILE ───────────────────────────────────────── */
+        @media (max-width: 640px) {
+            /* Esconde abas horizontais no mobile */
+            .main-tabs-desktop { display: none !important; }
+            /* Espaço para o bottom nav */
+            #main-body { padding-bottom: 80px !important; }
+            /* Bottom nav */
+            #bottom-nav {
+                display: flex !important;
+                position: fixed; bottom: 0; left: 0; right: 0; z-index: 800;
+                background: white;
+                border-top: 1.5px solid #e7e5e4;
+                box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+                height: 72px;
+                align-items: stretch;
+            }
+            .bnav-btn {
+                flex: 1; display: flex; flex-direction: column;
+                align-items: center; justify-content: center;
+                gap: 3px; border: none; background: none;
+                cursor: pointer; padding: 6px 2px;
+                color: #a8a29e; transition: color 0.15s, background 0.15s;
+                min-height: unset; min-width: unset;
+                font-family: 'Inter', sans-serif;
+                -webkit-tap-highlight-color: transparent;
+                border-radius: 0;
+            }
+            .bnav-btn .bnav-icon { font-size: 22px; line-height: 1; }
+            .bnav-btn .bnav-label { font-size: 10px; font-weight: 600; letter-spacing: 0.01em; line-height: 1; }
+            .bnav-btn.active { color: var(--header); background: #f0fdf4; }
+            .bnav-btn.active .bnav-label { color: var(--header); font-weight: 700; }
+            /* Com 7 botões visíveis (admin): ícone menor */
+            #bottom-nav:has(#bnav-treinamentos:not(.hidden)) .bnav-btn .bnav-icon { font-size: 18px; }
+            #bottom-nav:has(#bnav-treinamentos:not(.hidden)) .bnav-btn .bnav-label { font-size: 9px; }
+            /* Seletor de mês mobile — dropdown em vez de abas horizontais */
+            .month-tabs-desktop { display: none !important; }
+            #month-select-mobile {
+                display: flex !important;
+                align-items: center; gap: 8px;
+                padding: 8px 12px;
+                background: #f5f5f4; border-bottom: 1px solid #e7e5e4;
+            }
+            #month-select-mobile select {
+                flex: 1; border: 1.5px solid #d6d3d1; border-radius: 8px;
+                padding: 10px 12px; font-size: 16px; font-weight: 600;
+                background: white; color: #1c1917;
+                font-family: 'Inter', sans-serif; min-height: 44px;
+            }
+            #month-select-mobile .mes-nav-btn {
+                width: 44px; height: 44px; border-radius: 8px;
+                border: 1.5px solid #d6d3d1; background: white;
+                font-size: 20px; cursor: pointer; display: flex;
+                align-items: center; justify-content: center;
+                color: #57534e; flex-shrink: 0; min-height: unset;
+            }
+        }
+        @media (min-width: 641px) {
+            #bottom-nav { display: none !important; }
+            #month-select-mobile { display: none !important; }
+        }
+        /* ── FIM BOTTOM NAV ──────────────────────────────────────────── */
+
         /* Mobile específico */
         @media (max-width: 640px) {
             body { font-size: 16px; }
@@ -211,6 +273,106 @@
             .escala-tab    { font-size: 13px !important; }
             .momento-btn   { font-size: 12px !important; min-height: 38px; }
         }
+
+        /* ── MODAL DE LOGIN ─────────────────────────────────────────── */
+        #modal-login-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.55); backdrop-filter: blur(3px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.2s;
+        }
+        #modal-login-overlay.show { opacity: 1; pointer-events: all; }
+        #modal-login-box {
+            background: white; border-radius: 16px;
+            padding: 32px 28px 24px; width: 340px; max-width: calc(100vw - 32px);
+            box-shadow: 0 24px 64px rgba(0,0,0,0.22);
+            transform: translateY(12px); transition: transform 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        #modal-login-overlay.show #modal-login-box { transform: translateY(0); }
+        #modal-login-box h2 {
+            font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700;
+            color: #14532d; margin: 0 0 4px; text-align: center;
+        }
+        #modal-login-box p.sub {
+            font-size: 12px; color: #78716c; text-align: center; margin: 0 0 20px;
+        }
+        .login-field { position: relative; margin-bottom: 14px; }
+        .login-field input {
+            width: 100%; box-sizing: border-box;
+            border: 1.5px solid #d6d3d1; border-radius: 8px;
+            padding: 11px 44px 11px 14px; font-size: 15px;
+            outline: none; transition: border-color 0.15s;
+            font-family: 'Inter', sans-serif; color: #1c1917;
+            background: #fafaf9;
+        }
+        .login-field input:focus { border-color: #14532d; background: white; }
+        .login-field input.erro { border-color: #dc2626; }
+        .login-field .eye-btn {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; cursor: pointer; padding: 4px;
+            color: #a8a29e; transition: color 0.15s; min-height: unset; min-width: unset;
+        }
+        .login-field .eye-btn:hover { color: #14532d; }
+        #login-erro {
+            font-size: 12px; color: #dc2626; text-align: center;
+            margin: -6px 0 10px; min-height: 16px;
+        }
+        #btn-login-entrar {
+            width: 100%; padding: 12px; border-radius: 8px;
+            background: #14532d; color: white; font-weight: 700;
+            font-size: 14px; border: none; cursor: pointer;
+            font-family: 'Cinzel', serif; letter-spacing: 0.05em;
+            transition: background 0.15s; min-height: unset;
+        }
+        #btn-login-entrar:hover { background: #166534; }
+        #btn-login-entrar:disabled { background: #86efac; cursor: not-allowed; }
+        #btn-esqueceu {
+            display: block; text-align: center; margin-top: 14px;
+            font-size: 12px; color: #78716c; cursor: pointer;
+            background: none; border: none; text-decoration: underline;
+            text-underline-offset: 3px; min-height: unset;
+            font-family: 'Inter', sans-serif;
+        }
+        #btn-esqueceu:hover { color: #14532d; }
+        #painel-recuperacao { display: none; margin-top: 14px; }
+        #painel-recuperacao p { font-size: 12px; color: #57534e; line-height: 1.6; }
+        #painel-recuperacao a { color: #14532d; font-weight: 600; }
+        .login-perfil-badge {
+            display: inline-block; font-size: 11px; font-weight: 700;
+            padding: 2px 10px; border-radius: 20px; margin-top: 8px;
+            background: #f0fdf4; color: #14532d; border: 1px solid #bbf7d0;
+        }
+        /* ── FIM MODAL LOGIN ─────────────────────────────────────────── */
+
+        /* ── STATUS INLINE TREINAMENTO ──────────────────────────────── */
+        .trein-status-select {
+            appearance: none; -webkit-appearance: none;
+            border: 1.5px solid #e7e5e4; border-radius: 20px;
+            padding: 3px 24px 3px 10px; font-size: 11px; font-weight: 700;
+            cursor: pointer; background-color: white;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23a8a29e'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 8px center;
+            transition: border-color 0.15s; min-height: unset;
+            font-family: 'Inter', sans-serif;
+        }
+        .trein-status-select:focus { outline: none; border-color: var(--header); }
+        .trein-status-proximo   { border-color:#86efac; color:#166534; background-color:#f0fdf4; }
+        .trein-status-inscrito  { border-color:#93c5fd; color:#1e40af; background-color:#eff6ff; }
+        .trein-status-andamento { border-color:#fcd34d; color:#92400e; background-color:#fffbeb; }
+        .trein-status-concluido { border-color:#5eead4; color:#0f766e; background-color:#f0fdfa; }
+        .trein-status-cancelado { border-color:#fca5a5; color:#991b1b; background-color:#fef2f2; }
+        /* ── FIM STATUS INLINE ───────────────────────────────────────── */
+
+        /* ── UPLOAD DE FOTO LOCAL ────────────────────────────────────── */
+        .foto-upload-area {
+            border: 2px dashed #d6d3d1; border-radius: 8px;
+            padding: 10px; text-align: center; cursor: pointer;
+            transition: border-color 0.15s; background: #fafaf9;
+        }
+        .foto-upload-area:hover { border-color: var(--header); background: #f0fdf4; }
+        .foto-upload-area input[type="file"] { display: none; }
+        /* ── FIM UPLOAD FOTO ─────────────────────────────────────────── */
 
         /* Festividades clicáveis */
         .fest-item { cursor: pointer; transition: all 0.15s; }
@@ -232,6 +394,43 @@
 </head>
 <body id="main-body" class="p-1 sm:p-2 md:p-6 transition-colors duration-700">
 
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- MODAL DE LOGIN / ACESSO RESTRITO                              -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="modal-login-overlay" role="dialog" aria-modal="true" aria-labelledby="login-titulo">
+    <div id="modal-login-box">
+        <h2 id="login-titulo">🔒 Acesso Restrito</h2>
+        <p class="sub">Paróquia Imaculado Coração de Maria</p>
+
+        <div class="login-field">
+            <input type="password" id="input-senha-login" placeholder="Senha de administrador"
+                   autocomplete="current-password" maxlength="64"
+                   onkeydown="if(event.key==='Enter')tentarLogin()">
+            <button class="eye-btn" id="btn-eye-login" onclick="alternarVisibilidadeSenha()"
+                    title="Mostrar/ocultar senha" tabindex="0" aria-label="Mostrar senha">
+                <svg id="eye-icon-show" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg id="eye-icon-hide" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+        </div>
+
+        <p id="login-erro"></p>
+
+        <button id="btn-login-entrar" onclick="tentarLogin()">Entrar no Modo Editor</button>
+
+        <button id="btn-esqueceu" onclick="toggleRecuperacao()">Esqueceu a senha?</button>
+
+        <div id="painel-recuperacao">
+            <p>
+                Envie um e-mail para o administrador solicitando a redefinição da senha:<br>
+                <a href="mailto:musicosdaimaculadasantos@gmail.com">musicosdaimaculadasantos@gmail.com</a>
+            </p>
+            <p style="margin-top:8px; font-size:11px; color:#a8a29e;">
+                Informe seu nome e perfil de acesso. A resposta será enviada em até 24h.
+            </p>
+        </div>
+    </div>
+</div>
+
 <!-- Botão WhatsApp flutuante -->
 <button id="btn-whatsapp" title="Falar com Coordenador" aria-label="WhatsApp Coordenador">
     <svg width="28" height="28" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
@@ -240,9 +439,28 @@
 </button>
 <div id="wpp-tooltip">
     <p class="font-bold text-stone-700 mb-1">📲 Falar com o Coordenador</p>
-    <p class="text-stone-500 mb-2">Rogério Marinho</p>
-    <button id="wpp-troca" class="w-full text-left px-2 py-1 rounded hover:bg-stone-100 text-stone-600 mb-1">🔄 Solicitar troca de escala</button>
-    <button id="wpp-geral" class="w-full text-left px-2 py-1 rounded hover:bg-stone-100 text-stone-600">💬 Assunto geral</button>
+    <p class="text-stone-500 mb-2" style="font-size:12px">Rogério Marinho</p>
+
+    <!-- Mini-chat IA -->
+    <div id="wpp-ia-box" style="border-top:1px solid #e7e5e4; padding-top:8px; margin-top:4px;">
+        <p style="font-size:11px; font-weight:700; color:#78716c; margin-bottom:6px; text-transform:uppercase;">💬 Assistente — descreva sua dúvida</p>
+        <div id="wpp-ia-msgs" style="max-height:140px; overflow-y:auto; margin-bottom:6px; display:flex; flex-direction:column; gap:5px;"></div>
+        <div style="display:flex; gap:6px;">
+            <input id="wpp-ia-input" type="text" placeholder="Ex: Como trocar minha escala?" maxlength="200"
+                style="flex:1; border:1.5px solid #d6d3d1; border-radius:8px; padding:7px 10px; font-size:13px; font-family:'Inter',sans-serif; outline:none;"
+                onkeydown="if(event.key==='Enter')enviarMensagemIA()">
+            <button onclick="enviarMensagemIA()"
+                style="background:#14532d; color:white; border:none; border-radius:8px; padding:7px 12px; font-size:13px; font-weight:700; cursor:pointer; flex-shrink:0; min-height:unset;">
+                ➤
+            </button>
+        </div>
+        <div id="wpp-ia-aguardando" style="display:none; font-size:11px; color:#a8a29e; margin-top:4px; font-style:italic;">Consultando IA…</div>
+    </div>
+
+    <div style="border-top:1px solid #e7e5e4; margin-top:10px; padding-top:8px; display:flex; flex-direction:column; gap:4px;">
+        <button id="wpp-troca" class="w-full text-left px-2 py-1 rounded hover:bg-stone-100 text-stone-600" style="font-size:13px;">🔄 Solicitar troca de escala via WhatsApp</button>
+        <button id="wpp-geral" class="w-full text-left px-2 py-1 rounded hover:bg-stone-100 text-stone-600" style="font-size:13px;">💬 Assunto geral via WhatsApp</button>
+    </div>
 </div>
 
 <div class="max-w-[1550px] mx-auto bg-white shadow-2xl rounded-sm religious-border overflow-hidden">
@@ -280,7 +498,7 @@
             </div>
             <p class="font-cinzel text-white text-center text-xs sm:text-sm font-bold uppercase tracking-widest"
                style="text-shadow:0 2px 10px rgba(0,0,0,0.7)">
-                Imaculado Coração de Maria, seja a nossa salvação.
+                Imaculado Coração de Maria, seja a nossa salvação!
             </p>
         </div>
     </div>
@@ -312,8 +530,17 @@
                         <span id="lock-icon">🔒</span> <span id="adm-text">Acesso Restrito</span>
                     </button>
                     <select id="year-selector" class="bg-transparent border border-white/30 rounded px-1 py-1 text-white text-xs font-bold">
+                        <option value="2025" class="text-black">2025</option>
                         <option value="2026" class="text-black" selected>2026</option>
                         <option value="2027" class="text-black">2027</option>
+                        <option value="2028" class="text-black">2028</option>
+                        <option value="2029" class="text-black">2029</option>
+                        <option value="2030" class="text-black">2030</option>
+                        <option value="2031" class="text-black">2031</option>
+                        <option value="2032" class="text-black">2032</option>
+                        <option value="2033" class="text-black">2033</option>
+                        <option value="2034" class="text-black">2034</option>
+                        <option value="2035" class="text-black">2035</option>
                     </select>
                 </div>
                 <p id="sync-ultima" class="text-[11px] text-white/50 hidden"></p>
@@ -329,18 +556,32 @@
             <div>
                 <p class="text-[13px] uppercase font-bold text-stone-500">Tempo Litúrgico</p>
                 <p id="lit-tempo-nome" class="text-xs font-bold text-[var(--header)] uppercase font-cinzel">...</p>
+                <p id="lit-tempo-cor" class="text-[11px] text-stone-400 font-normal"></p>
             </div>
         </div>
-        <p id="lit-tempo-significado" class="text-[14px] text-stone-600 italic hidden sm:block">...</p>
+        <div class="flex-1 hidden sm:block">
+            <p id="lit-tempo-significado" class="text-[14px] text-stone-600 italic">...</p>
+            <details id="lit-tempo-porque-wrap" class="mt-0.5">
+                <summary class="text-[12px] text-[var(--header)] cursor-pointer select-none hover:underline w-fit">Por que esta cor?</summary>
+                <p id="lit-tempo-porque" class="text-[13px] text-stone-500 mt-1 leading-relaxed max-w-xl"></p>
+            </details>
+        </div>
     </div>
 
-    <!-- ABAS DE MÊS -->
-    <nav class="no-print bg-stone-100 border-b overflow-x-auto">
+    <!-- ABAS DE MÊS (desktop) -->
+    <nav class="no-print bg-stone-100 border-b overflow-x-auto month-tabs-desktop">
         <div id="month-tabs" class="flex min-w-max md:w-full justify-between"></div>
     </nav>
 
-    <!-- ABAS PRINCIPAIS: Escala | Leituras | Cantos -->
-    <div class="no-print border-b bg-white flex gap-0 px-2 sm:px-6 pt-3 overflow-x-auto">
+    <!-- SELETOR DE MÊS MOBILE -->
+    <div id="month-select-mobile" class="no-print" style="display:none">
+        <button class="mes-nav-btn" id="mes-prev-mobile" aria-label="Mês anterior">&#8249;</button>
+        <select id="mes-select-mobile" aria-label="Selecionar mês"></select>
+        <button class="mes-nav-btn" id="mes-next-mobile" aria-label="Próximo mês">&#8250;</button>
+    </div>
+
+    <!-- ABAS PRINCIPAIS (desktop) -->
+    <div class="no-print border-b bg-white flex gap-0 px-2 sm:px-6 pt-3 overflow-x-auto main-tabs-desktop">
         <button id="main-tab-escala"   class="main-tab-btn active font-cinzel text-sm sm:text-base font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent mr-1 whitespace-nowrap">📋 Escala</button>
         <button id="main-tab-leituras" class="main-tab-btn font-cinzel text-sm sm:text-base font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 mr-1 whitespace-nowrap">📖 Leituras</button>
         <button id="main-tab-cantos"   class="main-tab-btn font-cinzel text-sm sm:text-base font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">🎵 Cantos</button>
@@ -349,6 +590,31 @@
         <button id="main-tab-treinamentos" class="main-tab-btn hidden font-cinzel text-sm sm:text-base font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">🎓 Treinamentos</button>
         <button id="main-tab-celebracao" class="main-tab-btn font-cinzel text-sm sm:text-base font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">🌟 Santo do Dia</button>
     </div>
+
+    <!-- BOTTOM NAV MOBILE -->
+    <nav id="bottom-nav" role="navigation" aria-label="Navegação principal" style="display:none">
+        <button class="bnav-btn active" data-tab="escala"      id="bnav-escala">
+            <span class="bnav-icon">📋</span><span class="bnav-label">Escala</span>
+        </button>
+        <button class="bnav-btn" data-tab="leituras"   id="bnav-leituras">
+            <span class="bnav-icon">📖</span><span class="bnav-label">Leituras</span>
+        </button>
+        <button class="bnav-btn" data-tab="cantos"     id="bnav-cantos">
+            <span class="bnav-icon">🎵</span><span class="bnav-label">Cantos</span>
+        </button>
+        <button class="bnav-btn" data-tab="roteiro"    id="bnav-roteiro">
+            <span class="bnav-icon">📜</span><span class="bnav-label">Roteiro</span>
+        </button>
+        <button class="bnav-btn" data-tab="grupos"     id="bnav-grupos">
+            <span class="bnav-icon">👥</span><span class="bnav-label">Grupos</span>
+        </button>
+        <button class="bnav-btn hidden" data-tab="treinamentos" id="bnav-treinamentos">
+            <span class="bnav-icon">🎓</span><span class="bnav-label">Treinos</span>
+        </button>
+        <button class="bnav-btn" data-tab="celebracao" id="bnav-celebracao">
+            <span class="bnav-icon">🌟</span><span class="bnav-label">Santo</span>
+        </button>
+    </nav>
 
     <!-- ══════════════════════════════════════════════════════════════ -->
     <!-- PAINEL: ESCALA                                                 -->
@@ -756,13 +1022,20 @@
                 <h2 class="font-cinzel font-bold text-[var(--header)] text-base uppercase">🎓 Treinamentos e Cursos</h2>
                 <p class="text-[13px] text-stone-400 mt-0.5">Liturgia · Música · Formação · Curso Superior</p>
             </div>
-            <button id="btn-novo-trein" class="ml-auto flex items-center gap-1 bg-[var(--header)] text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:opacity-90">
-                ＋ Novo
-            </button>
+            <div class="ml-auto flex gap-2">
+                <button id="btn-trein-matriz" class="flex items-center gap-1 bg-white border border-stone-300 text-stone-600 px-3 py-1.5 rounded-lg text-sm font-bold hover:border-[var(--header)] transition-colors">
+                    📊 Matriz
+                </button>
+                <button id="btn-novo-trein" class="flex items-center gap-1 bg-[var(--header)] text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:opacity-90">
+                    ＋ Novo
+                </button>
+            </div>
         </div>
 
+        <!-- Sub-abas: Lista | Matriz -->
+        <div id="trein-sub-lista">
         <!-- Filtros de tipo -->
-        <div class="flex flex-wrap gap-2 mb-4">
+        <div class="flex flex-wrap gap-2 mb-3">
             <button data-trfiltro="todos"    class="trein-filtro-btn active text-[12px] font-bold px-3 py-1 rounded-full border bg-stone-700 text-white">Todos</button>
             <button data-trfiltro="liturgia" class="trein-filtro-btn text-[12px] font-bold px-3 py-1 rounded-full border border-purple-300 text-purple-700">📖 Liturgia</button>
             <button data-trfiltro="musica"   class="trein-filtro-btn text-[12px] font-bold px-3 py-1 rounded-full border border-blue-300 text-blue-700">🎵 Música</button>
@@ -770,9 +1043,22 @@
             <button data-trfiltro="workshop" class="trein-filtro-btn text-[12px] font-bold px-3 py-1 rounded-full border border-green-300 text-green-700">⛺ Workshop</button>
             <button data-trfiltro="outro"    class="trein-filtro-btn text-[12px] font-bold px-3 py-1 rounded-full border border-stone-300 text-stone-500">📌 Outro</button>
         </div>
-
+        <!-- Filtros de status -->
+        <div class="flex flex-wrap gap-2 mb-4">
+            <button data-trstatus="todos"     class="trein-status-btn active text-[11px] font-bold px-2 py-0.5 rounded-full border bg-stone-100 text-stone-600">Todos status</button>
+            <button data-trstatus="proximo"   class="trein-status-btn text-[11px] font-bold px-2 py-0.5 rounded-full border border-green-300 text-green-700">🟢 Próximo</button>
+            <button data-trstatus="inscrito"  class="trein-status-btn text-[11px] font-bold px-2 py-0.5 rounded-full border border-blue-300 text-blue-700">📝 Inscrições</button>
+            <button data-trstatus="andamento" class="trein-status-btn text-[11px] font-bold px-2 py-0.5 rounded-full border border-amber-300 text-amber-700">🔄 Em andamento</button>
+            <button data-trstatus="concluido" class="trein-status-btn text-[11px] font-bold px-2 py-0.5 rounded-full border border-teal-300 text-teal-700">✅ Concluído</button>
+        </div>
         <!-- Lista de treinamentos -->
         <div id="trein-conteudo" class="space-y-3"></div>
+        </div>
+
+        <!-- Matriz participantes × cursos -->
+        <div id="trein-sub-matriz" class="hidden">
+            <div id="trein-matriz-conteudo"></div>
+        </div>
     </div>
 
     <!-- MODAL: Edição de treinamento -->
@@ -821,9 +1107,29 @@
                         <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Link (inscrição / mais info)</label>
                         <input id="trein-link" type="url" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="https://…">
                     </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Status *</label>
+                            <select id="trein-status" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+                                <option value="proximo">🟢 Próximo</option>
+                                <option value="inscrito">📝 Inscrições abertas</option>
+                                <option value="andamento">🔄 Em andamento</option>
+                                <option value="concluido">✅ Concluído</option>
+                                <option value="cancelado">❌ Cancelado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Data fim</label>
+                            <input id="trein-data-fim" type="date" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+                        </div>
+                    </div>
                     <div>
-                        <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Participantes (nomes separados por vírgula)</label>
+                        <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Inscritos (separados por vírgula)</label>
                         <input id="trein-membros" type="text" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Ex: Maria, João, Ana…">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Quem concluiu (separados por vírgula)</label>
+                        <input id="trein-concluidos" type="text" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Nomes de quem completou o curso…">
                     </div>
                 </div>
                 <div class="px-5 py-3 border-t flex-shrink-0 flex gap-2 justify-between">
@@ -1123,8 +1429,14 @@
                     <div class="flex items-center gap-3 mb-2">
                         <div id="me-foto-preview" class="w-14 h-14 rounded-full bg-stone-200 flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden"></div>
                         <div class="flex-1">
-                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">URL da Foto (opcional)</label>
-                            <input id="me-foto" type="url" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="https://…">
+                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Foto do Membro (opcional)</label>
+                            <!-- Upload por arquivo local -->
+                            <label class="foto-upload-area block mb-1" title="Clique para selecionar foto da galeria">
+                                <input type="file" id="me-foto-file" accept="image/*">
+                                <span class="text-[12px] text-stone-400">📁 Selecionar da galeria…</span>
+                            </label>
+                            <!-- Ou URL -->
+                            <input id="me-foto" type="url" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Ou cole URL da foto: https://…">
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
@@ -1490,7 +1802,19 @@ let isAdmin     = false;
 let subEscalaAtiva = "calendario";
 
 const WHATSAPP_NUM  = "5513997869340";
-const SENHA_HASH    = "93cc50dae0667f2e4b7927c5c9b01b1b8aa1aba57c9d4d13efb9d2e79335a9a8"; // imaculada091623
+// ── Perfis de administrador ───────────────────────────────────────
+// Cada perfil tem: hash SHA-256 da senha, nome exibido e nível (1=editor, 2=super)
+// Para adicionar um perfil: calcule o SHA-256 da senha e insira aqui.
+const ADMIN_PERFIS = [
+    {
+        hash:  "93cc50dae0667f2e4b7927c5c9b01b1b8aa1aba57c9d4d13efb9d2e79335a9a8", // imaculada091623
+        nome:  "Administrador Geral",
+        nivel: 2
+    }
+    // Exemplo de como adicionar outro perfil:
+    // { hash: "<SHA256 da senha>", nome: "Rogério Marinho", nivel: 1 }
+];
+let adminPerfilAtivo = null; // perfil que fez login
 
 // ═══════════════════════════════════════════════════════════════════
 // SEGURANÇA
@@ -1531,12 +1855,19 @@ function getLiturgico(date) {
     advento.setDate(natal.getDate()-(dsn===0?28:(28-dsn)%7+21));
     advento.setHours(0,0,0,0);
     const d = new Date(date); d.setHours(0,0,0,0);
-    if(d>=cinzas && d<pascoa)       return {css:"lit-roxo",   nome:"Quaresma",    sig:"Tempo de penitência, conversão e jejum."};
-    if(d>=pascoa && d<pentecostes)  return {css:"lit-branco",  nome:"Páscoa",     sig:"Vitória de Cristo sobre a morte!"};
-    if(d>=pentecostes && d<trindade)return {css:"lit-vermelho",nome:"Pentecostes",sig:"Efusão do Espírito Santo sobre a Igreja."};
-    if(d>=advento && d<natal)       return {css:"lit-roxo",    nome:"Advento",    sig:"Tempo de espera e preparação para o Natal."};
-    if(d>=natal)                    return {css:"lit-branco",  nome:"Natal",      sig:"Celebração do nascimento de Jesus Cristo."};
-    return {css:"lit-verde", nome:"Comum", sig:"Crescimento e maturidade na fé."};
+
+    if(d>=cinzas && d<pascoa)        return {css:"lit-roxo",    nome:"Quaresma",    cor:"Roxo / Violeta", sig:"Tempo de penitência, conversão e jejum.",
+        porque:"O roxo (violeta) simboliza penitência, luto e conversão. É a cor da realeza humilhada — Cristo que se rebaixa para nos resgatar. Usada também no Advento como sinal de espera."};
+    if(d>=pascoa && d<pentecostes)   return {css:"lit-branco",  nome:"Páscoa",      cor:"Branco / Dourado", sig:"Vitória de Cristo sobre a morte!",
+        porque:"O branco representa pureza, glória e alegria pascal. É a cor da luz ressuscitada, da veste batismal e da vitória sobre a morte. O dourado pode substituí-lo nas solenidades maiores."};
+    if(d>=pentecostes && d<trindade) return {css:"lit-vermelho",nome:"Pentecostes", cor:"Vermelho",  sig:"Efusão do Espírito Santo sobre a Igreja.",
+        porque:"O vermelho evoca o fogo do Espírito Santo e o sangue dos mártires. É usado em Pentecostes, nas festas de apóstolos e mártires, e na Semana Santa (Ramos e Sexta-Feira)."};
+    if(d>=advento && d<natal)        return {css:"lit-roxo",    nome:"Advento",     cor:"Roxo / Rosa (3º dom.)", sig:"Tempo de espera e preparação para o Natal.",
+        porque:"O roxo no Advento simboliza expectativa e preparação. No 3º domingo (Gaudete), pode-se usar o rosa como sinal de alegria antecipada pela proximidade do Natal."};
+    if(d>=natal)                     return {css:"lit-branco",  nome:"Natal",       cor:"Branco / Dourado", sig:"Celebração do nascimento de Jesus Cristo.",
+        porque:"O branco e dourado expressam a alegria da Encarnação — Deus que se faz luz no mundo. Assim como na Páscoa, celebra-se a glória divina manifestada na fragilidade humana."};
+    return {css:"lit-verde", nome:"Comum", cor:"Verde", sig:"Crescimento e maturidade na fé.",
+        porque:"O verde simboliza vida, esperança e crescimento espiritual. É a cor da natureza que floresce — representa a Igreja caminhando e amadurecendo na fé durante o chamado 'Tempo Comum'."};
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2187,11 +2518,19 @@ async function carregarLeituraCompleta(dataStr) {
 // ═══════════════════════════════════════════════════════════════════
 // RENDER: TEMA / CABEÇALHO / ABAS DE MÊS
 // ═══════════════════════════════════════════════════════════════════
+function atualizarInfoLiturgica(info) {
+    document.getElementById("lit-tempo-nome").textContent        = "Tempo " + info.nome;
+    document.getElementById("lit-tempo-significado").textContent = info.sig;
+    const corEl    = document.getElementById("lit-tempo-cor");
+    const porqueEl = document.getElementById("lit-tempo-porque");
+    if (corEl)    corEl.textContent    = "Cor: " + (info.cor || "");
+    if (porqueEl) porqueEl.textContent = info.porque || "";
+}
+
 function renderTema() {
     const info = getLiturgico(new Date(anoAtual, mesAtualIdx, 15));
     document.getElementById("main-body").className = `p-1 sm:p-2 md:p-6 transition-colors duration-700 ${info.css}`;
-    document.getElementById("lit-tempo-nome").textContent        = "Tempo " + info.nome;
-    document.getElementById("lit-tempo-significado").textContent = info.sig;
+    atualizarInfoLiturgica(info);
 }
 
 function renderCabecalho() {
@@ -2217,15 +2556,16 @@ function renderTabs() {
                 dataInput.value = iso;
                 const info = getLiturgico(new Date(anoAtual, i, 1));
                 document.getElementById("main-body").className = `p-1 sm:p-2 md:p-6 transition-colors duration-700 ${info.css}`;
-                document.getElementById("lit-tempo-nome").textContent        = "Tempo " + info.nome;
-                document.getElementById("lit-tempo-significado").textContent = info.sig;
-                // Auto-carrega leituras sempre (independente do painel visível)
+                atualizarInfoLiturgica(info);
                 carregarLeituraCompleta(iso);
             }
             render();
         });
         c.appendChild(btn);
     });
+    // Sincroniza select de mês mobile
+    const selMobile = document.getElementById("mes-select-mobile");
+    if (selMobile) selMobile.value = mesAtualIdx;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2386,27 +2726,82 @@ function renderTabelaDomingos() {
 // ═══════════════════════════════════════════════════════════════════
 // RENDER: TABELA SÁBADOS
 // ═══════════════════════════════════════════════════════════════════
+function getSabadoSantoIso(ano) {
+    const pascoa = getPascoa(ano);
+    const sab = new Date(pascoa);
+    sab.setDate(pascoa.getDate() - 1);
+    return sab.toISOString().split("T")[0];
+}
+
 function renderTabelaSabados() {
     const corpo = document.getElementById("corpo-sabado");
     corpo.innerHTML = "";
     const escalaDef = ["SÁBADO SANTO","VOZES DO CORAÇÃO","JOVENS","MARCO","A DEFINIR"];
-    let d = new Date(anoAtual, mesAtualIdx, 1), sIdx=0;
+    const sabSantoIso = getSabadoSantoIso(anoAtual);
+    let d = new Date(anoAtual, mesAtualIdx, 1), sIdx = 0;
+
     while (d.getMonth() === mesAtualIdx) {
         if (d.getDay() === 6) {
-            const dia=d.getDate(), mes=d.getMonth()+1, ano=d.getFullYear();
-            const dataFmt=`${dia.toString().padStart(2,"0")}/${mes.toString().padStart(2,"0")}`;
-            const dataIso=d.toISOString().split("T")[0];
-            const idS=`lit-sab-${dia}`;
-            const def=escalaDef[sIdx]||"A DEFINIR";
-            const tr=document.createElement("tr");
-            tr.className="border-b bg-white/50";
-            tr.innerHTML=`
-                <td class="p-2 border-r font-bold text-xs">Sáb ${dataFmt}</td>
-                <td id="${idS}" class="p-2 border-r text-left loading-pulse hidden sm:table-cell"><div class="h-8 bg-stone-100 rounded"></div></td>
-                <td class="p-1">${getTag(def,`sab-${dataIso}`)}</td>`;
-            corpo.appendChild(tr);
-            const pd=new Date(d); pd.setDate(d.getDate()+1);
-            fetchLiturgiaResumo(pd.getDate(), pd.getMonth()+1, pd.getFullYear(), idS);
+            const dia = d.getDate(), mes = d.getMonth()+1, ano = d.getFullYear();
+            const dataFmt = `${dia.toString().padStart(2,"0")}/${mes.toString().padStart(2,"0")}`;
+            const dataIso = d.toISOString().split("T")[0];
+            const idS = `lit-sab-${dia}`;
+            const def = escalaDef[sIdx] || "A DEFINIR";
+            const isSabSanto = dataIso === sabSantoIso;
+
+            if (isSabSanto) {
+                // ── Sábado Santo: cabeçalho especial + 24 slots ──────────
+                const trTitulo = document.createElement("tr");
+                trTitulo.className = "border-b bg-teal-50";
+                trTitulo.innerHTML = `
+                    <td colspan="3" class="p-3 border-r">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-[13px] font-bold text-teal-800">🕯️ Sáb ${dataFmt} — Sábado Santo / Vigília Pascal</span>
+                            <span class="text-[11px] bg-teal-600 text-white px-2 py-0.5 rounded-full font-bold">24h de evento</span>
+                        </div>
+                        <p class="text-[11px] text-teal-600 mt-0.5">Cada hora disponível para escalar equipes de todas as Pastorais</p>
+                    </td>`;
+                corpo.appendChild(trTitulo);
+
+                // Linha especial 20h — Vigília/Missa
+                const tr20 = document.createElement("tr");
+                tr20.className = "border-b bg-teal-50/60";
+                tr20.innerHTML = `
+                    <td class="p-2 border-r font-bold text-[11px] text-teal-700">20:00<br><span class="font-normal text-teal-500 text-[10px]">Missa da Vigília</span></td>
+                    <td id="${idS}" class="p-2 border-r text-left loading-pulse hidden sm:table-cell"><div class="h-8 bg-teal-50 rounded"></div></td>
+                    <td class="p-1">${getTag("SÁBADO SANTO", `sab-${dataIso}`)}</td>`;
+                corpo.appendChild(tr20);
+                const pd = new Date(d); pd.setDate(d.getDate()+1);
+                fetchLiturgiaResumo(pd.getDate(), pd.getMonth()+1, pd.getFullYear(), idS);
+
+                // 24 slots horários (0h–23h, exceto 20h já acima)
+                for (let h = 0; h < 24; h++) {
+                    if (h === 20) continue; // já renderizado acima
+                    const hora = h.toString().padStart(2,"0") + ":00";
+                    const chave = `vigilia-${dataIso}-h${h.toString().padStart(2,"0")}`;
+                    const trH = document.createElement("tr");
+                    trH.className = "border-b hover:bg-teal-50/30 transition-colors";
+                    trH.innerHTML = `
+                        <td class="p-2 border-r text-[11px] font-bold text-stone-400">${hora}
+                            ${h >= 0 && h < 20 ? `<span class="block text-[9px] font-normal text-stone-300">Pastoral</span>` : ""}
+                        </td>
+                        <td class="p-2 border-r hidden sm:table-cell text-[11px] text-stone-300 italic">Vigília Pascal</td>
+                        <td class="p-1">${getTag("A DEFINIR", chave)}</td>`;
+                    corpo.appendChild(trH);
+                }
+
+            } else {
+                // ── Sábado normal ────────────────────────────────────────
+                const tr = document.createElement("tr");
+                tr.className = "border-b bg-white/50";
+                tr.innerHTML = `
+                    <td class="p-2 border-r font-bold text-xs">Sáb ${dataFmt}</td>
+                    <td id="${idS}" class="p-2 border-r text-left loading-pulse hidden sm:table-cell"><div class="h-8 bg-stone-100 rounded"></div></td>
+                    <td class="p-1">${getTag(def, `sab-${dataIso}`)}</td>`;
+                corpo.appendChild(tr);
+                const pd = new Date(d); pd.setDate(d.getDate()+1);
+                fetchLiturgiaResumo(pd.getDate(), pd.getMonth()+1, pd.getFullYear(), idS);
+            }
             sIdx++;
         }
         d.setDate(d.getDate()+1);
@@ -2506,15 +2901,80 @@ function gerarId() { return Date.now().toString(36) + Math.random().toString(36)
 let grupoAtivoId = null;
 
 // Avatar colorido por inicial quando não há foto
+// SVG de avatar neutro — dimensionado pelo container, não pelo próprio SVG
+const AVATAR_NEUTRO_SVG = `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;">
+    <rect width="64" height="64" fill="#e7e5e4"/>
+    <circle cx="32" cy="22" r="11" fill="#a8a29e"/>
+    <ellipse cx="32" cy="52" rx="18" ry="14" fill="#a8a29e"/>
+</svg>`;
+
+// Converte classe Tailwind w-X h-X em pixels para CSS inline
+function _avatarPx(size) {
+    const map = {"w-8 h-8":32,"w-10 h-10":40,"w-14 h-14":56,"w-20 h-20":80};
+    return map[size] || 56;
+}
+
 function avatarIniciais(nome, size="w-14 h-14") {
-    const cores = ["bg-red-400","bg-blue-400","bg-green-400","bg-purple-400","bg-amber-400","bg-rose-400","bg-teal-400"];
+    const cores = ["#f87171","#60a5fa","#4ade80","#c084fc","#fbbf24","#fb7185","#2dd4bf"];
+    const px    = _avatarPx(size);
     const idx   = (nome.charCodeAt(0) || 0) % cores.length;
     const ini   = (nome || "?")[0].toUpperCase();
-    return `<div class="${size} rounded-full ${cores[idx]} flex items-center justify-center text-white font-bold text-xl flex-shrink-0">${ini}</div>`;
+    const fs    = Math.round(px * 0.4);
+    return `<div style="width:${px}px;height:${px}px;border-radius:50%;background:${cores[idx]};display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:${fs}px;flex-shrink:0;">${ini}</div>`;
 }
+
+function avatarNeutro(size="w-14 h-14") {
+    const px = _avatarPx(size);
+    return `<div style="width:${px}px;height:${px}px;border-radius:50%;overflow:hidden;flex-shrink:0;">${AVATAR_NEUTRO_SVG}</div>`;
+}
+
 function avatarOuFoto(membro, size="w-14 h-14") {
-    if (membro.foto) return `<img src="${sanitizar(membro.foto)}" alt="${sanitizar(membro.nome)}" class="${size} rounded-full object-cover flex-shrink-0" onerror="this.replaceWith(document.querySelector('#_av_${membro.id || 0}'))">`;
-    return avatarIniciais(membro.nome || "?", size);
+    const px = _avatarPx(size);
+    const estilo = `width:${px}px;height:${px}px;border-radius:50%;object-fit:cover;flex-shrink:0;display:block;`;
+    const wrapEstilo = `width:${px}px;height:${px}px;border-radius:50%;overflow:hidden;flex-shrink:0;`;
+
+    if (membro.foto) {
+        // Wrap + img: se falhar, JS troca pelo neutro sem problema de aspas
+        const uid = "av-" + (membro.id || Math.random().toString(36).slice(2));
+        return `<div id="${uid}" style="${wrapEstilo}"><img src="${sanitizar(membro.foto)}" alt="${sanitizar(membro.nome)}" style="${estilo}" onload="this.parentElement.style.background=''" onerror="var d=document.getElementById('${uid}');if(d){d.innerHTML='${AVATAR_NEUTRO_SVG.replace(/'/g,"\\'").replace(/\n/g,"").replace(/"/g,"&quot;")}'}"></div>`;
+    }
+
+    const nomeLimpo = (membro.nome || "").trim();
+    if (!nomeLimpo || nomeLimpo.startsWith("(")) return avatarNeutro(size);
+    return avatarIniciais(nomeLimpo, size);
+}
+
+// ── Contador de missas/eventos do grupo no ano ──────────────────────
+function contarParticipacaoGrupo(nomeGrupo, ano) {
+    const hoje     = new Date();
+    hoje.setHours(0,0,0,0);
+    let total      = 0;
+    const prefixos = ["d1-","d2-","d3-","d4-","sab-","f730-","f19-"];
+    for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        const matchPref = prefixos.some(p => k.startsWith(p));
+        if (!matchPref) continue;
+        // Extrai a data da chave (formato YYYY-MM-DD ao final)
+        const partes = k.split("-");
+        const anoChave = partes[partes.length - 3];
+        if (anoChave !== String(ano)) continue;
+        const val = localStorage.getItem(k) || "";
+        if (val.trim().toUpperCase() !== nomeGrupo.trim().toUpperCase()) continue;
+        // Conta só até hoje
+        const dataStr = partes.slice(-3).join("-"); // YYYY-MM-DD
+        const dataEvt = new Date(dataStr + "T12:00:00");
+        if (dataEvt <= hoje) total++;
+    }
+    // Também conta vigília
+    for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (!k.startsWith("vigilia-")) continue;
+        if (!k.includes(`-${ano}-`)) continue;
+        const val = localStorage.getItem(k) || "";
+        if (val.trim().toUpperCase() !== nomeGrupo.trim().toUpperCase()) continue;
+        total++;
+    }
+    return total;
 }
 
 // ── Render principal da aba Grupos ──────────────────────────────────
@@ -2552,6 +3012,14 @@ function renderGrupos() {
     const membros = (g.membros || []).slice().sort((a,b) => (b.responsavel ? 1 : 0) - (a.responsavel ? 1 : 0));
     const resp    = membros.find(m => m.responsavel);
 
+    // Contagem de participações no ano até hoje
+    const participacoes = contarParticipacaoGrupo(g.nome, anoAtual);
+    const badgeParticip = participacoes > 0
+        ? `<span class="text-[12px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200" title="Missas/eventos realizados em ${anoAtual} até hoje">
+               ⛪ ${participacoes} missa${participacoes!==1?"s":""} em ${anoAtual}
+           </span>`
+        : `<span class="text-[12px] text-stone-300 italic">Nenhuma missa registrada em ${anoAtual}</span>`;
+
     // Resumo do grupo
     const resumo = (() => {
         const cnt = {};
@@ -2569,6 +3037,7 @@ function renderGrupos() {
                     <h3 class="font-cinzel font-bold text-[var(--header)] text-base uppercase">${sanitizar(g.nome)}</h3>
                     ${g.desc ? `<p class="text-sm text-stone-500 mt-0.5">${sanitizar(g.desc)}</p>` : ""}
                     <div class="flex flex-wrap gap-1 mt-2">${resumo || `<span class="text-[12px] text-stone-300 italic">Sem membros ainda</span>`}</div>
+                    <div class="mt-2">${badgeParticip}</div>
                 </div>
                 ${isAdmin ? `<div class="flex gap-2 flex-shrink-0">
                     <button class="btn-editar-grupo text-[12px] font-bold px-2 py-1 rounded border border-stone-200 text-stone-500 hover:border-[var(--header)] transition-colors" data-gid="${g.id}">✏️ Editar</button>
@@ -2590,7 +3059,7 @@ function renderGrupos() {
             ${membros.map(m => {
                 const esp = ESPECIALIDADE_CFG[m.especialidade] || {icone:"🎵", label:m.especialidade, cor:"bg-stone-100 text-stone-600"};
                 return `<div class="membro-card bg-white rounded-xl border ${m.responsavel ? "border-amber-300 shadow-md" : "border-stone-200 shadow-sm"} p-3 flex flex-col items-center gap-2 cursor-pointer hover:shadow-md transition-shadow" data-mid="${m.id}" data-gid="${g.id}">
-                    <div class="relative">
+                    <div class="relative" style="width:56px;height:56px;flex-shrink:0;">
                         ${avatarOuFoto(m, "w-14 h-14")}
                         ${m.responsavel ? `<span class="absolute -top-1 -right-1 text-base" title="Responsável">👑</span>` : ""}
                     </div>
@@ -2687,14 +3156,50 @@ function abrirEditarMembro(gid, mid) {
 function atualizarFotoPreview() {
     const url  = document.getElementById("me-foto")?.value?.trim();
     const prev = document.getElementById("me-foto-preview");
-    const nome = document.getElementById("me-nome")?.value || "?";
+    const nome = document.getElementById("me-nome")?.value || "";
     if (!prev) return;
-    prev.innerHTML = url
-        ? `<img src="${sanitizar(url)}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='${avatarIniciais(nome).replace(/'/g,"\\'")}'">`
-        : avatarIniciais(nome, "w-14 h-14");
+    const PREV_STYLE = "width:56px;height:56px;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;";
+    if (url) {
+        prev.setAttribute("style", PREV_STYLE);
+        prev.className = "";
+        const img = document.createElement("img");
+        img.src = url;
+        img.style.cssText = "width:56px;height:56px;border-radius:50%;object-fit:cover;display:block;";
+        img.alt = nome || "";
+        img.onerror = () => { prev.innerHTML = AVATAR_NEUTRO_SVG; };
+        prev.innerHTML = "";
+        prev.appendChild(img);
+    } else if (nome && !nome.startsWith("(")) {
+        const cores = ["#f87171","#60a5fa","#4ade80","#c084fc","#fbbf24","#fb7185","#2dd4bf"];
+        const idx   = (nome.charCodeAt(0) || 0) % cores.length;
+        prev.setAttribute("style", `width:56px;height:56px;border-radius:50%;background:${cores[idx]};display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:22px;flex-shrink:0;`);
+        prev.className = "";
+        prev.textContent = nome[0].toUpperCase();
+    } else {
+        prev.setAttribute("style", PREV_STYLE);
+        prev.className = "";
+        prev.innerHTML = AVATAR_NEUTRO_SVG;
+    }
 }
 document.getElementById("me-foto")?.addEventListener("input", atualizarFotoPreview);
 document.getElementById("me-nome")?.addEventListener("input", atualizarFotoPreview);
+
+// Upload de foto por arquivo local → converte para base64
+document.getElementById("me-foto-file")?.addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+        alert("Foto muito grande. Use uma imagem menor que 2 MB.");
+        e.target.value = "";
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = ev => {
+        document.getElementById("me-foto").value = ev.target.result;
+        atualizarFotoPreview();
+    };
+    reader.readAsDataURL(file);
+});
 
 function salvarMembro() {
     const gid   = document.getElementById("me-grupo-id").value;
@@ -2984,12 +3489,19 @@ function renderFestividades() {
         const tagGrupos = (() => {
             // Grupos das missas normais do dia
             const tags = grupos_.map(({grupo, horario}) =>
-                `<span class="text-[11px] font-bold bg-[var(--header)] text-white px-2 py-0.5 rounded-full">🎵 ${sanitizar(horario)} · ${sanitizar(grupo)}</span>`
+                `<span class="inline-flex items-center gap-1 text-[11px] font-bold bg-[var(--header)] text-white px-2 py-0.5 rounded-full">
+                    🎵 ${sanitizar(horario)} · ${sanitizar(grupo)}
+                 </span>`
             );
-            // Equipes específicas da festividade
+            // Equipes específicas da festividade — com botão × para admin
             const festEquipes = carregarEscalaFest(dataIso);
-            festEquipes.forEach(({horario, grupo}) => {
-                tags.push(`<span class="text-[11px] font-bold bg-amber-600 text-white px-2 py-0.5 rounded-full">🌟 ${sanitizar(horario)} · ${sanitizar(grupo)}</span>`);
+            festEquipes.forEach(({horario, grupo}, idx) => {
+                tags.push(`<span class="inline-flex items-center gap-1 text-[11px] font-bold bg-amber-600 text-white px-2 py-0.5 rounded-full">
+                    🌟 ${sanitizar(horario)} · ${sanitizar(grupo)}
+                    ${isAdmin
+                        ? `<button class="fest-equipe-del-card opacity-70 hover:opacity-100 font-bold leading-none text-white" data-iso="${dataIso}" data-idx="${idx}" title="Remover equipe" style="background:none;border:none;cursor:pointer;padding:0 2px;min-height:unset;min-width:unset;">×</button>`
+                        : ""}
+                </span>`);
             });
             return tags.length
                 ? `<div class="flex flex-wrap gap-1 mt-1">${tags.join("")}</div>`
@@ -3002,7 +3514,12 @@ function renderFestividades() {
             <p class="text-[13px] font-bold text-stone-400">${sanitizar(f.d)}</p>
             <div class="flex items-center justify-between">
                 <p class="text-[14px] text-stone-700 font-medium leading-snug">${sanitizar(f.t)}</p>
-                <span class="text-[13px] text-[var(--header)] opacity-60 ml-1 flex-shrink-0">🔍</span>
+                <div class="flex items-center gap-1 flex-shrink-0">
+                    ${isAdmin
+                        ? `<button class="fest-ocultar-card text-[11px] text-stone-300 hover:text-red-400 font-bold px-1.5 py-0.5 rounded border border-transparent hover:border-red-200 transition-colors" data-fest-data="${sanitizar(f.d)}" title="Ocultar evento" style="min-height:unset;min-width:unset;line-height:1">×</button>`
+                        : ""}
+                    <span class="text-[13px] text-[var(--header)] opacity-60 ml-1">🔍</span>
+                </div>
             </div>
             ${tagGrupos}
         </div>`;
@@ -3041,11 +3558,90 @@ function renderEscalaAtiva() {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// ADMIN
+// ADMIN — MODAL DE LOGIN
 // ═══════════════════════════════════════════════════════════════════
+
+function abrirModalLogin() {
+    const overlay = document.getElementById("modal-login-overlay");
+    const input   = document.getElementById("input-senha-login");
+    document.getElementById("login-erro").textContent = "";
+    input.value = "";
+    input.classList.remove("erro");
+    // Garante que o campo está como senha ao abrir
+    input.type = "password";
+    document.getElementById("eye-icon-show").style.display = "";
+    document.getElementById("eye-icon-hide").style.display = "none";
+    // Fecha painel de recuperação
+    document.getElementById("painel-recuperacao").style.display = "none";
+    overlay.classList.add("show");
+    setTimeout(() => input.focus(), 120);
+}
+
+function fecharModalLogin() {
+    document.getElementById("modal-login-overlay").classList.remove("show");
+}
+
+function alternarVisibilidadeSenha() {
+    const input = document.getElementById("input-senha-login");
+    const show  = document.getElementById("eye-icon-show");
+    const hide  = document.getElementById("eye-icon-hide");
+    if (input.type === "password") {
+        input.type = "text";
+        show.style.display = "none";
+        hide.style.display = "";
+    } else {
+        input.type = "password";
+        show.style.display = "";
+        hide.style.display = "none";
+    }
+    input.focus();
+}
+
+function toggleRecuperacao() {
+    const p = document.getElementById("painel-recuperacao");
+    p.style.display = p.style.display === "none" || !p.style.display ? "block" : "none";
+}
+
+async function tentarLogin() {
+    const input = document.getElementById("input-senha-login");
+    const erro  = document.getElementById("login-erro");
+    const btn   = document.getElementById("btn-login-entrar");
+    const s = input.value.trim();
+    if (!s) { erro.textContent = "Digite a senha."; input.classList.add("erro"); return; }
+
+    btn.disabled = true;
+    btn.textContent = "Verificando…";
+    erro.textContent = "";
+
+    const h = await hashSenha(s);
+    const perfil = ADMIN_PERFIS.find(p => p.hash === h);
+
+    if (perfil) {
+        adminPerfilAtivo = perfil;
+        isAdmin = true;
+        fecharModalLogin();
+        atualizarBtnAdm();
+        atualizarBotaoPublicar();
+        render();
+        if (typeof atualizarLembretesAdmin === "function") atualizarLembretesAdmin();
+    } else {
+        input.classList.add("erro");
+        erro.textContent = "Senha incorreta. Tente novamente.";
+        input.value = "";
+        input.focus();
+    }
+
+    btn.disabled = false;
+    btn.textContent = "Entrar no Modo Editor";
+}
+
+// Fechar modal ao clicar fora
+document.getElementById("modal-login-overlay").addEventListener("click", function(e) {
+    if (e.target === this) fecharModalLogin();
+});
+
 async function toggleAdmin() {
     if (isAdmin) {
-        // Pergunta se quer publicar antes de sair
         const publicar = confirm("Deseja publicar as alterações para a equipe antes de sair do Modo Editor?");
         if (publicar) {
             await publicarSync(false);
@@ -3054,23 +3650,13 @@ async function toggleAdmin() {
             if (!sairSemPublicar) return;
         }
         isAdmin = false;
+        adminPerfilAtivo = null;
         atualizarBtnAdm();
         atualizarBotaoPublicar();
         render();
         if (typeof atualizarLembretesAdmin === "function") atualizarLembretesAdmin();
     } else {
-        const s = prompt("Senha de Administrador:");
-        if (!s) return;
-        const h = await hashSenha(s);
-        if (h === SENHA_HASH) {
-            isAdmin = true;
-            atualizarBtnAdm();
-            atualizarBotaoPublicar();
-            render();
-            if (typeof atualizarLembretesAdmin === "function") atualizarLembretesAdmin();
-        } else {
-            alert("Senha incorreta.");
-        }
+        abrirModalLogin();
     }
 }
 
@@ -3080,7 +3666,8 @@ function atualizarBtnAdm() {
     const txt  = document.getElementById("adm-text");
     if (isAdmin) {
         icon.textContent = "🔓";
-        txt.textContent  = "Sair do Modo Editor";
+        const nomeP = adminPerfilAtivo ? ` (${adminPerfilAtivo.nome})` : "";
+        txt.textContent  = "Sair do Editor" + nomeP;
         btn.className    = "text-[14px] bg-yellow-400/30 hover:bg-yellow-400/50 px-2 py-1 rounded border border-yellow-300/60 transition-colors font-bold";
     } else {
         icon.textContent = "🔒";
@@ -3090,6 +3677,9 @@ function atualizarBtnAdm() {
     // Aba Treinamentos: só visível no modo admin
     const tabTrein = document.getElementById("main-tab-treinamentos");
     if (tabTrein) tabTrein.classList.toggle("hidden", !isAdmin);
+    // Bottom nav mobile: também sincroniza Treinamentos
+    const bnavTrein = document.getElementById("bnav-treinamentos");
+    if (bnavTrein) bnavTrein.classList.toggle("hidden", !isAdmin);
     // Aba Log: só visível no modo admin
     const tabLog = document.getElementById("tab-log");
     if (tabLog) tabLog.classList.toggle("hidden", !isAdmin);
@@ -3187,11 +3777,16 @@ function switchMainTab(ativo) {
         document.getElementById("painel-" + t)?.classList.toggle("hidden", t !== ativo);
         document.getElementById("main-tab-" + t)?.classList.toggle("active", t === ativo);
         document.getElementById("main-tab-" + t)?.classList.toggle("text-stone-400", t !== ativo);
+        // Sincroniza bottom nav mobile
+        const bnav = document.getElementById("bnav-" + t);
+        if (bnav) bnav.classList.toggle("active", t === ativo);
     });
     if (ativo === "cantos")        renderCantos();
     if (ativo === "roteiro")       iniciarRoteiro();
     if (ativo === "grupos")        renderGrupos();
     if (ativo === "treinamentos")  renderTreinamentos();
+    // Scroll ao topo ao trocar aba no mobile
+    if (window.innerWidth <= 640) window.scrollTo({top: 0, behavior: "smooth"});
 }
 
 document.getElementById("main-tab-escala").addEventListener("click",   () => switchMainTab("escala"));
@@ -3206,6 +3801,59 @@ document.getElementById("main-tab-roteiro").addEventListener("click",  () => { s
 document.getElementById("main-tab-grupos").addEventListener("click",   () => switchMainTab("grupos"));
 document.getElementById("main-tab-treinamentos")?.addEventListener("click", () => switchMainTab("treinamentos"));
 document.getElementById("main-tab-celebracao").addEventListener("click", () => { switchMainTab("celebracao"); iniciarCelebracao(); });
+
+// ── Bottom Nav Mobile ────────────────────────────────────────────
+document.getElementById("bottom-nav")?.addEventListener("click", e => {
+    const btn = e.target.closest(".bnav-btn");
+    if (!btn) return;
+    const tab = btn.dataset.tab;
+    if (!tab) return;
+    if (tab === "leituras") {
+        switchMainTab("leituras");
+        const data = document.getElementById("data-leitura").value;
+        const container = document.getElementById("leitura-container");
+        if (container.querySelector(".text-stone-300")) carregarLeituraCompleta(data);
+    } else if (tab === "roteiro") {
+        switchMainTab("roteiro"); iniciarRoteiro();
+    } else if (tab === "celebracao") {
+        switchMainTab("celebracao"); iniciarCelebracao();
+    } else {
+        switchMainTab(tab);
+    }
+});
+
+// ── Select de mês mobile ─────────────────────────────────────────
+(function inicializarMesMobile() {
+    const sel = document.getElementById("mes-select-mobile");
+    if (!sel) return;
+    mesesNomes.forEach((nome, i) => {
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = nome;
+        sel.appendChild(opt);
+    });
+    sel.value = mesAtualIdx;
+
+    function mudarMesMobile(novoIdx) {
+        mesAtualIdx = Math.max(0, Math.min(11, novoIdx));
+        sel.value = mesAtualIdx;
+        const dataInput = document.getElementById("data-leitura");
+        if (dataInput) {
+            const mes = (mesAtualIdx+1).toString().padStart(2,"0");
+            const iso = `${anoAtual}-${mes}-01`;
+            dataInput.value = iso;
+            const info = getLiturgico(new Date(anoAtual, mesAtualIdx, 1));
+            document.getElementById("main-body").className = `p-1 sm:p-2 md:p-6 transition-colors duration-700 ${info.css}`;
+            atualizarInfoLiturgica(info);
+            carregarLeituraCompleta(iso);
+        }
+        render();
+    }
+
+    sel.addEventListener("change", () => mudarMesMobile(parseInt(sel.value)));
+    document.getElementById("mes-prev-mobile")?.addEventListener("click", () => mudarMesMobile(mesAtualIdx - 1));
+    document.getElementById("mes-next-mobile")?.addEventListener("click", () => mudarMesMobile(mesAtualIdx + 1));
+})();
 
 // Sub-abas da escala
 document.querySelectorAll(".escala-tab").forEach(btn => {
@@ -3246,8 +3894,7 @@ document.getElementById("data-leitura").addEventListener("change", () => {
     const d    = new Date(val + "T12:00:00");
     const info = getLiturgico(d);
     document.getElementById("main-body").className = `p-1 sm:p-2 md:p-6 transition-colors duration-700 ${info.css}`;
-    document.getElementById("lit-tempo-nome").textContent        = "Tempo " + info.nome;
-    document.getElementById("lit-tempo-significado").textContent = info.sig;
+    atualizarInfoLiturgica(info);
     mesAtualIdx = d.getMonth();
     anoAtual    = d.getFullYear();
     renderCabecalho();
@@ -4767,6 +5414,12 @@ const BANCO_SANTOS = {
         desc:"São Lucas, médico e evangelista, acompanhou Paulo em suas viagens missionárias. Escreveu o terceiro Evangelho — o mais literário e rico em misericórdia — e os Atos dos Apóstolos. É o evangelista que mais destaca o papel das mulheres e dos pobres. A tradição o apresenta como pintor da primeira imagem de Nossa Senhora. Padroeiro dos médicos e pintores.",
         wiki:"Lucas_(evangelista)"
     },
+    "Dia de S. Antônio M. Claret": {
+        cat:"padre", cor:"branco",
+        desc:"São Antônio Maria Claret (1807–1870) nasceu em Sallent, Catalunha (Espanha). Ordenado sacerdote em 1835, tornou-se um incansável missionário popular: pregou mais de 25.000 sermões e publicou mais de 200 obras. Em 1849 fundou a Congregação dos Missionários Filhos do Imaculado Coração de Maria — os Claretianos — que evangeliza hoje em mais de 65 países. Foi Arcebispo de Santiago de Cuba e confessor da Rainha Isabel II. Homem de profunda vida mística e ardor apostólico, foi canonizado por Pio XII em 1950. A comunidade Imaculada Santos é claretiana, tornando este santo especialmente venerado em nossa paróquia.",
+        wiki:"Antônio_Maria_Claret",
+        destaque:"claretiano"
+    },
     // ── NOVEMBRO ─────────────────────────────────────────────────────
     "Dia de Todos os Santos": {
         cat:"santo", cor:"branco",
@@ -4906,6 +5559,11 @@ function renderizarSanto(titulo, dados, dataDisplay, corInfo, festividades, litI
         <!-- Descrição curada -->
         <div class="bg-white border border-stone-200 rounded-xl p-4 sm:p-5 mb-4 shadow-sm">
             <p class="text-[14px] font-bold text-stone-400 uppercase mb-2">📖 Sobre esta celebração</p>
+            ${dados?.destaque === "claretiano" ? `
+            <div class="flex items-center gap-2 mb-3 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                <span class="text-lg">⭐</span>
+                <p class="text-[13px] font-bold text-amber-800">Santo patronal da nossa comunidade — Paróquia Claretiana</p>
+            </div>` : ""}
             <p class="text-sm text-stone-700 leading-relaxed">${sanitizar(descricao)}</p>
         </div>` : `
         <div class="bg-stone-50 border border-stone-200 rounded-xl p-4 mb-4">
@@ -5196,10 +5854,42 @@ document.getElementById("fest-ocultar-evento")?.addEventListener("click", () => 
 
 // Botão "Restaurar todos" no painel lateral (aparece quando há ocultos)
 document.getElementById("important-dates-list")?.addEventListener("click", e => {
-    const btn = e.target.closest("#btn-restaurar-ocultos");
-    if (!btn) return;
-    localStorage.removeItem(FEST_OCULTOS_KEY);
-    renderFestividades();
+    // Restaurar ocultos
+    if (e.target.closest("#btn-restaurar-ocultos")) {
+        localStorage.removeItem(FEST_OCULTOS_KEY);
+        renderFestividades();
+        return;
+    }
+    // × Ocultar evento direto no card (admin)
+    const btnOcultarCard = e.target.closest(".fest-ocultar-card");
+    if (btnOcultarCard && isAdmin) {
+        e.stopPropagation();
+        const dataFmt = btnOcultarCard.dataset.festData; // DD/MM
+        const ocultos = carregarOcultos();
+        if (!ocultos.includes(dataFmt)) ocultos.push(dataFmt);
+        localStorage.setItem(FEST_OCULTOS_KEY, JSON.stringify(ocultos));
+        renderFestividades();
+        return;
+    }
+    // × Remover equipe de festividade direto no card (admin)
+    const btnDelCard = e.target.closest(".fest-equipe-del-card");
+    if (btnDelCard && isAdmin) {
+        e.stopPropagation();
+        const iso = btnDelCard.dataset.iso;
+        const idx = parseInt(btnDelCard.dataset.idx);
+        const arr = carregarEscalaFest(iso);
+        const removido = arr[idx];
+        arr.splice(idx, 1);
+        salvarEscalaFest(iso, arr);
+        if (removido) registrarLog("troca", {
+            data: iso.split("-").reverse().join("/"),
+            horario: removido.horario,
+            descricao: "Equipe removida da festividade (card)",
+            de: removido.grupo, para: "—",
+        });
+        renderFestividades();
+        return;
+    }
 });
 
 // Horário livre — mostra/oculta input
@@ -5280,13 +5970,16 @@ function abrirTreinEdit(tid) {
     document.getElementById("modal-trein-titulo").textContent = t ? "Editar Treinamento" : "Novo Treinamento";
     document.getElementById("trein-id").value               = tid || "";
     document.getElementById("trein-tipo").value             = t?.tipo || "liturgia";
+    document.getElementById("trein-status").value           = t?.status || "proximo";
     document.getElementById("trein-data").value             = t?.data || "";
+    document.getElementById("trein-data-fim").value         = t?.dataFim || "";
     document.getElementById("trein-titulo-input").value     = t?.titulo || "";
     document.getElementById("trein-instituicao").value      = t?.instituicao || "";
     document.getElementById("trein-local").value            = t?.local || "";
     document.getElementById("trein-desc").value             = t?.desc || "";
     document.getElementById("trein-link").value             = t?.link || "";
     document.getElementById("trein-membros").value          = (t?.membros || []).join(", ");
+    document.getElementById("trein-concluidos").value       = (t?.concluidos || []).join(", ");
     document.getElementById("btn-trein-del-modal").classList.toggle("hidden", !tid);
     document.getElementById("modal-trein-edit").classList.remove("hidden");
     document.body.style.overflow = "hidden";
@@ -5301,19 +5994,22 @@ function salvarTrein() {
     const titulo = document.getElementById("trein-titulo-input").value.trim();
     if (!titulo) { alert("Título obrigatório."); return; }
     const tid = document.getElementById("trein-id").value;
-    const membrosRaw = document.getElementById("trein-membros").value;
-    const membros = membrosRaw.split(",").map(s=>s.trim()).filter(Boolean);
+    const membros    = document.getElementById("trein-membros").value.split(",").map(s=>s.trim()).filter(Boolean);
+    const concluidos = document.getElementById("trein-concluidos").value.split(",").map(s=>s.trim()).filter(Boolean);
 
     const dados = {
         id:          tid || gerarId(),
         tipo:        document.getElementById("trein-tipo").value,
+        status:      document.getElementById("trein-status").value,
         data:        document.getElementById("trein-data").value,
+        dataFim:     document.getElementById("trein-data-fim").value,
         titulo,
         instituicao: document.getElementById("trein-instituicao").value.trim(),
         local:       document.getElementById("trein-local").value.trim(),
         desc:        document.getElementById("trein-desc").value.trim(),
         link:        document.getElementById("trein-link").value.trim(),
         membros,
+        concluidos,
     };
 
     const arr = carregarTreinamentos();
@@ -5348,6 +6044,49 @@ document.getElementById("btn-trein-del-modal")?.addEventListener("click", () => 
 });
 document.getElementById("modal-trein-edit")?.addEventListener("click", e => {
     if (e.target === document.getElementById("modal-trein-edit")) fecharTreinModal();
+});
+
+// Filtro de status
+document.querySelector("#painel-treinamentos")?.addEventListener("click", e => {
+    const sb = e.target.closest(".trein-status-btn");
+    if (!sb) return;
+    document.querySelectorAll(".trein-status-btn").forEach(b => {
+        b.classList.remove("active","bg-stone-700","text-white");
+        b.classList.add("text-stone-500");
+    });
+    sb.classList.add("active","bg-stone-700","text-white");
+    sb.classList.remove("text-stone-500");
+    treinStatusFiltro = sb.dataset.trstatus;
+    renderTreinamentos();
+});
+
+// ── Status inline: atualiza sem abrir modal ──────────────────────
+document.querySelector("#painel-treinamentos")?.addEventListener("change", e => {
+    const sel = e.target.closest(".trein-status-select");
+    if (!sel || !isAdmin) return;
+    const tid  = sel.dataset.tid;
+    const novo = sel.value;
+    const arr  = carregarTreinamentos();
+    const t    = arr.find(x => x.id === tid);
+    if (!t) return;
+    const antigo = t.status || "proximo";
+    t.status = novo;
+    salvarTreinamentos(arr);
+    registrarLog("manual", { descricao: `Status de treinamento atualizado: "${t.titulo}" → ${novo}`, de: antigo, para: novo });
+    // Atualiza só a cor do select sem re-renderizar tudo
+    sel.className = sel.className.replace(/trein-status-\w+/, `trein-status-${novo}`);
+});
+
+// Botão Matriz
+document.getElementById("btn-trein-matriz")?.addEventListener("click", () => {
+    const lista  = document.getElementById("trein-sub-lista");
+    const matriz = document.getElementById("trein-sub-matriz");
+    const btn    = document.getElementById("btn-trein-matriz");
+    const mostrando = !matriz.classList.contains("hidden");
+    lista.classList.toggle("hidden", !mostrando);
+    matriz.classList.toggle("hidden", mostrando);
+    btn.textContent = mostrando ? "📊 Matriz" : "📋 Lista";
+    if (!mostrando) renderMatrizTreinamentos();
 });
 
 // ═══════════════════════════════════════════════════════════════════
@@ -5444,58 +6183,92 @@ const TREIN_TIPOS = {
     outro:      { label:"Outro",             icone:"📌", cor:"bg-stone-100 text-stone-600 border-stone-200" },
 };
 
+const TREIN_STATUS = {
+    proximo:   { label:"Próximo",          icone:"🟢", cor:"text-green-700 bg-green-50 border-green-200" },
+    inscrito:  { label:"Inscrições abertas",icone:"📝", cor:"text-blue-700 bg-blue-50 border-blue-200" },
+    andamento: { label:"Em andamento",     icone:"🔄", cor:"text-amber-700 bg-amber-50 border-amber-200" },
+    concluido: { label:"Concluído",        icone:"✅", cor:"text-teal-700 bg-teal-50 border-teal-200" },
+    cancelado: { label:"Cancelado",        icone:"❌", cor:"text-red-400 bg-red-50 border-red-200" },
+};
+
 function carregarTreinamentos() {
     try { return JSON.parse(localStorage.getItem(TREIN_KEY) || "[]"); } catch(e) { return []; }
 }
 function salvarTreinamentos(arr) { localStorage.setItem(TREIN_KEY, JSON.stringify(arr)); }
 
 let treinFiltro = "todos";
+let treinStatusFiltro = "todos";
 
 function renderTreinamentos() {
     const cont = document.getElementById("trein-conteudo");
     if (!cont) return;
 
-    const todos = carregarTreinamentos();
-    const exibir = treinFiltro === "todos" ? todos : todos.filter(t => t.tipo === treinFiltro);
+    let todos = carregarTreinamentos();
+    let exibir = todos;
+    if (treinFiltro !== "todos")       exibir = exibir.filter(t => t.tipo === treinFiltro);
+    if (treinStatusFiltro !== "todos") exibir = exibir.filter(t => (t.status||"proximo") === treinStatusFiltro);
 
-    // Ordena: próximos primeiro, depois passados
-    const hoje = new Date().toISOString().split("T")[0];
+    // Ordena: andamento → inscritos → próximos → concluídos → cancelados
+    const ordem = { andamento:0, inscrito:1, proximo:2, concluido:3, cancelado:4 };
     exibir.sort((a,b) => {
-        const aFut = a.data >= hoje, bFut = b.data >= hoje;
-        if (aFut && !bFut) return -1;
-        if (!aFut && bFut) return 1;
-        return aFut ? a.data.localeCompare(b.data) : b.data.localeCompare(a.data);
+        const oa = ordem[a.status||"proximo"] ?? 5;
+        const ob = ordem[b.status||"proximo"] ?? 5;
+        if (oa !== ob) return oa - ob;
+        return (a.data||"").localeCompare(b.data||"");
     });
 
     if (!exibir.length) {
         cont.innerHTML = `<div class="text-center py-16 text-stone-300"><div class="text-4xl mb-3">🎓</div>
-            <p class="font-cinzel text-sm">Nenhum treinamento cadastrado</p>
+            <p class="font-cinzel text-sm">Nenhum treinamento encontrado</p>
             ${isAdmin ? `<p class="text-[12px] mt-1">Clique em ＋ Novo para adicionar</p>` : ""}</div>`;
         return;
     }
 
+    const hoje = new Date().toISOString().split("T")[0];
     cont.innerHTML = exibir.map(t => {
-        const cfg = TREIN_TIPOS[t.tipo] || TREIN_TIPOS.outro;
-        const dataFmt = t.data ? t.data.split("-").reverse().join("/") : "—";
-        const passado = t.data && t.data < hoje;
-        const membTag = (t.membros||[]).length
-            ? `<div class="flex flex-wrap gap-1 mt-2">${t.membros.map(n =>
-                `<span class="text-[11px] bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full font-bold">👤 ${sanitizar(n)}</span>`
-              ).join("")}</div>`
-            : "";
-        return `<div class="bg-white rounded-xl border border-stone-200 shadow-sm p-4 ${passado ? "opacity-60" : ""}" data-tid="${t.id}">
+        const cfg    = TREIN_TIPOS[t.tipo] || TREIN_TIPOS.outro;
+        const stCfg  = TREIN_STATUS[t.status||"proximo"] || TREIN_STATUS.proximo;
+        const dataFmt = t.data ? t.data.split("-").reverse().join("/") : "";
+        const dataFimFmt = t.dataFim ? t.dataFim.split("-").reverse().join("/") : "";
+        const dataStr = dataFmt + (dataFimFmt && dataFimFmt !== dataFmt ? ` – ${dataFimFmt}` : "");
+        const inscritos  = (t.membros||[]);
+        const concluidos = (t.concluidos||[]);
+        const inscTag = inscritos.length
+            ? `<div class="mt-2">
+                <p class="text-[10px] font-bold text-stone-400 uppercase mb-1">📝 Inscritos (${inscritos.length})</p>
+                <div class="flex flex-wrap gap-1">${inscritos.map(n =>
+                    `<span class="text-[11px] bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full">👤 ${sanitizar(n)}</span>`
+                ).join("")}</div>
+               </div>` : "";
+        const concTag = concluidos.length
+            ? `<div class="mt-2">
+                <p class="text-[10px] font-bold text-stone-400 uppercase mb-1">✅ Concluíram (${concluidos.length}/${inscritos.length||"?"})</p>
+                <div class="flex flex-wrap gap-1">${concluidos.map(n =>
+                    `<span class="text-[11px] bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-full">✓ ${sanitizar(n)}</span>`
+                ).join("")}</div>
+               </div>` : "";
+        return `<div class="bg-white rounded-xl border border-stone-200 shadow-sm p-4" data-tid="${t.id}">
             <div class="flex items-start justify-between gap-2">
                 <div class="flex-1 min-w-0">
                     <div class="flex flex-wrap items-center gap-2 mb-1">
                         <span class="text-[11px] font-bold px-2 py-0.5 rounded-full border ${cfg.cor}">${cfg.icone} ${cfg.label}</span>
-                        <span class="text-[12px] font-bold text-stone-500">${dataFmt}${t.local ? " · " + sanitizar(t.local) : ""}</span>
-                        ${passado ? `<span class="text-[11px] text-stone-300 italic">Concluído</span>` : `<span class="text-[11px] font-bold text-green-600">● Próximo</span>`}
+                        ${isAdmin
+                            ? `<select class="trein-status-select trein-status-${t.status||'proximo'}" data-tid="${t.id}" title="Alterar status">
+                                <option value="proximo"   ${(t.status||"proximo")==="proximo"   ?"selected":""}>🟢 Próximo</option>
+                                <option value="inscrito"  ${t.status==="inscrito"  ?"selected":""}>📝 Inscrições</option>
+                                <option value="andamento" ${t.status==="andamento" ?"selected":""}>🔄 Em andamento</option>
+                                <option value="concluido" ${t.status==="concluido" ?"selected":""}>✅ Concluído</option>
+                                <option value="cancelado" ${t.status==="cancelado" ?"selected":""}>❌ Cancelado</option>
+                               </select>`
+                            : `<span class="text-[11px] font-bold px-2 py-0.5 rounded-full border ${stCfg.cor}">${stCfg.icone} ${stCfg.label}</span>`
+                        }
+                        ${dataStr ? `<span class="text-[12px] font-bold text-stone-400">${dataStr}${t.local ? " · " + sanitizar(t.local) : ""}</span>` : ""}
                     </div>
                     <h4 class="font-cinzel font-bold text-stone-800 text-sm leading-snug">${sanitizar(t.titulo)}</h4>
                     ${t.instituicao ? `<p class="text-[12px] text-stone-400 mt-0.5">🏛️ ${sanitizar(t.instituicao)}</p>` : ""}
                     ${t.desc ? `<p class="text-[13px] text-stone-600 mt-1 leading-relaxed">${sanitizar(t.desc)}</p>` : ""}
                     ${t.link ? `<a href="${sanitizar(t.link)}" target="_blank" rel="noopener" class="text-[12px] font-bold text-[var(--accent)] hover:underline mt-1 inline-block">🔗 Mais informações</a>` : ""}
-                    ${membTag}
+                    ${inscTag}${concTag}
                 </div>
                 ${isAdmin ? `<div class="flex gap-1 flex-shrink-0">
                     <button class="btn-trein-edit text-[12px] font-bold px-2 py-1 rounded border border-stone-200 text-stone-400 hover:border-[var(--header)] transition-colors" data-tid="${t.id}">✏️</button>
@@ -5504,6 +6277,72 @@ function renderTreinamentos() {
             </div>
         </div>`;
     }).join("");
+}
+
+function renderMatrizTreinamentos() {
+    const cont = document.getElementById("trein-matriz-conteudo");
+    if (!cont) return;
+    const treinamentos = carregarTreinamentos().filter(t => t.status === "concluido" || (t.membros||[]).length || (t.concluidos||[]).length);
+
+    // Coletar todos os nomes únicos
+    const nomesSet = new Set();
+    treinamentos.forEach(t => {
+        (t.membros||[]).forEach(n => nomesSet.add(n.trim()));
+        (t.concluidos||[]).forEach(n => nomesSet.add(n.trim()));
+    });
+    const nomes = [...nomesSet].sort();
+
+    if (!treinamentos.length || !nomes.length) {
+        cont.innerHTML = `<div class="text-center py-12 text-stone-300">
+            <div class="text-4xl mb-3">📊</div>
+            <p class="text-sm font-cinzel">Nenhum dado para exibir</p>
+            <p class="text-[12px] mt-1">Cadastre treinamentos com inscritos ou concluídos para ver a matriz</p>
+        </div>`;
+        return;
+    }
+
+    cont.innerHTML = `
+    <p class="text-[12px] text-stone-400 mb-3">✅ = concluiu &nbsp;·&nbsp; 📝 = inscrito &nbsp;·&nbsp; · = não participou</p>
+    <div class="overflow-x-auto rounded-xl border border-stone-200">
+    <table class="w-full text-left border-collapse" style="table-layout:fixed;min-width:${Math.max(400, 160 + treinamentos.length * 110)}px">
+        <thead>
+            <tr class="bg-stone-50 border-b">
+                <th class="p-2 text-[12px] font-bold text-stone-500 sticky left-0 bg-stone-50 z-10" style="width:160px">Participante</th>
+                ${treinamentos.map(t => {
+                    const cfg = TREIN_TIPOS[t.tipo] || TREIN_TIPOS.outro;
+                    const dataFmt = t.data ? t.data.split("-").reverse().slice(0,2).join("/") : "";
+                    return `<th class="p-2 text-[11px] font-bold text-stone-500 text-center border-l" style="width:110px">
+                        <span class="${(TREIN_TIPOS[t.tipo]||TREIN_TIPOS.outro).cor.split(" ")[0]} text-[9px] px-1 rounded">${cfg.icone}</span><br>
+                        <span class="leading-tight block">${sanitizar(t.titulo.substring(0,28))}${t.titulo.length>28?"…":""}</span>
+                        ${dataFmt ? `<span class="text-[10px] font-normal text-stone-400">${dataFmt}</span>` : ""}
+                    </th>`;
+                }).join("")}
+                <th class="p-2 text-[11px] font-bold text-stone-500 text-center border-l" style="width:70px">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${nomes.map((nome, ni) => {
+                let total = 0;
+                const cells = treinamentos.map(t => {
+                    const concluiu = (t.concluidos||[]).map(n=>n.trim()).includes(nome);
+                    const inscrito = (t.membros||[]).map(n=>n.trim()).includes(nome);
+                    if (concluiu) { total++; return `<td class="p-2 text-center border-l text-[16px]">✅</td>`; }
+                    if (inscrito) return `<td class="p-2 text-center border-l text-[14px]">📝</td>`;
+                    return `<td class="p-2 text-center border-l text-stone-200 text-[12px]">·</td>`;
+                }).join("");
+                return `<tr class="${ni%2===0?"bg-white":"bg-stone-50/50"} border-b hover:bg-[var(--bg-main)] transition-colors">
+                    <td class="p-2 sticky left-0 ${ni%2===0?"bg-white":"bg-stone-50"} z-10 border-r">
+                        <span class="text-[13px] font-bold text-stone-700">${sanitizar(nome)}</span>
+                    </td>
+                    ${cells}
+                    <td class="p-2 text-center border-l">
+                        <span class="text-[12px] font-bold ${total>0?"text-teal-700 bg-teal-50":"text-stone-300"} px-2 py-0.5 rounded-full">${total}</span>
+                    </td>
+                </tr>`;
+            }).join("")}
+        </tbody>
+    </table>
+    </div>`;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -5520,7 +6359,7 @@ function coletarDadosSync() {
     const escala = {};
     for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
-        if (/^(d[1-4]|sab|f730|f19)-\d{4}-\d{2}-\d{2}$/.test(k)) {
+        if (/^(d[1-4]|sab|f730|f19|vigilia)-\d{4}-\d{2}-\d{2}/.test(k)) {
             escala[k] = localStorage.getItem(k);
         }
     }
@@ -5647,11 +6486,81 @@ function atualizarBotaoPublicar() {
     }
 }
 
+// ═══════════════════════════════════════════════════════════════════
+// ASSISTENTE IA — FALE COM O COORDENADOR
+// ═══════════════════════════════════════════════════════════════════
+const _iaHistorico = []; // histórico da conversa no mini-chat
+
+function _iaBolha(texto, lado) {
+    const el = document.createElement("div");
+    el.style.cssText = `
+        max-width:90%; padding:7px 10px; border-radius:10px; font-size:12px;
+        line-height:1.5; font-family:'Inter',sans-serif;
+        ${lado === "user"
+            ? "align-self:flex-end; background:#14532d; color:white;"
+            : "align-self:flex-start; background:#f5f5f4; color:#1c1917; border:1px solid #e7e5e4;"}
+    `;
+    el.textContent = texto;
+    return el;
+}
+
+async function enviarMensagemIA() {
+    const input   = document.getElementById("wpp-ia-input");
+    const msgs    = document.getElementById("wpp-ia-msgs");
+    const aguard  = document.getElementById("wpp-ia-aguardando");
+    const texto   = (input?.value || "").trim();
+    if (!texto) return;
+
+    // Exibe mensagem do usuário
+    msgs.appendChild(_iaBolha(texto, "user"));
+    _iaHistorico.push({ role: "user", content: texto });
+    input.value = "";
+    msgs.scrollTop = msgs.scrollHeight;
+
+    // Contexto da paróquia para a IA
+    const grupos_   = carregarGrupos().map(g => g.nome).join(", ") || "sem grupos cadastrados";
+    const systemPrompt = `Você é o assistente digital da Paróquia Imaculado Coração de Maria — comunidade Claretiana de Santos/SP.
+Coordenador responsável: Rogério Marinho (WhatsApp disponível no app).
+Grupos de música cadastrados: ${grupos_}.
+Responda de forma clara, gentil e objetiva. Se não souber a resposta exata, oriente o fiel a entrar em contato diretamente com o coordenador via WhatsApp. Nunca invente informações específicas de escala ou datas. Mantenha respostas curtas (máx. 3 frases).`;
+
+    if (aguard) aguard.style.display = "block";
+
+    try {
+        const res = await fetch("https://api.anthropic.com/v1/messages", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                model: "claude-sonnet-4-20250514",
+                max_tokens: 300,
+                system: systemPrompt,
+                messages: _iaHistorico
+            })
+        });
+        const data   = await res.json();
+        const answer = (data.content || []).map(b => b.text || "").join("").trim()
+            || "Não consegui processar sua mensagem. Por favor, entre em contato direto com o coordenador.";
+
+        _iaHistorico.push({ role: "assistant", content: answer });
+        msgs.appendChild(_iaBolha(answer, "ia"));
+
+        // Registra no log interno
+        registrarLog("manual", { descricao: `Assistente IA consultado: "${texto.substring(0,60)}"` });
+    } catch(e) {
+        const fallback = "Não consegui conectar ao assistente agora. Fale diretamente com o coordenador pelo WhatsApp.";
+        _iaHistorico.push({ role: "assistant", content: fallback });
+        msgs.appendChild(_iaBolha(fallback, "ia"));
+    } finally {
+        if (aguard) aguard.style.display = "none";
+        msgs.scrollTop = msgs.scrollHeight;
+    }
+}
+
 window.addEventListener("load", async () => {
     try {
         inicializarGrupos();
         render();
-        await inicializarSync(); // Lê da nuvem para equipe; mostra timestamp para ADM
+        await inicializarSync();
     } catch(err) {
         console.error("Erro em render():", err);
         document.getElementById("corpo-domingo").innerHTML =
