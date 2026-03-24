@@ -589,6 +589,7 @@
         <button id="main-tab-grupos"   class="main-tab-btn font-cinzel text-sm sm:text-base font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">👥 Grupos</button>
         <button id="main-tab-treinamentos" class="main-tab-btn hidden font-cinzel text-sm sm:text-base font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">🎓 Treinamentos</button>
         <button id="main-tab-celebracao" class="main-tab-btn font-cinzel text-sm sm:text-base font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">🌟 Santo do Dia</button>
+        <button id="main-tab-gestao" class="main-tab-btn hidden font-cinzel text-sm sm:text-base font-bold uppercase px-3 sm:px-6 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">🏛️ Gestão</button>
     </div>
 
     <!-- BOTTOM NAV MOBILE -->
@@ -613,6 +614,9 @@
         </button>
         <button class="bnav-btn" data-tab="celebracao" id="bnav-celebracao">
             <span class="bnav-icon">🌟</span><span class="bnav-label">Santo</span>
+        </button>
+        <button class="bnav-btn hidden" data-tab="gestao" id="bnav-gestao">
+            <span class="bnav-icon">🏛️</span><span class="bnav-label">Gestão</span>
         </button>
     </nav>
 
@@ -796,7 +800,7 @@
 
         <!-- Modal cifra / transpositor -->
         <div id="modal-cifra" class="fixed inset-0 z-50 hidden" style="background:rgba(0,0,0,0.55)">
-            <div class="flex items-start justify-center min-h-screen p-4 pt-8">
+            <div class="flex justify-center min-h-full p-4 py-8">
                 <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col">
                     <div class="flex items-center justify-between px-5 py-4 border-b">
                         <div>
@@ -832,7 +836,7 @@
                         </div>
                     </div>
                     <!-- Conteúdo cifra -->
-                    <div class="overflow-y-auto flex-1 p-5">
+                    <div class="p-5">
                         <pre id="modal-cifra-texto" class="font-mono text-xs sm:text-sm leading-relaxed text-stone-800 whitespace-pre-wrap"></pre>
                     </div>
                 </div>
@@ -848,7 +852,7 @@
 
         <!-- Modal adicionar/editar canto (admin) -->
         <div id="modal-add" class="fixed inset-0 z-50 hidden" style="background:rgba(0,0,0,0.55)">
-            <div class="flex items-start justify-center min-h-screen p-4 pt-8">
+            <div class="flex justify-center min-h-full p-4 py-8">
                 <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
                     <div class="flex items-center justify-between px-5 py-4 border-b">
                         <h3 class="font-cinzel font-bold text-[var(--header)] uppercase text-sm">Cadastrar Canto</h3>
@@ -1061,15 +1065,79 @@
         </div>
     </div>
 
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- PAINEL: GESTÃO — ORGANOGRAMA (só admin)                       -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <div id="painel-gestao" class="hidden p-3 sm:p-5 md:p-8">
+
+        <!-- Cabeçalho -->
+        <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <div>
+                <h2 class="font-cinzel font-bold text-[var(--header)] text-lg uppercase">Organograma Pastoral de Música</h2>
+                <p class="text-sm text-stone-400 mt-0.5">Paróquia Imaculado Coração de Maria — Comunidade Claretiana</p>
+            </div>
+            <button id="btn-gestao-imprimir" class="no-print text-[13px] font-bold px-3 py-1.5 rounded border border-stone-300 text-stone-600 hover:border-[var(--header)] transition-colors">🖨️ Imprimir</button>
+        </div>
+
+        <!-- Organograma -->
+        <div id="organograma-wrap" class="overflow-x-auto pb-4">
+            <div id="organograma" class="min-w-max mx-auto"></div>
+        </div>
+
+        <!-- Modal editar Padre -->
+        <div id="modal-padre-edit" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.6);overflow-y:auto;-webkit-overflow-scrolling:touch;">
+            <div class="flex justify-center min-h-full p-4 py-8">
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm" style="height:fit-content;align-self:flex-start;">
+                    <div class="flex items-center justify-between px-5 py-4 border-b">
+                        <h3 class="font-cinzel font-bold text-[var(--header)] text-sm uppercase">Editar Pároco</h3>
+                        <button onclick="document.getElementById('modal-padre-edit').style.display='none'" class="text-stone-400 hover:text-stone-700 text-2xl leading-none">&times;</button>
+                    </div>
+                    <div class="p-5 space-y-3">
+                        <div class="flex justify-center mb-2">
+                            <div id="padre-foto-preview" style="width:80px;height:80px;border-radius:50%;overflow:hidden;border:3px solid #14532d;flex-shrink:0;"></div>
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Foto — selecionar da galeria</label>
+                            <label style="display:block;border:2px dashed #d6d3d1;border-radius:8px;padding:10px;text-align:center;cursor:pointer;background:#fafaf9;">
+                                <input type="file" id="padre-foto-file" accept="image/*" style="display:none">
+                                <span style="font-size:12px;color:#a8a29e;">📁 Selecionar foto…</span>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Ou URL da foto</label>
+                            <input id="padre-foto-url" type="url" placeholder="https://…" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Nome completo</label>
+                            <input id="padre-nome" type="text" placeholder="Pe. Sebastiano…" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Cargo / Título</label>
+                            <input id="padre-cargo" type="text" placeholder="Pároco" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Contato / WhatsApp</label>
+                            <input id="padre-contato" type="text" placeholder="13 9XXXX-XXXX" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+                        </div>
+                    </div>
+                    <div class="px-5 py-4 border-t flex justify-end gap-2">
+                        <button onclick="document.getElementById('modal-padre-edit').style.display='none'" class="px-4 py-2 text-sm font-bold text-stone-500">Cancelar</button>
+                        <button onclick="salvarDadosPadre()" class="bg-[var(--header)] text-white px-4 py-2 rounded-lg text-sm font-bold hover:opacity-90">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: Edição de treinamento -->
-    <div id="modal-trein-edit" class="fixed inset-0 z-[80] hidden" style="background:rgba(0,0,0,0.6)">
-        <div class="flex items-start justify-center min-h-screen p-4 pt-10">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col max-h-[90vh]">
+    <div id="modal-trein-edit" class="fixed inset-0 z-[80] hidden" style="background:rgba(0,0,0,0.6);overflow-y:auto;-webkit-overflow-scrolling:touch;">
+        <div class="flex justify-center min-h-full p-4 py-8">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col" style="height:fit-content;align-self:flex-start;">
                 <div class="flex items-center justify-between px-5 py-4 border-b flex-shrink-0">
                     <h3 class="font-cinzel font-bold text-[var(--header)] text-sm uppercase" id="modal-trein-titulo">Treinamento</h3>
                     <button id="modal-trein-fechar" class="text-stone-400 hover:text-stone-700 text-2xl leading-none">&times;</button>
                 </div>
-                <div class="overflow-y-auto flex-1 p-5 space-y-3">
+                <div class="p-5 space-y-3">
                     <input type="hidden" id="trein-id">
                     <div class="grid grid-cols-2 gap-3">
                         <div>
@@ -1132,7 +1200,7 @@
                         <input id="trein-concluidos" type="text" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Nomes de quem completou o curso…">
                     </div>
                 </div>
-                <div class="px-5 py-3 border-t flex-shrink-0 flex gap-2 justify-between">
+                <div class="px-5 py-4 border-t flex-shrink-0 flex gap-2 justify-between">
                     <button id="btn-trein-del-modal" class="text-[13px] text-red-400 hover:text-red-600 font-bold px-3 py-1.5 rounded border border-red-200 hidden">🗑️ Excluir</button>
                     <div class="flex gap-2 ml-auto">
                         <button id="modal-trein-cancelar" class="px-4 py-2 text-sm font-bold text-stone-500 hover:text-stone-700">Cancelar</button>
@@ -1208,7 +1276,7 @@
 
     <!-- MODAL LEMBRETES WHATSAPP -->
     <div id="modal-lembretes" class="fixed inset-0 z-[60] hidden" style="background:rgba(0,0,0,0.55)">
-        <div class="flex items-start justify-center min-h-screen p-4 pt-10">
+        <div class="flex justify-center min-h-full p-4 py-8">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
                 <div class="flex items-center justify-between px-5 py-4 border-b">
                     <div>
@@ -1268,8 +1336,8 @@
     </div>
 
     <!-- MODAL FESTIVIDADE -->
-    <div id="modal-festividade" class="fixed inset-0 z-[70] hidden" style="background:rgba(0,0,0,0.6)">
-        <div class="flex items-start justify-center min-h-screen p-4 pt-8">
+    <div id="modal-festividade" class="fixed inset-0 z-[70] hidden" style="background:rgba(0,0,0,0.6);overflow-y:auto;-webkit-overflow-scrolling:touch;">
+        <div class="flex justify-center min-h-full p-4 py-8">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col">
                 <div class="flex items-center justify-between px-5 py-4 border-b flex-shrink-0">
                     <div class="flex-1 min-w-0 pr-3">
@@ -1279,7 +1347,7 @@
                     <button id="fest-modal-fechar" class="text-stone-400 hover:text-stone-700 text-2xl leading-none flex-shrink-0">&times;</button>
                 </div>
                 <!-- Conteúdo carregado dinamicamente -->
-                <div id="fest-modal-body" class="overflow-y-auto flex-1 p-5">
+                <div id="fest-modal-body" class="p-5">
                     <div class="text-center py-8 loading-pulse">
                         <div class="text-3xl mb-2">🔍</div>
                         <p class="text-stone-400 text-sm">Buscando informações...</p>
@@ -1376,28 +1444,28 @@
     </div>
 
     <!-- MODAL: Detalhes / Edição de membro -->
-    <div id="modal-membro" class="fixed inset-0 z-[80] hidden" style="background:rgba(0,0,0,0.6)">
-        <div class="flex items-start justify-center min-h-screen p-4 pt-10">
+    <div id="modal-membro" class="fixed inset-0 z-[80] hidden" style="background:rgba(0,0,0,0.6);overflow-y:auto;-webkit-overflow-scrolling:touch;">
+        <div class="flex justify-center min-h-full p-4 py-8">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[85vh]">
                 <div class="flex items-center justify-between px-5 py-4 border-b flex-shrink-0">
                     <h3 class="font-cinzel font-bold text-[var(--header)] text-sm uppercase" id="modal-membro-titulo">Membro</h3>
                     <button id="modal-membro-fechar" class="text-stone-400 hover:text-stone-700 text-2xl leading-none">&times;</button>
                 </div>
-                <div class="overflow-y-auto flex-1 p-5" id="modal-membro-body"></div>
+                <div class="p-5" id="modal-membro-body"></div>
                 <div class="px-5 py-3 border-t flex-shrink-0 flex gap-2 justify-end" id="modal-membro-actions"></div>
             </div>
         </div>
     </div>
 
     <!-- MODAL: Edição de grupo (admin) -->
-    <div id="modal-grupo-edit" class="fixed inset-0 z-[80] hidden" style="background:rgba(0,0,0,0.6)">
-        <div class="flex items-start justify-center min-h-screen p-4 pt-10">
+    <div id="modal-grupo-edit" class="fixed inset-0 z-[80] hidden" style="background:rgba(0,0,0,0.6);overflow-y:auto;-webkit-overflow-scrolling:touch;">
+        <div class="flex justify-center min-h-full p-4 py-8">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[85vh]">
                 <div class="flex items-center justify-between px-5 py-4 border-b flex-shrink-0">
                     <h3 class="font-cinzel font-bold text-[var(--header)] text-sm uppercase" id="modal-grupo-titulo">Grupo</h3>
                     <button id="modal-grupo-fechar" class="text-stone-400 hover:text-stone-700 text-2xl leading-none">&times;</button>
                 </div>
-                <div class="overflow-y-auto flex-1 p-5 space-y-3">
+                <div class="p-5 space-y-3">
                     <div>
                         <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Nome do Grupo *</label>
                         <input id="ge-nome" type="text" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Ex: VOZES DO CORAÇÃO">
@@ -1416,14 +1484,14 @@
     </div>
 
     <!-- MODAL: Edição de membro (admin) -->
-    <div id="modal-membro-edit" class="fixed inset-0 z-[80] hidden" style="background:rgba(0,0,0,0.6)">
-        <div class="flex items-start justify-center min-h-screen p-4 pt-10">
+    <div id="modal-membro-edit" class="fixed inset-0 z-[80] hidden" style="background:rgba(0,0,0,0.6);overflow-y:auto;-webkit-overflow-scrolling:touch;">
+        <div class="flex justify-center min-h-full p-4 py-8">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[85vh]">
                 <div class="flex items-center justify-between px-5 py-4 border-b flex-shrink-0">
                     <h3 class="font-cinzel font-bold text-[var(--header)] text-sm uppercase" id="modal-membro-edit-titulo">Membro</h3>
                     <button id="modal-membro-edit-fechar" class="text-stone-400 hover:text-stone-700 text-2xl leading-none">&times;</button>
                 </div>
-                <div class="overflow-y-auto flex-1 p-5 space-y-3">
+                <div class="p-5 space-y-3">
                     <input type="hidden" id="me-grupo-id">
                     <input type="hidden" id="me-membro-id">
                     <div class="flex items-center gap-3 mb-2">
@@ -3680,6 +3748,11 @@ function atualizarBtnAdm() {
     // Bottom nav mobile: também sincroniza Treinamentos
     const bnavTrein = document.getElementById("bnav-treinamentos");
     if (bnavTrein) bnavTrein.classList.toggle("hidden", !isAdmin);
+    // Aba Gestão: só visível no modo admin
+    const tabGestao = document.getElementById("main-tab-gestao");
+    if (tabGestao) tabGestao.classList.toggle("hidden", !isAdmin);
+    const bnavGestao = document.getElementById("bnav-gestao");
+    if (bnavGestao) bnavGestao.classList.toggle("hidden", !isAdmin);
     // Aba Log: só visível no modo admin
     const tabLog = document.getElementById("tab-log");
     if (tabLog) tabLog.classList.toggle("hidden", !isAdmin);
@@ -3773,11 +3846,10 @@ document.addEventListener("click", e => {
 });
 
 function switchMainTab(ativo) {
-    ["escala","leituras","cantos","roteiro","grupos","treinamentos","celebracao"].forEach(t => {
+    ["escala","leituras","cantos","roteiro","grupos","treinamentos","celebracao","gestao"].forEach(t => {
         document.getElementById("painel-" + t)?.classList.toggle("hidden", t !== ativo);
         document.getElementById("main-tab-" + t)?.classList.toggle("active", t === ativo);
         document.getElementById("main-tab-" + t)?.classList.toggle("text-stone-400", t !== ativo);
-        // Sincroniza bottom nav mobile
         const bnav = document.getElementById("bnav-" + t);
         if (bnav) bnav.classList.toggle("active", t === ativo);
     });
@@ -3785,7 +3857,7 @@ function switchMainTab(ativo) {
     if (ativo === "roteiro")       iniciarRoteiro();
     if (ativo === "grupos")        renderGrupos();
     if (ativo === "treinamentos")  renderTreinamentos();
-    // Scroll ao topo ao trocar aba no mobile
+    if (ativo === "gestao")        renderOrganograma();
     if (window.innerWidth <= 640) window.scrollTo({top: 0, behavior: "smooth"});
 }
 
@@ -3801,6 +3873,7 @@ document.getElementById("main-tab-roteiro").addEventListener("click",  () => { s
 document.getElementById("main-tab-grupos").addEventListener("click",   () => switchMainTab("grupos"));
 document.getElementById("main-tab-treinamentos")?.addEventListener("click", () => switchMainTab("treinamentos"));
 document.getElementById("main-tab-celebracao").addEventListener("click", () => { switchMainTab("celebracao"); iniciarCelebracao(); });
+document.getElementById("main-tab-gestao")?.addEventListener("click", () => switchMainTab("gestao"));
 
 // ── Bottom Nav Mobile ────────────────────────────────────────────
 document.getElementById("bottom-nav")?.addEventListener("click", e => {
@@ -6487,8 +6560,240 @@ function atualizarBotaoPublicar() {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// ASSISTENTE IA — FALE COM O COORDENADOR
+// GESTÃO — ORGANOGRAMA
 // ═══════════════════════════════════════════════════════════════════
+const PADRE_KEY = "gestao_padre_v1";
+
+function carregarDadosPadre() {
+    try { return JSON.parse(localStorage.getItem(PADRE_KEY) || "{}"); } catch(e) { return {}; }
+}
+function salvarDadosPadre() {
+    const dados = {
+        nome:    document.getElementById("padre-nome").value.trim()    || "Pe. Sebastiano",
+        cargo:   document.getElementById("padre-cargo").value.trim()   || "Pároco",
+        contato: document.getElementById("padre-contato").value.trim() || "",
+        foto:    document.getElementById("padre-foto-url").value.trim() || carregarDadosPadre().foto || "",
+    };
+    localStorage.setItem(PADRE_KEY, JSON.stringify(dados));
+    document.getElementById("modal-padre-edit").style.display = "none";
+    renderOrganograma();
+}
+
+// Upload de foto do padre
+document.getElementById("padre-foto-file")?.addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { alert("Foto muito grande. Use menos de 2 MB."); e.target.value = ""; return; }
+    const reader = new FileReader();
+    reader.onload = ev => {
+        document.getElementById("padre-foto-url").value = ev.target.result;
+        atualizarPrevPadre();
+    };
+    reader.readAsDataURL(file);
+});
+document.getElementById("padre-foto-url")?.addEventListener("input", atualizarPrevPadre);
+
+function atualizarPrevPadre() {
+    const url  = document.getElementById("padre-foto-url").value.trim();
+    const prev = document.getElementById("padre-foto-preview");
+    if (!prev) return;
+    if (url) {
+        const img = document.createElement("img");
+        img.style.cssText = "width:80px;height:80px;border-radius:50%;object-fit:cover;display:block;";
+        img.src = url;
+        img.onerror = () => { prev.innerHTML = AVATAR_NEUTRO_SVG; };
+        prev.innerHTML = ""; prev.appendChild(img);
+    } else {
+        prev.innerHTML = AVATAR_NEUTRO_SVG;
+    }
+}
+
+function abrirEditarPadre() {
+    const d = carregarDadosPadre();
+    document.getElementById("padre-nome").value    = d.nome    || "Pe. Sebastiano";
+    document.getElementById("padre-cargo").value   = d.cargo   || "Pároco";
+    document.getElementById("padre-contato").value = d.contato || "";
+    document.getElementById("padre-foto-url").value = d.foto   || "";
+    atualizarPrevPadre();
+    document.getElementById("modal-padre-edit").style.display = "block";
+}
+
+// ── Construção visual do organograma ───────────────────────────────
+// ── Organograma: card individual ────────────────────────────────────
+function _orgCard({ foto, nome, cargo, grupo, cor, editavel, pequeno, rogerio: isRog }) {
+    const px  = pequeno ? 48 : isRog ? 72 : 64;
+    const uid = "oc-" + Math.random().toString(36).slice(2, 7);
+    const borda = `3px solid ${cor || "#e7e5e4"}`;
+
+    // Avatar: foto ou neutro
+    let avatarHtml;
+    if (foto) {
+        avatarHtml = `<div id="${uid}" style="width:${px}px;height:${px}px;border-radius:50%;overflow:hidden;border:${borda};flex-shrink:0;">
+            <img src="${sanitizar(foto)}" style="width:100%;height:100%;object-fit:cover;display:block;"
+                 onerror="var d=document.getElementById('${uid}');if(d){d.innerHTML='${AVATAR_NEUTRO_SVG.replace(/'/g,"\\'").replace(/\n/g,"").replace(/"/g,"&quot;")}'}">
+        </div>`;
+    } else {
+        avatarHtml = `<div style="width:${px}px;height:${px}px;border-radius:50%;overflow:hidden;border:${borda};flex-shrink:0;">${AVATAR_NEUTRO_SVG}</div>`;
+    }
+
+    const editBtn = editavel && isAdmin
+        ? `<button onclick="abrirEditarPadre()" title="Editar pároco"
+               style="position:absolute;top:-4px;right:-4px;background:white;border:1.5px solid #d6d3d1;border-radius:50%;width:24px;height:24px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;min-height:unset;min-width:unset;padding:0;box-shadow:0 1px 4px rgba(0,0,0,.15);">✏️</button>`
+        : "";
+
+    const grupoTag = grupo
+        ? `<span style="font-size:9px;font-weight:700;color:white;background:${cor};padding:2px 7px;border-radius:20px;margin-top:2px;display:inline-block;letter-spacing:0.03em;">${sanitizar(grupo)}</span>`
+        : "";
+
+    const nomeFmt  = (nome || "—").startsWith("(") ? "—" : sanitizar(nome || "—");
+    const cargoFmt = sanitizar(cargo || "");
+    const fs1 = pequeno ? "10px" : isRog ? "13px" : "11px";
+    const fs2 = pequeno ? "9px"  : "10px";
+    const pad = pequeno ? "8px 10px" : isRog ? "12px 16px" : "10px 12px";
+    const minW = pequeno ? "80px" : "110px";
+    const maxW = pequeno ? "96px" : "130px";
+    const shadow = isRog ? "0 4px 14px rgba(0,0,0,.12)" : "0 2px 8px rgba(0,0,0,.07)";
+
+    return `<div style="position:relative;display:flex;flex-direction:column;align-items:center;background:white;
+                border:2px solid ${cor||"#e7e5e4"};border-radius:14px;padding:${pad};
+                min-width:${minW};max-width:${maxW};box-shadow:${shadow};gap:6px;">
+        ${editBtn}
+        <div style="position:relative;">${avatarHtml}</div>
+        <div style="text-align:center;line-height:1.3;">
+            <p style="font-size:${fs1};font-weight:700;color:#1c1917;margin:0;">${nomeFmt}</p>
+            <p style="font-size:${fs2};color:#78716c;margin:0;">${cargoFmt}</p>
+            ${grupoTag}
+        </div>
+    </div>`;
+}
+
+function _conector(cor, altura) {
+    return `<div style="width:2px;height:${altura||20}px;background:${cor||"#d6d3d1"};margin:0 auto;flex-shrink:0;"></div>`;
+}
+
+function renderOrganograma() {
+    const wrap = document.getElementById("organograma");
+    if (!wrap) return;
+
+    const padre  = carregarDadosPadre();
+    const grupos = carregarGrupos();
+
+    const rogFoto = (() => {
+        for (const g of grupos) {
+            for (const m of (g.membros || [])) {
+                if ((m.nome || "").toLowerCase().includes("rogério") || (m.nome || "").toLowerCase().includes("rogerio")) return m.foto || "";
+            }
+        }
+        return "";
+    })();
+
+    const responsaveis = grupos.map(g => {
+        const resp = (g.membros || []).find(m => m.responsavel);
+        return {
+            grupo:   g.nome,
+            nome:    resp?.nome  || "(Responsável)",
+            cargo:   resp?.apelido || "Responsável",
+            foto:    resp?.foto  || "",
+            cor:     _corGrupo(g.id),
+            membros: (g.membros || []).filter(m => !m.responsavel)
+        };
+    }).filter(r => r);
+
+    const corPadre = "#4c1d95";
+    const corRog   = "#14532d";
+
+    // ── HTML final ───────────────────────────────────────────────────
+    const nResp = responsaveis.length;
+
+    wrap.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;font-family:'Inter',sans-serif;padding:20px 8px 32px;gap:0;min-width:max-content;">
+
+        <!-- Padre -->
+        ${_orgCard({ foto: padre.foto || "", nome: padre.nome || "Pe. Sebastiano", cargo: padre.cargo || "Pároco", cor: corPadre, editavel: true })}
+        ${_conector(corPadre, 20)}
+
+        <!-- Rogério -->
+        ${_orgCard({ foto: rogFoto, nome: "Rogério Marinho", cargo: "Coordenador de Música", cor: corRog, rogerio: true })}
+
+        <!-- Linha vertical descendo do Rogério até a barra horizontal -->
+        ${_conector(corRog, 20)}
+
+        <!-- Linha horizontal + linhas verticais para cada responsável -->
+        <div style="position:relative;display:flex;align-items:flex-start;justify-content:center;gap:16px;" id="org-resp-row">
+
+            <!-- Barra horizontal: posicionada via JS após render -->
+            <div id="org-barra-h" style="
+                position:absolute;
+                top:0;
+                height:2px;
+                background:#d6d3d1;
+                pointer-events:none;
+            "></div>
+
+            ${responsaveis.map((r, i) => {
+                const membrosHtml = r.membros.length
+                    ? `${_conector(r.cor, 14)}
+                       <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:${Math.min(r.membros.length, 3) * 104}px;">
+                           ${r.membros.map(m =>
+                               `<div style="display:flex;flex-direction:column;align-items:center;">
+                                   ${_orgCard({ foto: m.foto, nome: m.apelido || m.nome, cargo: m.instrumento || m.especialidade || "", cor: r.cor, pequeno: true })}
+                               </div>`
+                           ).join("")}
+                       </div>`
+                    : "";
+
+                return `<div class="org-resp-col" style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+                    <div style="width:2px;height:20px;background:#d6d3d1;flex-shrink:0;"></div>
+                    ${_orgCard({ foto: r.foto, nome: r.nome, cargo: r.cargo, grupo: r.grupo, cor: r.cor })}
+                    ${membrosHtml}
+                </div>`;
+            }).join("")}
+        </div>
+
+        <p style="font-size:10px;color:#d6d3d1;margin-top:28px;text-align:center;letter-spacing:0.05em;">
+            PARÓQUIA IMACULADO CORAÇÃO DE MARIA · COMUNIDADE CLARETIANA · SANTOS/SP
+        </p>
+    </div>`;
+
+    // Posiciona a barra horizontal do centro da 1ª coluna ao centro da última
+    requestAnimationFrame(() => {
+        const row   = document.getElementById("org-resp-row");
+        const barra = document.getElementById("org-barra-h");
+        if (!row || !barra) return;
+        const cols  = Array.from(row.querySelectorAll(".org-resp-col"));
+        if (cols.length < 2) { barra.style.display = "none"; return; }
+        const rowRect   = row.getBoundingClientRect();
+        const firstRect = cols[0].getBoundingClientRect();
+        const lastRect  = cols[cols.length - 1].getBoundingClientRect();
+        const left  = firstRect.left  + firstRect.width  / 2 - rowRect.left;
+        const right = lastRect.right  - lastRect.width   / 2 - rowRect.left;
+        barra.style.left  = left  + "px";
+        barra.style.width = (right - left) + "px";
+    });
+}
+
+function _corGrupo(id) {
+    return { "g-vozes":"#991b1b","g-jovens":"#d97706","g-marco":"#0369a1",
+             "g-casais":"#1e40af","g-fatima":"#166534","g-eac":"#701a75",
+             "g-sabsanto":"#0f766e" }[id] || "#78716c";
+}
+
+document.getElementById("btn-gestao-imprimir")?.addEventListener("click", () => window.print());
+
+// ── Integrar aba Gestão no switchMainTab ───────────────────────────
+window.addEventListener("load", async () => {
+    try {
+        inicializarGrupos();
+        render();
+        await inicializarSync();
+    } catch(err) {
+        console.error("Erro em render():", err);
+        document.getElementById("corpo-domingo").innerHTML =
+            `<tr><td colspan="6" class="p-4 text-red-500 text-xs">Erro ao renderizar: ${err.message}</td></tr>`;
+        document.getElementById("corpo-sabado").innerHTML =
+            `<tr><td colspan="3" class="p-4 text-red-500 text-xs">Erro ao renderizar: ${err.message}</td></tr>`;
+    }
+});
 const _iaHistorico = []; // histórico da conversa no mini-chat
 
 function _iaBolha(texto, lado) {
@@ -6556,19 +6861,7 @@ Responda de forma clara, gentil e objetiva. Se não souber a resposta exata, ori
     }
 }
 
-window.addEventListener("load", async () => {
-    try {
-        inicializarGrupos();
-        render();
-        await inicializarSync();
-    } catch(err) {
-        console.error("Erro em render():", err);
-        document.getElementById("corpo-domingo").innerHTML =
-            `<tr><td colspan="6" class="p-4 text-red-500 text-xs">Erro ao renderizar: ${err.message}</td></tr>`;
-        document.getElementById("corpo-sabado").innerHTML =
-            `<tr><td colspan="3" class="p-4 text-red-500 text-xs">Erro ao renderizar: ${err.message}</td></tr>`;
-    }
-});
+
 </script>
 </body>
 </html>
