@@ -7386,116 +7386,69 @@ document.getElementById("main-tab-grupos")?.addEventListener("click", () => {
 });
 </script>
 
-<div id="claret-chat" class="fixed bottom-20 right-4 z-[9999]">
-    <button onclick="toggleChat()" class="bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition active:scale-95">
-        <span class="text-2xl">🙏</span>
-    </button>
 
-    <div id="chat-window" class="hidden absolute bottom-16 right-0 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
-        <div class="bg-blue-600 p-4 text-white font-bold flex justify-between items-center shadow-md">
-            <span>Clarezinho</span>
-            <button onclick="toggleChat()" class="hover:bg-blue-700 px-2 rounded">✕</button>
-        </div>
-        <div id="chat-messages" class="h-80 p-4 overflow-y-auto bg-gray-50 text-sm space-y-3 flex flex-col">
-            <div class="text-left"><span class="bg-gray-200 p-2 rounded-lg inline-block shadow-sm">Olá! Sou o Clarezinho. Como posso ajudar a equipe hoje?</span></div>
-        </div>
-        <div class="p-3 border-t bg-white flex items-center gap-2">
-            <button onclick="ouvirAudio()" id="mic-btn" class="text-blue-600 p-2 rounded-full hover:bg-blue-50 transition">
-                <span id="mic-icon" class="text-xl">🎤</span>
-            </button>
-            <input type="text" id="chat-input" placeholder="Pergunte ao Clarezinho..." class="flex-1 p-2 border rounded-xl outline-none text-sm focus:border-blue-500">
-            <button onclick="enviarMensagemClarezinho()" class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">></button>
-        </div>
-    </div>
-</div>
+// ===============================
+// NOVO CLAREZINHO (VERCEL)
+// ===============================
 
-<script>
-// CHAVE PROTEGIDA (MARÇO 2026)
-const _p1 = "AIzaSyBgJoEecV6";
-const _p2 = "chrC_gbKIzORzDUjPIYNVjbs";
-const API_KEY_CLARET = _p1 + _p2;
-const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + API_KEY_CLARET;
+async function enviarMensagemIA() {
+    const input = document.getElementById("wpp-ia-input");
+    const msg = input.value.trim();
+    if (!msg) return;
 
-function toggleChat() {
-    const win = document.getElementById("chat-window");
-    win?.classList.toggle("hidden");
-    if (!win?.classList.contains("hidden")) document.getElementById("chat-input").focus();
-}
-
-async function enviarMensagemClarezinho() {
-    const input = document.getElementById("chat-input");
-    const container = document.getElementById("chat-messages");
-    const texto = input.value.trim();
-
-    if (!texto) return;
-
-    // Remove avisos de erro antigos
-    container.querySelectorAll('.text-red-500').forEach(e => e.remove());
-
-    // Bolha do Usuário
-    container.innerHTML += `<div class="self-end mb-2 text-right"><span class="bg-blue-100 p-2 rounded-lg text-sm inline-block shadow-sm border border-blue-200">${texto}</span></div>`;
+    adicionarMensagem("user", msg);
     input.value = "";
-    container.scrollTop = container.scrollHeight;
 
-    // Contexto Litúrgico - Adicionamos os dados da escala se houver
-    const escalaInfo = localStorage.getItem("DadosEscala") || "Escala Paroquial";
-    const instrucaoCompleta = `Você é o Clarezinho, assistente da Paróquia Imaculada em Santos. Regras: Missas (pedir com 48h de antecedência), Eventos (pedir com 7 dias). Escala atual: ${escalaInfo}. Pergunta do músico: ${texto}`;
+    const loading = document.getElementById("wpp-ia-aguardando");
+    loading.style.display = "block";
 
     try {
-        const response = await fetch(GEMINI_ENDPOINT, {
+        const response = await fetch("https://clarezinho-backend.vercel.app/api/clarezinho", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: instrucaoCompleta }]
-                }]
-            })
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ mensagem: msg })
         });
 
         const data = await response.json();
-        
-        if (data.error) throw new Error(data.error.message);
 
-        const respostaIA = data.candidates[0].content.parts[0].text;
+        adicionarMensagem("bot", data.resposta);
 
-        container.innerHTML += `
-            <div class="self-start mb-2 text-left">
-                <span class="bg-gray-200 p-2 rounded-lg text-sm inline-block shadow-sm">
-                    <b>Clarezinho:</b> ${respostaIA}
-                </span>
-            </div>`;
-    } catch (err) {
-        console.error("Erro Técnico:", err);
-        container.innerHTML += `<div class="text-center text-[10px] text-red-500 p-2">Conexão interrompida. Verifique sua chave no Google AI Studio ou o link HTTPS.</div>`;
+    } catch (error) {
+        console.error(error);
+        adicionarMensagem("bot", "⚠️ Não consegui responder agora. Tente novamente.");
     }
+
+    loading.style.display = "none";
+}
+
+// ===============================
+// UI DAS MENSAGENS
+// ===============================
+function adicionarMensagem(tipo, texto) {
+    const container = document.getElementById("wpp-ia-msgs");
+
+    const div = document.createElement("div");
+    div.style.maxWidth = "85%";
+    div.style.padding = "8px 10px";
+    div.style.borderRadius = "10px";
+    div.style.fontSize = "12px";
+
+    if (tipo === "user") {
+        div.style.background = "#dcfce7";
+        div.style.alignSelf = "flex-end";
+    } else {
+        div.style.background = "#f1f5f9";
+        div.style.alignSelf = "flex-start";
+    }
+
+    div.innerText = texto;
+    container.appendChild(div);
+
     container.scrollTop = container.scrollHeight;
 }
-
-function ouvirAudio() {
-    const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!Recognition) return alert("Seu navegador não suporta voz.");
-    const rec = new Recognition();
-    rec.lang = "pt-BR";
-    rec.onstart = () => { 
-        document.getElementById("mic-icon").textContent = "🔴";
-        document.getElementById("mic-btn").classList.add("animate-pulse");
-    };
-    rec.onresult = (e) => { document.getElementById("chat-input").value = e.results[0][0].transcript; };
-    rec.onend = () => { 
-        document.getElementById("mic-icon").textContent = "🎤";
-        document.getElementById("mic-btn").classList.remove("animate-pulse");
-    };
-    rec.start();
-}
-
-document.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && document.activeElement.id === "chat-input") {
-        e.preventDefault();
-        enviarMensagemClarezinho();
-    }
-});
 </script>
-
 </body>
 </html>
 </body>
