@@ -62,6 +62,17 @@
         .cal-day.tem-missa { cursor: pointer; }
         .cal-day.tem-missa:hover { background-color: #f0fdf4; }
 
+        /* ── PRIVACIDADE / LGPD ──────────────────────────────────── */
+        .consent-badge-ok  { display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:#dcfce7;color:#166534;border:1px solid #bbf7d0; }
+        .consent-badge-no  { display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:#fef9c3;color:#92400e;border:1px solid #fde68a; }
+        .consent-badge-rev { display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:#fee2e2;color:#991b1b;border:1px solid #fecaca; }
+        .tel-oculto        { letter-spacing:2px;color:#a8a29e;font-size:12px;user-select:none; }
+        #modal-privacidade-overlay {
+            position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.6);
+            display:flex;align-items:center;justify-content:center;
+            opacity:0;pointer-events:none;transition:opacity 0.2s;
+        }
+        #modal-privacidade-overlay.show { opacity:1;pointer-events:all; }
         /* Botão WhatsApp flutuante */
         #btn-whatsapp {
             position: fixed;
@@ -422,7 +433,7 @@
         <div id="painel-recuperacao">
             <p>
                 Envie um e-mail para o administrador solicitando a redefinição da senha:<br>
-                <a href="mailto:musicosdaimaculadasantos@gmail.com">musicosdaimaculadasantos@gmail.com</a>
+                <a href="/cdn-cgi/l/email-protection#bbd6cec8d2d8d4c8dfdad2d6dad8ced7dadfdac8dad5cfd4c8fbdcd6dad2d795d8d4d6"><span class="__cf_email__" data-cfemail="177a62647e74786473767e7a7674627b76737664767963786457707a767e7b3974787a">[email&#160;protected]</span></a>
             </p>
             <p style="margin-top:8px; font-size:11px; color:#a8a29e;">
                 Informe seu nome e perfil de acesso. A resposta será enviada em até 24h.
@@ -1546,6 +1557,19 @@
                         <input type="checkbox" id="me-responsavel" class="w-4 h-4 accent-[var(--header)]">
                         <label for="me-responsavel" class="text-sm font-bold text-stone-600">👑 Responsável pelo grupo</label>
                     </div>
+                    <!-- LGPD: Consentimento -->
+                    <div class="border border-green-200 bg-green-50 rounded-xl p-3 mt-1">
+                        <p class="text-[11px] font-bold text-green-800 uppercase mb-2">🔒 Consentimento LGPD</p>
+                        <div class="flex items-center gap-2 mb-2">
+                            <input type="checkbox" id="me-consentimento" class="w-4 h-4 accent-green-600">
+                            <label for="me-consentimento" class="text-sm text-green-800 font-medium">Autorizou uso de imagem e telefone</label>
+                        </div>
+                        <div id="me-consent-data-wrap" class="hidden">
+                            <label class="text-[11px] font-bold text-stone-400 uppercase block mb-1">Data da autorização</label>
+                            <input id="me-consentimento-data" type="date" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400">
+                        </div>
+                        <p class="text-[11px] text-green-700 mt-1 italic">Sem autorização, telefone fica oculto para não-admins.</p>
+                    </div>
                 </div>
                 <div class="px-5 py-3 border-t flex-shrink-0 flex gap-2 justify-end">
                     <button id="me-excluir" class="mr-auto text-[13px] text-red-400 hover:text-red-600 font-bold px-3 py-1.5 rounded border border-red-200 hover:border-red-400 transition-colors hidden">🗑️ Excluir</button>
@@ -1557,6 +1581,114 @@
     </div>
 
     <!-- RODAPÉ -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- MODAL: POLÍTICA DE PRIVACIDADE                                  -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <div id="modal-privacidade-overlay">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between px-5 py-4 border-b flex-shrink-0">
+                <h3 class="font-cinzel font-bold text-[var(--header)] text-sm uppercase">🔒 Política de Privacidade — LGPD</h3>
+                <button onclick="fecharPrivacidade()" class="text-stone-400 hover:text-stone-700 text-2xl leading-none">&times;</button>
+            </div>
+            <div class="p-5 overflow-y-auto text-sm text-stone-700 leading-relaxed space-y-4 flex-1">
+                <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+                    <p class="font-bold text-green-800 mb-1">📋 Finalidade dos dados</p>
+                    <p>Os dados pessoais (nome, foto e telefone) dos músicos cadastrados neste sistema são utilizados <strong>exclusivamente</strong> para fins de organização interna das escalas litúrgicas da Paróquia Imaculado Coração de Maria — Comunidade Claretiana, Santos/SP.</p>
+                </div>
+                <div>
+                    <p class="font-bold text-stone-800 mb-1">📌 Base legal</p>
+                    <p>O tratamento dos dados obedece à <strong>Lei Geral de Proteção de Dados (LGPD — Lei 13.709/2018)</strong>, com base no consentimento explícito e livre do titular (Art. 7º, I), coletado por meio de Termo de Autorização específico.</p>
+                </div>
+                <div>
+                    <p class="font-bold text-stone-800 mb-1">🔐 Acesso restrito</p>
+                    <p>Os dados sensíveis (telefone e foto) são visíveis apenas para o <strong>Administrador do sistema</strong>. Membros sem autorização expressa terão seus telefones ocultados da visualização pública do site.</p>
+                </div>
+                <div>
+                    <p class="font-bold text-stone-800 mb-1">🚫 Vedações</p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>É vedada a reprodução, cópia ou compartilhamento das informações com terceiros sem autorização prévia.</li>
+                        <li>É vedado o uso dos dados para finalidade diversa da organização litúrgica interna.</li>
+                        <li>O compartilhamento do link de acesso com pessoas externas à equipe é proibido.</li>
+                    </ul>
+                </div>
+                <div>
+                    <p class="font-bold text-stone-800 mb-1">✏️ Direitos do titular</p>
+                    <p>Qualquer músico pode, a qualquer momento, solicitar ao Coordenador (<strong>Rogério Marinho</strong>) a <strong>remoção imediata</strong> de sua foto e/ou telefone do sistema, ou a revogação do consentimento concedido, sem nenhum ônus.</p>
+                </div>
+                <div>
+                    <p class="font-bold text-stone-800 mb-1">📅 Retenção de dados</p>
+                    <p>Os dados são mantidos enquanto o músico estiver ativo na equipe ou enquanto o consentimento estiver vigente. Após revogação, os dados serão removidos no prazo máximo de 7 dias corridos.</p>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                    <p class="font-bold text-amber-800 mb-1">⚠️ Disclaimer</p>
+                    <p class="text-amber-900 text-[13px] italic">"Este site é uma ferramenta de apoio logístico para a equipe de música da Paróquia. O uso dos dados aqui contidos é exclusivo para comunicação interna. É vedada a reprodução ou compartilhamento dessas informações com terceiros sem autorização prévia. A Paróquia não se responsabiliza pelo uso indevido do link por parte de usuários não autorizados."</p>
+                </div>
+                <p class="text-[12px] text-stone-400 text-center">Responsável pelo sistema: Rogério Marinho — Coordenador de Música<br>Paróquia Imaculado Coração de Maria · Santos/SP</p>
+            </div>
+            <div class="px-5 py-3 border-t flex-shrink-0 flex gap-2 justify-between flex-wrap">
+                <button onclick="imprimirAutorizacao()" class="text-[13px] font-bold px-4 py-2 bg-[var(--header)] text-white rounded-lg hover:opacity-90">🖨️ Imprimir Termo de Autorização</button>
+                <button onclick="fecharPrivacidade()" class="px-4 py-2 text-sm font-bold text-stone-500 hover:text-stone-700">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- FORMULÁRIO IMPRIMÍVEL DE AUTORIZAÇÃO (oculto — só ao imprimir) -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <div id="form-autorizacao" style="display:none;">
+        <div style="font-family:serif;max-width:680px;margin:0 auto;padding:32px;font-size:13px;line-height:1.7;color:#1c1917;">
+            <div style="text-align:center;border-bottom:2px solid #14532d;padding-bottom:16px;margin-bottom:20px;">
+                <p style="font-size:11px;text-transform:uppercase;color:#14532d;font-weight:bold;letter-spacing:2px;">Paróquia Imaculado Coração de Maria — Comunidade Claretiana</p>
+                <p style="font-size:11px;color:#78716c;">Av. Ana Costa, 74 · Vila Matias · Santos / SP · Tel: (13) 3224-8302</p>
+                <h2 style="font-size:17px;font-weight:bold;text-transform:uppercase;margin-top:8px;color:#14532d;">Termo de Autorização de Uso de Imagem e Dados Pessoais</h2>
+                <p style="font-size:11px;color:#57534e;font-style:italic;">Lei Geral de Proteção de Dados — LGPD (Lei 13.709/2018) · Art. 7º, I</p>
+            </div>
+            <p>Eu, <span style="display:inline-block;min-width:250px;border-bottom:1px solid #000;">&nbsp;</span>, portador(a) do CPF nº <span style="display:inline-block;min-width:150px;border-bottom:1px solid #000;">&nbsp;</span>, integrante da <strong>Equipe de Música</strong> da Paróquia Imaculado Coração de Maria, <strong>AUTORIZO</strong>, de forma livre, informada e inequívoca, nos termos do Art. 7º, inciso I, da Lei 13.709/2018 (LGPD):</p>
+            <ol style="padding-left:20px;margin:16px 0;space-y:8px;">
+                <li style="margin-bottom:8px;">A inclusão do meu <strong>nome</strong>, <strong>foto</strong> e <strong>número de telefone</strong> no sistema digital de escala litúrgica da Paróquia;</li>
+                <li style="margin-bottom:8px;">O uso das referidas informações <strong>exclusivamente para fins de organização interna</strong> das escalas de música e comunicação entre os membros da equipe;</li>
+                <li style="margin-bottom:8px;">O acesso a esses dados pelos <strong>integrantes autorizados</strong> da Coordenação de Música desta Paróquia.</li>
+            </ol>
+            <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:8px;padding:12px;margin:16px 0;">
+                <p style="font-weight:bold;margin-bottom:4px;">⚠️ Ciência e Restrições</p>
+                <p>Declaro estar ciente de que:</p>
+                <ul style="padding-left:18px;margin-top:4px;">
+                    <li>Meus dados <strong>não serão compartilhados com terceiros</strong> fora da equipe, nem utilizados para fins comerciais;</li>
+                    <li>Posso <strong>revogar esta autorização a qualquer momento</strong>, solicitando ao Coordenador a remoção dos meus dados;</li>
+                    <li>O compartilhamento do link de acesso com pessoas externas é <strong>expressamente proibido</strong>.</li>
+                </ul>
+            </div>
+            <p>Marque as opções que autoriza:</p>
+            <div style="margin:12px 0;padding-left:10px;">
+                <p>☐ &nbsp;Autorizo o uso da minha <strong>foto</strong> no sistema de escala</p>
+                <p>☐ &nbsp;Autorizo a exibição do meu <strong>telefone/WhatsApp</strong> para os membros da equipe</p>
+                <p>☐ &nbsp;Autorizo o uso de <strong>ambos</strong> (foto e telefone)</p>
+                <p>☐ &nbsp;<strong>NÃO autorizo</strong> o uso de foto e/ou telefone (apenas nome e instrumento serão exibidos)</p>
+            </div>
+            <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:40px;">
+                <div>
+                    <div style="border-bottom:1px solid #000;height:40px;"></div>
+                    <p style="font-size:11px;color:#57534e;margin-top:4px;">Assinatura do Músico</p>
+                </div>
+                <div>
+                    <div style="border-bottom:1px solid #000;height:40px;"></div>
+                    <p style="font-size:11px;color:#57534e;margin-top:4px;">Data: ____/____/________</p>
+                </div>
+            </div>
+            <div style="margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:40px;">
+                <div>
+                    <div style="border-bottom:1px solid #000;height:40px;"></div>
+                    <p style="font-size:11px;color:#57534e;margin-top:4px;">Rogério Marinho — Coordenador de Música (testemunha)</p>
+                </div>
+                <div>
+                    <div style="border-bottom:1px solid #000;height:40px;"></div>
+                    <p style="font-size:11px;color:#57534e;margin-top:4px;">Carimbo / Assento da Paróquia (opcional)</p>
+                </div>
+            </div>
+            <p style="text-align:center;font-size:10px;color:#a8a29e;margin-top:28px;border-top:1px solid #e7e5e4;padding-top:12px;">Paróquia Imaculado Coração de Maria · Comunidade Claretiana · Santos/SP · sistema de escala interno · LGPD 13.709/2018</p>
+        </div>
+    </div>
+
     <footer class="bg-[var(--header)] text-white px-4 sm:px-8 py-6 border-t-4 border-[var(--accent)] no-print">
         <div class="max-w-4xl mx-auto">
 
@@ -1639,8 +1771,18 @@
                 <p class="text-[13px] opacity-50 italic text-center sm:text-left">
                     Sistema desenvolvido para uso interno da Paróquia · Coordenação Litúrgica
                 </p>
-                <p class="text-[13px] opacity-50 text-center sm:text-right">
-                    Pároco: Pe. Sebastião Franciulli · Coordenador: Rogério Marinho
+                <div class="flex flex-wrap items-center justify-center sm:justify-end gap-3">
+                    <button onclick="abrirPrivacidade()" class="text-[13px] opacity-70 hover:opacity-100 text-[var(--accent)] underline font-bold transition-opacity">🔒 Política de Privacidade (LGPD)</button>
+                    <p class="text-[13px] opacity-50 text-center sm:text-right">
+                        Pároco: Pe. Sebastião Franciulli · Coordenador: Rogério Marinho
+                    </p>
+                </div>
+            </div>
+            <!-- Disclaimer jurídico -->
+            <div class="mt-3 pt-3 border-t border-white/10">
+                <p class="text-[11px] opacity-40 italic text-center leading-relaxed">
+                    ⚖️ Este site é uma ferramenta de apoio logístico para a equipe de música. O uso dos dados aqui contidos é exclusivo para comunicação interna.
+                    É vedada a reprodução ou compartilhamento dessas informações com terceiros sem autorização prévia. · LGPD — Lei 13.709/2018
                 </p>
             </div>
         </div>
@@ -1648,7 +1790,7 @@
 
 
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 
 // ═══════════════════════════════════════════════════════════════════
 // ANÁLISE DO SALMO RESPONSORIAL — fórmula litúrgica + estrutura
@@ -6418,19 +6560,17 @@ function renderMatrizTreinamentos() {
     </div>`;
 }
 
-// ===================================================================
-// BLOCO DE SINCRONIZAÇÃO (COLE DENTRO DA TAG <SCRIPT>)
-// ===================================================================
+// ═══════════════════════════════════════════════════════════════════
+// SINCRONIZAÇÃO JSONBIN
+// ═══════════════════════════════════════════════════════════════════
+const SYNC_BIN_ID  = "69c125edaa77b81da90ec069";
+const SYNC_API_KEY = "$2a$10$eaPvC45HUl3MpgWIJsYCj.YGTPcW9OTPHwDduu7Jjv/ntnG/iYGhK";
+const SYNC_BASE    = `https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}`;
+const SYNC_TS_KEY  = "sync_ultima_pub";
 
-
-// ===================================================================
-// BLOCO DE SINCRONIZAÇÃO - VERSÃO LIMPA (GOOGLE SHEETS)
-// ===================================================================
-
-const SYNC_BASE = "https://script.google.com/macros/s/AKfycbxvHMtZ0yn3KhDYkS_P4vZfunp-ocvkLrmCuIwfDkDDWKJTFPPh8bCxSw_jBsELXBq2/exec";
-const SYNC_TS_KEY = "sync_ultima_pub";
-
+// Coleta todos os dados locais a sincronizar
 function coletarDadosSync() {
+    // Escala: todas as chaves que começam com d1-,d2-,d3-,d4-,sab-,f730-,f19-
     const escala = {};
     for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
@@ -6438,65 +6578,128 @@ function coletarDadosSync() {
             escala[k] = localStorage.getItem(k);
         }
     }
+    // Equipes de festividades
+    const festEquipes = {};
+    for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k.startsWith("fest-equipe-")) {
+            festEquipes[k] = localStorage.getItem(k);
+        }
+    }
+    // Eventos ocultos
+    const ocultos = localStorage.getItem(FEST_OCULTOS_KEY) || "[]";
+
     return {
         versao: 2,
         publicadoEm: new Date().toISOString(),
         escala,
-        grupos: localStorage.getItem("musica-grupos") || "[]",
-        treinamentos: localStorage.getItem("musica-treinamentos") || "[]"
+        festEquipes,
+        ocultos,
+        grupos:       localStorage.getItem(GRUPOS_KEY)  || "[]",
+        treinamentos: localStorage.getItem(TREIN_KEY)   || "[]",
     };
 }
 
+// Aplica dados recebidos da nuvem no localStorage local
 function aplicarDadosSync(dados) {
     if (!dados || dados.versao < 2) return;
+    // Escala
     if (dados.escala) {
         Object.entries(dados.escala).forEach(([k, v]) => localStorage.setItem(k, v));
     }
-    if (dados.grupos) localStorage.setItem("musica-grupos", dados.grupos);
-    if (dados.treinamentos) localStorage.setItem("musica-treinamentos", dados.treinamentos);
+    // Equipes de festividades
+    if (dados.festEquipes) {
+        Object.entries(dados.festEquipes).forEach(([k, v]) => localStorage.setItem(k, v));
+    }
+    // Eventos ocultos
+    if (dados.ocultos) localStorage.setItem(FEST_OCULTOS_KEY, dados.ocultos);
+    // Grupos e treinamentos
+    if (dados.grupos)       localStorage.setItem(GRUPOS_KEY, dados.grupos);
+    if (dados.treinamentos) localStorage.setItem(TREIN_KEY, dados.treinamentos);
 }
 
+// Publica dados no JSONBin
 async function publicarSync(silencioso = false) {
-    const btn = document.getElementById("btn-publicar");
-    if (btn) btn.disabled = true;
-
+    const btnPublicar  = document.getElementById("btn-publicar");
+    const statusText   = document.getElementById("sync-status-text");
+    const syncUltima   = document.getElementById("sync-ultima");
+    if (btnPublicar) { btnPublicar.disabled = true; btnPublicar.classList.add("opacity-60"); }
+    if (statusText) statusText.textContent = "Publicando…";
     try {
         const dados = coletarDadosSync();
-        await fetch(SYNC_BASE, { method: "POST", mode: "no-cors", body: JSON.stringify(dados) });
-
+        const res = await fetch(SYNC_BASE, {
+            method:  "PUT",
+            headers: {
+                "Content-Type":    "application/json",
+                "X-Master-Key":    SYNC_API_KEY,
+                "X-Bin-Versioning":"false",
+            },
+            body: JSON.stringify(dados),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const ts = new Date().toLocaleString("pt-BR", {day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
         localStorage.setItem(SYNC_TS_KEY, ts);
-        
-        const ultima = document.getElementById("sync-ultima");
-        if (ultima) {
-            ultima.textContent = `☁️ Publicado ${ts}`;
-            ultima.classList.remove("hidden");
-        }
-        if (!silencioso) alert("✅ Sincronizado com o Google!");
+        if (statusText) statusText.textContent = "Publicar";
+        if (syncUltima) { syncUltima.textContent = `☁️ Publicado ${ts}`; syncUltima.classList.remove("hidden"); }
+        if (!silencioso) alert("✅ Dados publicados com sucesso!\nA equipe verá as atualizações ao abrir o app.");
+        registrarLog("manual", { descricao: `Dados publicados para a equipe (JSONBin)` });
     } catch(err) {
-        console.error(err);
-        alert("❌ Erro na conexão.");
+        if (statusText) statusText.textContent = "Erro — tentar de novo";
+        if (!silencioso) alert(`❌ Erro ao publicar: ${err.message}`);
     } finally {
-        if (btn) btn.disabled = false;
+        if (btnPublicar) { btnPublicar.disabled = false; btnPublicar.classList.remove("opacity-60"); }
     }
 }
 
+// Lê dados da nuvem (equipe sem login)
 async function lerSync() {
     try {
-        const res = await fetch(SYNC_BASE);
-        const dados = await res.json();
-        if (dados && dados.versao) {
-            aplicarDadosSync(dados);
-            // IMPORTANTE: Só chama o render se os dados mudaram para evitar loop
-            if (typeof render === "function") render();
+        const res = await fetch(SYNC_BASE, {
+            headers: {
+                "X-Master-Key": SYNC_API_KEY,
+                "X-Bin-Meta":   "false",
+            },
+        });
+        if (!res.ok) return;
+        const json  = await res.json();
+        const dados = json.record || json;
+        if (!dados || !dados.versao) return;
+        aplicarDadosSync(dados);
+        if (dados.publicadoEm) {
+            const ts = new Date(dados.publicadoEm).toLocaleString("pt-BR",
+                {day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+            const el = document.getElementById("sync-ultima");
+            if (el && !isAdmin) {
+                el.textContent = `☁️ Atualizado ${ts}`;
+                el.classList.remove("hidden");
+            }
         }
-    } catch(e) { console.warn("Erro ao ler dados"); }
+        render();
+    } catch(err) {
+        console.warn("Sync leitura falhou:", err.message);
+    }
 }
 
-// ESTA FUNÇÃO SUBSTITUI A ANTIGA PARA EVITAR ER
+// Inicializa sync: ADM só mostra timestamp, equipe lê da nuvem
+async function inicializarSync() {
+    if (isAdmin) {
+        atualizarBotaoPublicar();
+    } else {
+        await lerSync();
+    }
+}
 
-
-
+// Mostra/oculta botão publicar conforme modo ADM
+function atualizarBotaoPublicar() {
+    const btn      = document.getElementById("btn-publicar");
+    const ultima   = document.getElementById("sync-ultima");
+    if (!btn) return;
+    btn.classList.toggle("hidden", !isAdmin);
+    if (isAdmin) {
+        const ts = localStorage.getItem(SYNC_TS_KEY);
+        if (ultima && ts) { ultima.textContent = `☁️ Última pub: ${ts}`; ultima.classList.remove("hidden"); }
+    }
+}
 
 // ═══════════════════════════════════════════════════════════════════
 // GESTÃO — ORGANOGRAMA
@@ -6791,54 +6994,487 @@ Responda de forma clara, gentil e objetiva. Se não souber a resposta exata, ori
         // Registra no log interno
         registrarLog("manual", { descricao: `Assistente IA consultado: "${texto.substring(0,60)}"` });
     } catch(e) {
-        const fallback = "Não consegui conectar ao assistente agora. Fale diretamente com o coordenador pelo WhatsApp.";
-        _iaHistorico.push({ role: "assistant", content: fallback });
+        const fallback = "Não consegui conectar ao assistente agora. Fale diretamente com o coordenador pelo WhatsApp";
         msgs.appendChild(_iaBolha(fallback, "ia"));
-    } finally {
-        if (aguard) aguard.style.display = "none";
-        msgs.scrollTop = msgs.scrollHeight;
     }
+    if (aguard) aguard.style.display = "none";
+    msgs.scrollTop = msgs.scrollHeight;
 }
 
-// ... (Tudo o que está na sua foto termina aqui)
+// ═══════════════════════════════════════════════════════════════════
+// LGPD — PRIVACIDADE E CONSENTIMENTO
+// ═══════════════════════════════════════════════════════════════════
 
-// === BLOCO DE SINCRONIZAÇÃO E INICIALIZAÇÃO ===
-
-// 1. Função que garante que a hora apareça no botão
-function atualizarBotaoPublicar() {
-    const ultima = document.getElementById("sync-ultima");
-    if (!ultima) return;
-    const ts = localStorage.getItem("sync_ultima_pub");
-    if (ts) {
-        ultima.textContent = `☁️ Última pub: ${ts}`;
-        ultima.classList.remove("hidden");
-    }
+function abrirPrivacidade() {
+    document.getElementById("modal-privacidade-overlay").classList.add("show");
+    document.body.style.overflow = "hidden";
 }
 
-// 2. O Motor que liga o site e busca dados no Google
-(async function inicializarSite() {
-    console.log("Iniciando motor de sincronização...");
-    try {
-        const ehAdmin = (typeof isAdmin !== 'undefined' && isAdmin);
-        
-        if (ehAdmin) {
-            atualizarBotaoPublicar();
+function fecharPrivacidade() {
+    document.getElementById("modal-privacidade-overlay").classList.remove("show");
+    document.body.style.overflow = "";
+}
+
+// Fechar modal de privacidade clicando fora
+document.getElementById("modal-privacidade-overlay").addEventListener("click", function(e) {
+    if (e.target === this) fecharPrivacidade();
+});
+
+// Imprimir formulário de autorização
+function imprimirAutorizacao() {
+    const form = document.getElementById("form-autorizacao");
+    const original = document.body.innerHTML;
+    fecharPrivacidade();
+    const conteudo = form.innerHTML;
+    const janela = window.open("", "_blank", "width=720,height=900");
+    janela.document.write(`<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Termo de Autorização — LGPD — Paróquia ICM</title>
+<style>
+  body { font-family: 'Georgia', serif; color: #1c1917; background: white; }
+  @media print {
+    body { margin: 0; padding: 0; }
+    button { display: none !important; }
+  }
+</style>
+</head>
+<body>
+<div style="padding:20px;max-width:720px;margin:0 auto;">
+  <div style="text-align:right;margin-bottom:12px;">
+    <button onclick="window.print()" style="background:#14532d;color:white;border:none;padding:8px 18px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:13px;">🖨️ Imprimir / Salvar como PDF</button>
+  </div>
+  ${conteudo}
+</div>
+</body>
+</html>`);
+    janela.document.close();
+}
+
+// ── Controle do checkbox de consentimento no modal de edição ──────
+document.getElementById("me-consentimento")?.addEventListener("change", function() {
+    const wrap = document.getElementById("me-consent-data-wrap");
+    if (wrap) wrap.classList.toggle("hidden", !this.checked);
+    if (this.checked && !document.getElementById("me-consentimento-data").value) {
+        document.getElementById("me-consentimento-data").value = new Date().toISOString().split("T")[0];
+    }
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// PAINEL DE CONTROLE DE CONSENTIMENTOS (Admin — aba Grupos)
+// ═══════════════════════════════════════════════════════════════════
+
+function renderPainelConsentimento() {
+    const cont = document.getElementById("painel-consentimentos");
+    if (!cont) return;
+
+    const grupos_ = carregarGrupos();
+    let todos = [];
+    grupos_.forEach(g => {
+        (g.membros || []).forEach(m => {
+            todos.push({ grupo: g.nome, gid: g.id, ...m });
+        });
+    });
+
+    const autorizados  = todos.filter(m => m.consentimento === true);
+    const pendentes    = todos.filter(m => !m.consentimento && m.consentimento !== "revogado");
+    const revogados    = todos.filter(m => m.consentimento === "revogado");
+
+    cont.innerHTML = `
+    <div class="bg-white rounded-xl border border-stone-200 shadow-sm p-4 mb-4">
+        <h3 class="font-cinzel font-bold text-[var(--header)] text-sm uppercase mb-3">📋 Controle de Consentimentos LGPD</h3>
+
+        <!-- Resumo -->
+        <div class="grid grid-cols-3 gap-3 mb-4">
+            <div class="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
+                <p class="text-2xl font-bold text-green-700">${autorizados.length}</p>
+                <p class="text-[11px] font-bold text-green-600 uppercase">✅ Autorizados</p>
+            </div>
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center">
+                <p class="text-2xl font-bold text-amber-700">${pendentes.length}</p>
+                <p class="text-[11px] font-bold text-amber-600 uppercase">⚠️ Pendentes</p>
+            </div>
+            <div class="bg-red-50 border border-red-200 rounded-xl p-3 text-center">
+                <p class="text-2xl font-bold text-red-700">${revogados.length}</p>
+                <p class="text-[11px] font-bold text-red-600 uppercase">❌ Revogados</p>
+            </div>
+        </div>
+
+        <!-- Lista -->
+        <div class="space-y-2 max-h-96 overflow-y-auto pr-1">
+            ${todos.length === 0
+                ? `<p class="text-center text-stone-400 italic text-sm py-6">Nenhum músico cadastrado ainda.</p>`
+                : todos.map(m => {
+                    let badge, statusTxt;
+                    if (m.consentimento === true) {
+                        badge = `<span class="consent-badge-ok">✅ Autorizado${m.consentimentoData ? " · " + m.consentimentoData.split("-").reverse().join("/") : ""}</span>`;
+                        statusTxt = "autorizado";
+                    } else if (m.consentimento === "revogado") {
+                        badge = `<span class="consent-badge-rev">❌ Revogado</span>`;
+                        statusTxt = "revogado";
+                    } else {
+                        badge = `<span class="consent-badge-no">⚠️ Pendente</span>`;
+                        statusTxt = "pendente";
+                    }
+                    return `<div class="flex items-center gap-3 px-3 py-2 rounded-lg border ${m.consentimento===true?"border-green-100 bg-green-50":m.consentimento==="revogado"?"border-red-100 bg-red-50":"border-amber-100 bg-amber-50"}">
+                        <div class="flex-1 min-w-0">
+                            <p class="font-bold text-sm text-stone-800 truncate">${sanitizar(m.apelido || m.nome)}</p>
+                            <p class="text-[11px] text-stone-400">${sanitizar(m.grupo)} · ${sanitizar(m.instrumento || m.especialidade || "")}</p>
+                        </div>
+                        ${badge}
+                        <button class="btn-consent-toggle text-[11px] font-bold px-2 py-1 rounded border border-stone-300 text-stone-500 hover:border-[var(--header)] transition-colors flex-shrink-0"
+                            data-gid="${m.gid}" data-mid="${m.id}" title="Alternar consentimento">✏️</button>
+                    </div>`;
+                }).join("")
+            }
+        </div>
+
+        <div class="flex gap-2 mt-4 flex-wrap">
+            <button onclick="imprimirAutorizacao()" class="text-[13px] font-bold px-4 py-2 bg-[var(--header)] text-white rounded-lg hover:opacity-90">
+                🖨️ Imprimir Termo em Branco
+            </button>
+            <button onclick="abrirPrivacidade()" class="text-[13px] font-bold px-4 py-2 border border-stone-300 text-stone-600 rounded-lg hover:border-[var(--header)] transition-colors">
+                📜 Ver Política de Privacidade
+            </button>
+        </div>
+    </div>`;
+
+    // Evento de toggle consentimento
+    cont.addEventListener("click", function(e) {
+        const btn = e.target.closest(".btn-consent-toggle");
+        if (!btn) return;
+        const { gid, mid } = btn.dataset;
+        const grupos_ = carregarGrupos();
+        const g = grupos_.find(x => x.id === gid);
+        if (!g) return;
+        const m = (g.membros || []).find(x => x.id === mid);
+        if (!m) return;
+
+        // Ciclo: pendente → autorizado → revogado → pendente
+        if (!m.consentimento) {
+            m.consentimento = true;
+            m.consentimentoData = new Date().toISOString().split("T")[0];
+        } else if (m.consentimento === true) {
+            m.consentimento = "revogado";
+            m.consentimentoData = new Date().toISOString().split("T")[0];
         } else {
-            // Busca a escala no Google para os músicos
-            if (typeof lerSync === "function") {
-                await lerSync(); 
+            m.consentimento = false;
+            m.consentimentoData = "";
+        }
+        salvarGrupos(grupos_);
+        registrarLog("manual", { descricao: `Consentimento LGPD de ${m.nome}: ${m.consentimento}` });
+        renderPainelConsentimento();
+    }, { once: false });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PATCH: Salvar consentimento ao salvar membro
+// Sobrescreve a função salvarMembroEdit para incluir campos LGPD
+// ═══════════════════════════════════════════════════════════════════
+const _salvarMembroEditOriginal = typeof salvarMembroEdit === "function" ? salvarMembroEdit : null;
+
+function salvarMembroEditLGPD() {
+    // Chama a função original se existir
+    if (_salvarMembroEditOriginal) _salvarMembroEditOriginal();
+
+    // Complementa salvando campos de consentimento
+    const gid  = document.getElementById("me-grupo-id")?.value;
+    const mid  = document.getElementById("me-membro-id")?.value;
+    const cons = document.getElementById("me-consentimento")?.checked;
+    const data = document.getElementById("me-consentimento-data")?.value || "";
+
+    if (!gid) return;
+    const grupos_ = carregarGrupos();
+    const g = grupos_.find(x => x.id === gid);
+    if (!g) return;
+
+    if (mid) {
+        const m = (g.membros || []).find(x => x.id === mid);
+        if (m) {
+            m.consentimento = cons ? true : false;
+            m.consentimentoData = cons ? data : "";
+        }
+    } else {
+        // Membro recém-criado — o último adicionado
+        const ultimo = g.membros?.[g.membros.length - 1];
+        if (ultimo) {
+            ultimo.consentimento = cons ? true : false;
+            ultimo.consentimentoData = cons ? data : "";
+        }
+    }
+    salvarGrupos(grupos_);
+}
+
+// Hook no botão de salvar membro
+document.getElementById("modal-membro-edit-salvar")?.addEventListener("click", function() {
+    // Aguarda o tick do evento original (que fecha o modal) e então aplica LGPD
+    setTimeout(salvarMembroEditLGPD, 50);
+}, true); // capture = true para rodar antes do handler original
+
+// ── Populate consent fields when opening edit modal ───────────────
+const _abrirEditarMembroOriginal = typeof abrirEditarMembro === "function" ? abrirEditarMembro : null;
+document.addEventListener("click", function(e) {
+    // Detecta quando o modal de edição de membro abre (qualquer botão que o dispara)
+    // e preenche os campos de consentimento
+    const btn = e.target.closest("[data-mid][data-gid]");
+    if (!btn) return;
+
+    // Aguarda o modal abrir
+    setTimeout(() => {
+        const mid = btn.dataset.mid;
+        const gid = btn.dataset.gid;
+        if (!mid || !gid) return;
+        const modal = document.getElementById("modal-membro-edit");
+        if (!modal || modal.classList.contains("hidden")) return;
+
+        const grupos_ = carregarGrupos();
+        const g = grupos_.find(x => x.id === gid);
+        const m = g?.membros?.find(x => x.id === mid);
+        if (!m) return;
+
+        const cbCons  = document.getElementById("me-consentimento");
+        const dtCons  = document.getElementById("me-consentimento-data");
+        const wrap    = document.getElementById("me-consent-data-wrap");
+        if (!cbCons) return;
+
+        cbCons.checked = m.consentimento === true;
+        if (dtCons) dtCons.value = m.consentimentoData || "";
+        if (wrap) wrap.classList.toggle("hidden", !cbCons.checked);
+    }, 80);
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// PATCH: renderGrupos — injetar painel de consentimentos e ocultar telefone
+// ═══════════════════════════════════════════════════════════════════
+
+// Aguarda o DOM estar pronto e faz monkey-patch em renderGrupos
+window.addEventListener("load", function() {
+    // Injeta aba "🔒 LGPD" na barra de grupos (admin)
+    const gruposTabs = document.getElementById("grupo-tabs");
+    if (gruposTabs && isAdmin) {
+        const tabLGPD = document.createElement("button");
+        tabLGPD.id = "tab-lgpd";
+        tabLGPD.className = "px-3 py-1.5 rounded-full text-[12px] font-bold border border-stone-300 text-stone-500 hover:border-[var(--header)] transition-colors";
+        tabLGPD.textContent = "🔒 LGPD";
+        tabLGPD.addEventListener("click", () => {
+            document.querySelectorAll("#grupo-tabs button").forEach(b => b.classList.remove("bg-[var(--header)]","text-white"));
+            tabLGPD.classList.add("bg-[var(--header)]","text-white");
+            const cont = document.getElementById("grupo-conteudo");
+            if (cont) {
+                cont.innerHTML = `<div id="painel-consentimentos"></div>`;
+                renderPainelConsentimento();
+            }
+        });
+        gruposTabs.appendChild(tabLGPD);
+    }
+
+    // Patch: ocultar telefone para não-admins sem consentimento
+    // A lista de membros usa innerHTML — sobrescrevemos após renderGrupos
+    const _renderGruposOrig = typeof renderGrupos === "function" ? renderGrupos : null;
+    if (_renderGruposOrig) {
+        window.renderGrupos = function() {
+            _renderGruposOrig();
+            if (!isAdmin) aplicarMascaraTelefone();
+        };
+    }
+
+    // Aplica máscara também na troca de aba
+    document.getElementById("main-tab-grupos")?.addEventListener("click", () => {
+        setTimeout(() => { if (!isAdmin) aplicarMascaraTelefone(); }, 100);
+    });
+});
+
+// Oculta telefones para não-admins quando músico não autorizou
+function aplicarMascaraTelefone() {
+    const grupos_ = carregarGrupos();
+    // Cria mapa mid → consentimento
+    const consentMap = {};
+    grupos_.forEach(g => {
+        (g.membros || []).forEach(m => { consentMap[m.id] = m.consentimento; });
+    });
+    // Encontra todos os links de WhatsApp nos cards de membro e aplica ocultação
+    document.querySelectorAll("a[href^='https://wa.me/']").forEach(a => {
+        const card = a.closest("[data-mid]");
+        if (!card) return;
+        const mid = card.dataset.mid;
+        if (consentMap[mid] !== true) {
+            a.outerHTML = `<span class="tel-oculto" title="Contato oculto — autorização pendente">●●● ●●●●●</span>`;
+        }
+    });
+    // Oculta na lista compacta também (abrirVerMembro mostra modal com contato)
+    document.querySelectorAll(".membro-card a[href^='https://wa.me/']").forEach(a => {
+        const card = a.closest(".membro-card");
+        if (!card) return;
+        const mid = card.dataset.mid;
+        if (consentMap[mid] !== true) {
+            a.outerHTML = `<span class="tel-oculto" title="Contato oculto — autorização pendente">●●● ●●●●●</span>`;
+        }
+    });
+}
+
+// Patch: abrirVerMembro — oculta telefone se sem consentimento e não-admin
+const _abrirVerMembroOriginal = typeof abrirVerMembro === "function" ? abrirVerMembro.toString() : "";
+const _abrirVerMembroFn = window.abrirVerMembro;
+if (_abrirVerMembroFn) {
+    window.abrirVerMembro = function(gid, mid) {
+        _abrirVerMembroFn(gid, mid);
+        if (!isAdmin) {
+            const g = carregarGrupos().find(x => x.id === gid);
+            const m = g?.membros?.find(x => x.id === mid);
+            if (!m) return;
+            if (m.consentimento !== true && m.contato) {
+                // Troca o link de contato visível pelo placeholder
+                const body = document.getElementById("modal-membro-body");
+                if (body) {
+                    body.querySelectorAll("a[href^='https://wa.me/']").forEach(a => {
+                        const parent = a.parentElement;
+                        if (parent) {
+                            parent.innerHTML = `<p class="text-[11px] font-bold text-stone-400 uppercase">Contato</p>
+                            <p class="text-sm text-stone-400 italic">🔒 Contato oculto — autorização LGPD pendente.<br>Solicite ao coordenador.</p>`;
+                        }
+                    });
+                }
             }
         }
-    } catch (err) {
-        console.error("Aviso na carga inicial:", err);
-    } finally {
-        // Desenha a escala na tela (seja com dados novos ou antigos)
-        if (typeof render === "function") render();
-    }
-})();
+    };
+}
 
-// === FIM DO BLOCO ===
+// Badge de consentimento nos cards de membro (admin)
+// Injetado após renderização dos cards
+function injetarBadgesConsentimento() {
+    if (!isAdmin) return;
+    const grupos_ = carregarGrupos();
+    const consentMap = {};
+    grupos_.forEach(g => {
+        (g.membros || []).forEach(m => { consentMap[m.id] = { c: m.consentimento, d: m.consentimentoData }; });
+    });
+    document.querySelectorAll(".membro-card[data-mid]").forEach(card => {
+        const mid = card.dataset.mid;
+        const cs  = consentMap[mid];
+        if (!cs) return;
+        // Remove badge existente se houver
+        card.querySelectorAll(".consent-badge-ok,.consent-badge-no,.consent-badge-rev").forEach(b => b.remove());
+        let badge;
+        if (cs.c === true) {
+            badge = document.createElement("span");
+            badge.className = "consent-badge-ok";
+            badge.textContent = "✅";
+            badge.title = "LGPD: autorizado" + (cs.d ? " em " + cs.d.split("-").reverse().join("/") : "");
+        } else if (cs.c === "revogado") {
+            badge = document.createElement("span");
+            badge.className = "consent-badge-rev";
+            badge.textContent = "❌";
+            badge.title = "LGPD: consentimento revogado";
+        } else {
+            badge = document.createElement("span");
+            badge.className = "consent-badge-no";
+            badge.textContent = "⚠️";
+            badge.title = "LGPD: autorização pendente";
+        }
+        // Posiciona o badge sobre o avatar
+        const rel = card.querySelector(".relative");
+        if (rel) rel.appendChild(badge);
+    });
+}
 
+// Escuta mudanças no painel de grupos para injetar badges
+const _renderGruposConteudo = typeof renderGrupoConteudo === "function" ? renderGrupoConteudo : null;
+// ... (seu código anterior de badges e grupos)
+document.getElementById("main-tab-grupos")?.addEventListener("click", () => {
+    setTimeout(injetarBadgesConsentimento, 200);
+});
 </script>
+
+<div id="claret-chat" class="fixed bottom-20 right-4 z-[9999]">
+    <button onclick="toggleChat()" class="bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition active:scale-95">
+        <span class="text-2xl">🙏</span>
+    </button>
+
+    <div id="chat-window" class="hidden absolute bottom-16 right-0 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
+        <div class="bg-blue-600 p-4 text-white font-bold flex justify-between items-center">
+            <span>Clarezinho (Assistente)</span>
+            <button onclick="toggleChat()" class="hover:bg-blue-700 px-2 rounded">✕</button>
+        </div>
+        <div id="chat-messages" class="h-80 p-4 overflow-y-auto bg-gray-50 text-sm space-y-3 flex flex-col">
+            <div class="text-left"><span class="bg-gray-200 p-2 rounded-lg inline-block">Olá! Sou o Clarezinho. Como posso ajudar a equipa hoje?</span></div>
+        </div>
+        <div class="p-3 border-t bg-white flex gap-2">
+            <input type="text" id="chat-input" placeholder="Pergunte ao Clarezinho..." class="flex-1 p-2 border rounded-xl outline-none text-sm focus:border-blue-500">
+            <button onclick="enviarMensagemClarezinho()" class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">></button>
+        </div>
+    </div>
+</div>
+
+<script>
+// CONFIGURAÇÃO TÉCNICA
+const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=" + API_KEY_CLARET;
+
+function toggleChat() {
+    const win = document.getElementById("chat-window");
+    if (win) {
+        win.classList.toggle("hidden");
+        if (!win.classList.contains("hidden")) {
+            document.getElementById("chat-input").focus();
+        }
+    }
+}
+
+async function enviarMensagemClarezinho() {
+    const input = document.getElementById("chat-input");
+    const container = document.getElementById("chat-messages");
+    const texto = input.value.trim();
+
+    if (!texto) return;
+
+    container.innerHTML += `<div class="self-end mb-2 text-right"><span class="bg-blue-100 p-2 rounded-lg text-sm inline-block shadow-sm">${texto}</span></div>`;
+    input.value = "";
+    container.scrollTop = container.scrollHeight;
+
+    // DNA do Clarezinho
+    const escalaInfo = localStorage.getItem("DadosEscala") || "Escala ainda não sincronizada.";
+    const promptBase = "Você é o Clarezinho, assistente da Paróquia Imaculada. Regras: Missas (48h de antecedência), Eventos (7 dias). Escala: " + escalaInfo;
+
+    try {
+        const response = await fetch(GEMINI_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: promptBase + "\n\nPergunta do Músico: " + texto }] }]
+            })
+        });
+
+        const data = await response.json();
+
+        // Se der erro 404 ou 400, a gente captura aqui
+        if (data.error) {
+            console.error("Erro da IA:", data.error.message);
+            throw new Error(data.error.message);
+        }
+
+        const respostaIA = data.candidates[0].content.parts[0].text;
+
+        container.innerHTML += `
+            <div class="self-start mb-2 text-left">
+                <span class="bg-gray-200 p-2 rounded-lg text-sm inline-block shadow-sm">
+                    <b>Clarezinho:</b> ${respostaIA}
+                </span>
+            </div>`;
+    } catch (err) {
+        console.error("Falha Técnica:", err);
+        container.innerHTML += `<div class="text-center text-[10px] text-red-500">Erro: Use o link do GitHub (HTTPS) para o chat funcionar.</div>`;
+    }
+    container.scrollTop = container.scrollHeight;
+}
+
+// ATIVAÇÃO DO ENTER
+document.addEventListener("keydown", function(e) {
+    if (e.key === "Enter" && document.activeElement.id === "chat-input") {
+        e.preventDefault();
+        enviarMensagemClarezinho();
+    }
+});
+</script>
+
 </body>
 </html>
