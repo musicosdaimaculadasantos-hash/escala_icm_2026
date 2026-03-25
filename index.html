@@ -7414,8 +7414,6 @@ document.getElementById("main-tab-grupos")?.addEventListener("click", () => {
 const _p1 = "AIzaSyBgJoEecV6";
 const _p2 = "chrC_gbKIzORzDUjPIYNVjbs";
 const API_KEY_CLARET = _p1 + _p2;
-
-// VOLTANDO PARA v1beta QUE É MAIS COMPATÍVEL COM O MODELO FLASH
 const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + API_KEY_CLARET;
 
 function toggleChat() {
@@ -7428,44 +7426,54 @@ async function enviarMensagemClarezinho() {
     const input = document.getElementById("chat-input");
     const container = document.getElementById("chat-messages");
     const texto = input.value.trim();
+
     if (!texto) return;
 
-    // Limpar avisos de erro
+    // Remove avisos de erro antigos
     container.querySelectorAll('.text-red-500').forEach(e => e.remove());
 
+    // Bolha do Usuário
     container.innerHTML += `<div class="self-end mb-2 text-right"><span class="bg-blue-100 p-2 rounded-lg text-sm inline-block shadow-sm border border-blue-200">${texto}</span></div>`;
     input.value = "";
     container.scrollTop = container.scrollHeight;
 
-    const escalaInfo = localStorage.getItem("DadosEscala") || "Escala de música Paróquia Imaculada Santos";
-    const promptBase = "Você é o Clarezinho, assistente da Paróquia Imaculada em Santos. Regras: Missas (48h), Eventos (7 dias). Responda curto.";
+    // Contexto Litúrgico - Adicionamos os dados da escala se houver
+    const escalaInfo = localStorage.getItem("DadosEscala") || "Escala Paroquial";
+    const instrucaoCompleta = `Você é o Clarezinho, assistente da Paróquia Imaculada em Santos. Regras: Missas (pedir com 48h de antecedência), Eventos (pedir com 7 dias). Escala atual: ${escalaInfo}. Pergunta do músico: ${texto}`;
 
     try {
         const response = await fetch(GEMINI_ENDPOINT, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: promptBase + "\n\nPergunta: " + texto }] }]
+                contents: [{
+                    parts: [{ text: instrucaoCompleta }]
+                }]
             })
         });
 
         const data = await response.json();
         
-        // Se ainda der erro de modelo não encontrado
         if (data.error) throw new Error(data.error.message);
 
         const respostaIA = data.candidates[0].content.parts[0].text;
-        container.innerHTML += `<div class="self-start mb-2 text-left"><span class="bg-gray-200 p-2 rounded-lg text-sm inline-block shadow-sm"><b>Clarezinho:</b> ${respostaIA}</span></div>`;
+
+        container.innerHTML += `
+            <div class="self-start mb-2 text-left">
+                <span class="bg-gray-200 p-2 rounded-lg text-sm inline-block shadow-sm">
+                    <b>Clarezinho:</b> ${respostaIA}
+                </span>
+            </div>`;
     } catch (err) {
         console.error("Erro Técnico:", err);
-        container.innerHTML += `<div class="text-center text-[10px] text-red-500 p-2">Erro: O modelo está sendo atualizado ou a chave foi limitada. Tente novamente.</div>`;
+        container.innerHTML += `<div class="text-center text-[10px] text-red-500 p-2">Conexão interrompida. Verifique sua chave no Google AI Studio ou o link HTTPS.</div>`;
     }
     container.scrollTop = container.scrollHeight;
 }
 
 function ouvirAudio() {
     const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!Recognition) return alert("Navegador não suporta voz.");
+    if (!Recognition) return alert("Seu navegador não suporta voz.");
     const rec = new Recognition();
     rec.lang = "pt-BR";
     rec.onstart = () => { 
